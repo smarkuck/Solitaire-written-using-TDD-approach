@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16.3)
 project(Solitaire)
 
 if (MSVC)
-    set(SDL2_DIR "${CMAKE_SOURCE_DIR}/SDL2-devel-2.0.14-VC")
+    set(SDL2_DIR "${CMAKE_SOURCE_DIR}/libs/SDL2-devel-2.0.14-VC")
     set(SDL2_INCLUDE_DIRS "${SDL2_DIR}/include")
 
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -24,3 +24,6 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME} WIN32 src/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
+
+add_subdirectory(libs)
+add_subdirectory(ut)
