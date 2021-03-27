@@ -1,2 +1,3 @@
-add_executable(UnitTests DummyTest.cpp)
-target_link_libraries(UnitTests gmock_main)
+add_executable(UnitTests)
+target_sources(UnitTests PRIVATE piles/TableauPileTest.cpp)
+target_link_libraries(UnitTests PRIVATE gmock_main)
