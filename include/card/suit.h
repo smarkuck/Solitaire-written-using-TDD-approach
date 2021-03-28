@@ -3,19 +3,19 @@
 namespace solitaire {
 namespace card {
 
-enum class Color {
+enum class Suit {
     Heart, Spade, Diamond, Club
 };
 
-inline std::string to_string(const Color& color) {
+inline std::string to_string(const Suit& color) {
     switch(color) {
-        case Color::Heart:
+        case Suit::Heart:
             return "Heart";
-        case Color::Spade:
+        case Suit::Spade:
             return "Spade";
-        case Color::Diamond:
+        case Suit::Diamond:
             return "Diamond";
-        case Color::Club:
+        case Suit::Club:
             return "Club";
         default:
             return "Unknown";

@@ -11,9 +11,7 @@ public:
     }
 
     void tryAddCards(card::Cards& cardsToAdd) {
-        if (cardsToAdd.empty()) return;
-
-        if (cardsToAdd.at(0).value == card::Value::King) {
+        if (shouldAddCards(cardsToAdd)) {
             cards.insert(cards.end(), cardsToAdd.begin(), cardsToAdd.end());
             cardsToAdd.clear();
         }
@@ -28,6 +26,24 @@ public:
     }
 
 private:
+    bool shouldAddCards(const card::Cards& cardsToAdd) const {
+        if (cardsToAdd.empty()) return false;
+        if (cards.empty()) return isFirstCardKing(cardsToAdd);
+        return isFirstCardToAddCorrect(cardsToAdd);
+    }
+
+    bool isFirstCardKing(const card::Cards& cardsToAdd) const {
+        return cardsToAdd.front().getValue() == card::Value::King;
+    }
+
+    bool isFirstCardToAddCorrect(const card::Cards& cardsToAdd) const {
+        const card::Card& topPileCard = cards.back();
+        const card::Card& firstCardToAdd = cardsToAdd.front();
+
+        return topPileCard.hasValueOneGreaterThan(firstCardToAdd) and
+               topPileCard.hasDifferentColorThan(firstCardToAdd);
+    }
+
     card::Cards cards;
     unsigned queuePositionOfFirstFaceDownCard;
 };
