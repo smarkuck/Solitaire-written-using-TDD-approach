@@ -1,8 +1,8 @@
 #include <ostream>
 #include <type_traits>
 
-#include "value.h"
-#include "suit.h"
+#include "Value.h"
+#include "Suit.h"
 
 namespace solitaire {
 namespace card {

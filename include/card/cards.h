@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "card.h"
+#include "Card.h"
 
 namespace solitaire {
 namespace card {

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "card/card.h"
+#include "card/Card.h"
 
 using namespace testing;
 
