@@ -16,7 +16,7 @@ namespace {
 TEST(TableauPileTest, createEmptyPile) {
     TableauPile pile{noCards.begin(), noCards.begin()};
     EXPECT_TRUE(pile.getCards().empty());
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 0);
+    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 0);
 }
 
 TEST(TableauPileTest, createPileWithOneCard) {
@@ -26,7 +26,7 @@ TEST(TableauPileTest, createPileWithOneCard) {
 
     TableauPile pile{cards.begin(), cards.end()};
     EXPECT_THAT(pile.getCards(), ContainerEq(cards));
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 0);
+    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 0);
 }
 
 TEST(TableauPileTest, createPileWithTwoCards) {
@@ -37,7 +37,7 @@ TEST(TableauPileTest, createPileWithTwoCards) {
 
     TableauPile pile{cards.begin(), cards.end()};
     EXPECT_THAT(pile.getCards(), ContainerEq(cards));
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 1);
+    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 1);
 }
 
 TEST(TableauPileTest, createPileWithSevenCards) {
@@ -53,16 +53,12 @@ TEST(TableauPileTest, createPileWithSevenCards) {
 
     TableauPile pile{cards.begin(), cards.end()};
     EXPECT_THAT(pile.getCards(), ContainerEq(cards));
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 6);
+    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 6);
 }
 
 class EmptyTableauPileTest: public Test {
 public:
-    EmptyTableauPileTest():
-        pile {noCards.begin(), noCards.end()} {
-    }
-
-    TableauPile pile;
+    TableauPile pile {noCards.begin(), noCards.end()};
 };
 
 TEST_F(EmptyTableauPileTest, tryAddNoCards) {
@@ -71,7 +67,6 @@ TEST_F(EmptyTableauPileTest, tryAddNoCards) {
 
     EXPECT_TRUE(noCardsToAdd.empty());
     EXPECT_TRUE(pile.getCards().empty());
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 0);
 }
 
 TEST_F(EmptyTableauPileTest, tryAddCardsWhenKingIsNotFirst) {
@@ -86,7 +81,6 @@ TEST_F(EmptyTableauPileTest, tryAddCardsWhenKingIsNotFirst) {
 
     EXPECT_THAT(cardsToAdd, ContainerEq(cardsLeftAfterAdding));
     EXPECT_TRUE(pile.getCards().empty());
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 0);
 }
 
 TEST_F(EmptyTableauPileTest, tryAddCardsWhenKingIsFirst) {
@@ -101,7 +95,6 @@ TEST_F(EmptyTableauPileTest, tryAddCardsWhenKingIsFirst) {
 
     EXPECT_TRUE(cardsToAdd.empty());
     EXPECT_THAT(pile.getCards(), ContainerEq(cardsInPileAfterAdding));
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 0);
 }
 
 class TableauPileWithUncoveredTopCardTest: public Test {
@@ -136,7 +129,6 @@ TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardColorIsIncor
 
     EXPECT_THAT(cardsToAdd, ContainerEq(cardsLeftAfterAdding));
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 2);
 }
 
 TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardValueIsIncorrect) {
@@ -150,7 +142,6 @@ TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardValueIsIncor
 
     EXPECT_THAT(cardsToAdd, ContainerEq(cardsLeftAfterAdding));
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 2);
 }
 
 TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardIsCorrect) {
@@ -161,7 +152,52 @@ TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardIsCorrect) {
 
     EXPECT_TRUE(cardsToAdd.empty());
     EXPECT_THAT(pile.getCards(), ContainerEq(cardsInPileAfterAdding));
-    EXPECT_EQ(pile.getQueuePositionOfFirstFaceDownCard(), 2);
+}
+
+class TableauPileWithUncoveredTopTwoCardsTest: public Test {
+public:
+    TableauPileWithUncoveredTopTwoCardsTest() {
+        const Card cardToAdd {Value::Four, Suit::Club};
+        Cards cardsToAdd {cardToAdd};
+
+        pileCards.push_back(cardToAdd);
+        pile.tryAddCards(cardsToAdd);
+    }
+
+    Cards pileCards {
+        Card {Value::Ace, Suit::Heart},
+        Card {Value::Ten, Suit::Spade},
+        Card {Value::Five, Suit::Diamond}
+    };
+
+    TableauPile pile {pileCards.begin(), pileCards.end()};
+};
+
+TEST_F(TableauPileWithUncoveredTopTwoCardsTest, tryPullOutZeroCards) {
+    EXPECT_TRUE(pile.tryPullOutCards(0).empty());
+    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+}
+
+TEST_F(TableauPileWithUncoveredTopTwoCardsTest, tryPullOutOneCard) {
+    const Cards pulledOutCards {std::prev(pileCards.end()), pileCards.end()};
+    pileCards.pop_back();
+
+    EXPECT_THAT(pile.tryPullOutCards(1), ContainerEq(pulledOutCards));
+    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+}
+
+TEST_F(TableauPileWithUncoveredTopTwoCardsTest, tryPullOutTwoCard) {
+    const auto firstCardToPullOut = std::prev(pileCards.end(), 2);
+    const Cards pulledOutCards {firstCardToPullOut, pileCards.end()};
+    pileCards.erase(firstCardToPullOut, pileCards.end());
+
+    EXPECT_THAT(pile.tryPullOutCards(2), ContainerEq(pulledOutCards));
+    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+}
+
+TEST_F(TableauPileWithUncoveredTopTwoCardsTest, tryPullOutThreeCards) {
+    EXPECT_TRUE(pile.tryPullOutCards(3).empty());
+    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
 }

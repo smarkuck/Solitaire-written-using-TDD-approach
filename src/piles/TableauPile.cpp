@@ -7,7 +7,7 @@ namespace piles {
 
 TableauPile::TableauPile(Cards::const_iterator begin, const Cards::const_iterator& end) {
     cards.assign(begin, end);
-    queuePositionOfFirstFaceDownCard = cards.size() > 0 ? cards.size() - 1 : 0;
+    placeInOrderOfFirstCoveredCard = cards.size() > 0 ? cards.size() - 1 : 0;
 }
 
 void TableauPile::tryAddCards(Cards& cardsToAdd) {
@@ -35,12 +35,24 @@ bool TableauPile::isFirstCardToAddCorrect(const Cards& cardsToAdd) const {
             topPileCard.hasDifferentColorThan(firstCardToAdd);
 }
 
+Cards TableauPile::tryPullOutCards(unsigned quantity) {
+    Cards cardsToPullout;
+
+    if (cards.size() - placeInOrderOfFirstCoveredCard >= quantity) {
+        const auto firstCardToPullOut = std::prev(cards.end(), quantity);
+        cardsToPullout.assign(firstCardToPullOut, cards.end());
+        cards.erase(firstCardToPullOut, cards.end());
+    }
+
+    return cardsToPullout;
+}
+
 const Cards& TableauPile::getCards() const {
     return cards;
 }
 
-unsigned TableauPile::getQueuePositionOfFirstFaceDownCard() const {
-    return queuePositionOfFirstFaceDownCard;
+unsigned TableauPile::getPlaceInOrderOfFirstCoveredCard() const {
+    return placeInOrderOfFirstCoveredCard;
 }
 
 }
