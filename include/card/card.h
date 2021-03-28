@@ -9,30 +9,14 @@ namespace card {
 
 class Card {
 public:
-    Card(Value value, Suit suit):
-        value(value), suit(suit) {
-    }
+    Card(Value value, Suit suit);
 
-    Value getValue() const {
-        return value;
-    }
+    Value getValue() const;
+    Suit getSuit() const;
 
-    Suit getSuit() const {
-        return suit;
-    }
-
-    bool hasValueOneGreaterThan(const Card& card) const {
-        return static_cast<std::underlying_type<Value>::type>(this->value) ==
-               static_cast<std::underlying_type<Value>::type>(card.value) + 1;
-    }
-
-    bool hasDifferentColorThan(const Card& card) const {
-        return hasRedColor() != card.hasRedColor();
-    }
-
-    bool hasRedColor() const {
-        return suit == card::Suit::Heart or suit == card::Suit::Diamond;
-    }
+    bool hasValueOneGreaterThan(const Card& card) const;
+    bool hasDifferentColorThan(const Card& card) const;
+    bool hasRedColor() const;
 
 private:
     Value value;

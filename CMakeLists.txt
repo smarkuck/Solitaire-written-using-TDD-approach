@@ -23,6 +23,14 @@ endif ()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${SDL2_INCLUDE_DIRS})
 
+set(SOLITAIRE_LIB ${PROJECT_NAME}Lib)
+add_library(${SOLITAIRE_LIB} STATIC)
+
+target_sources(${SOLITAIRE_LIB} PRIVATE
+    src/card/Card.cpp
+    src/piles/TableauPile.cpp
+)
+
 add_executable(${PROJECT_NAME} WIN32 src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
 

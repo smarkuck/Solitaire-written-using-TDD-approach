@@ -5,4 +5,4 @@ target_sources(UnitTests PRIVATE
     piles/TableauPileTest.cpp
 )
 
-target_link_libraries(UnitTests PRIVATE gmock_main)
+target_link_libraries(UnitTests PRIVATE ${SOLITAIRE_LIB} gmock_main)
