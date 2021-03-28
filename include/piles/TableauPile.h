@@ -8,7 +8,7 @@ public:
     TableauPile(const card::Cards::const_iterator& begin,
                 const card::Cards::const_iterator& end);
 
-    void reset(card::Cards::const_iterator begin,
+    void reset(const card::Cards::const_iterator& begin,
                const card::Cards::const_iterator& end);
 
     void tryUncoverTopCard();

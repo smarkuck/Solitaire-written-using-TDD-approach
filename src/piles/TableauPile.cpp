@@ -11,7 +11,7 @@ TableauPile::TableauPile(const Cards::const_iterator& begin,
     reset(begin, end);
 }
 
-void TableauPile::reset(card::Cards::const_iterator begin,
+void TableauPile::reset(const card::Cards::const_iterator& begin,
                         const card::Cards::const_iterator& end) {
     cards.assign(begin, end);
     lastPulledOutCards.clear();

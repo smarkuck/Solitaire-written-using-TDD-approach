@@ -1,5 +1,3 @@
-#include <tuple>
-
 #include "gmock/gmock.h"
 #include "piles/TableauPile.h"
 

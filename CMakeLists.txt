@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.16.3)
 
 project(Solitaire)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 if (MSVC)
     add_compile_options(/permissive-)
 
@@ -28,6 +32,7 @@ add_library(${SOLITAIRE_LIB} STATIC)
 
 target_sources(${SOLITAIRE_LIB} PRIVATE
     src/card/Card.cpp
+    src/piles/StockPile.cpp
     src/piles/TableauPile.cpp
 )
 
