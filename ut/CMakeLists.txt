@@ -2,6 +2,7 @@ add_executable(UnitTests)
 
 target_sources(UnitTests PRIVATE
     card/CardTest.cpp
+    piles/FoundationPileTest.cpp
     piles/StockPileTest.cpp
     piles/TableauPileTest.cpp
 )

@@ -16,8 +16,12 @@ Suit Card::getSuit() const {
 }
 
 bool Card::hasValueOneGreaterThan(const Card& card) const {
-    return static_cast<std::underlying_type<Value>::type>(this->value) ==
-            static_cast<std::underlying_type<Value>::type>(card.value) + 1;
+    return static_cast<std::underlying_type<Value>::type>(value) - 1 ==
+           static_cast<std::underlying_type<Value>::type>(card.value);
+}
+
+bool Card::hasSameSuitAs(const Card& card) const {
+    return suit == card.getSuit();
 }
 
 bool Card::hasDifferentColorThan(const Card& card) const {

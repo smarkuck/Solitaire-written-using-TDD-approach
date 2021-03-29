@@ -26,18 +26,6 @@ TEST_F(EmptyStockPileTest, selectNextCard) {
     EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
 
-TEST(StockPileTest, createPileWithCards) {
-    const Cards pileCards {
-        Card {Value::Ten, Suit::Heart},
-        Card {Value::Three, Suit::Spade},
-        Card {Value::Two, Suit::Diamond}
-    };
-
-    StockPile pile{pileCards.begin(), pileCards.end()};
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-    EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
-}
-
 class StockPileWithCardsTest: public Test {
 public:
     Cards pileCards {
@@ -49,7 +37,12 @@ public:
     StockPile pile{pileCards.begin(), pileCards.end()};
 };
 
-TEST_F(StockPileWithCardsTest, selectNextCardOnPileWithCards) {
+TEST_F(StockPileWithCardsTest, createPile) {
+    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+    EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
+}
+
+TEST_F(StockPileWithCardsTest, selectNextCard) {
     pile.selectNextCard();
     EXPECT_EQ(pile.getSelectedCardIndex(), 0);
 
@@ -74,8 +67,8 @@ TEST_F(StockPileWithCardsTest, tryPullOutFirstCard) {
     pileCards.erase(pileCards.begin());
 
     pile.selectNextCard();
-    EXPECT_EQ(pile.tryPullOutCard(), firstCard);
 
+    EXPECT_EQ(pile.tryPullOutCard(), firstCard);
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
     EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
@@ -87,8 +80,8 @@ TEST_F(StockPileWithCardsTest, tryPullOutSecondCard) {
 
     pile.selectNextCard();
     pile.selectNextCard();
-    EXPECT_EQ(pile.tryPullOutCard(), secondCard);
 
+    EXPECT_EQ(pile.tryPullOutCard(), secondCard);
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
     EXPECT_EQ(pile.getSelectedCardIndex(), 0);
 }
@@ -100,10 +93,17 @@ TEST_F(StockPileWithCardsTest, tryPullOutLastCard) {
     pile.selectNextCard();
     pile.selectNextCard();
     pile.selectNextCard();
-    EXPECT_EQ(pile.tryPullOutCard(), lastCard);
 
+    EXPECT_EQ(pile.tryPullOutCard(), lastCard);
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
     EXPECT_EQ(pile.getSelectedCardIndex(), 1);
+}
+
+TEST_F(StockPileWithCardsTest, tryRestoreCardWhenNothingPulledOut)
+{
+    pile.tryRestoreLastPulledOutCard();
+    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+    EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
 
 class StockPileWithCardsAfterPullOutTest: public Test {
@@ -158,7 +158,9 @@ TEST_F(StockPileWithCardsAfterPullOutTest, tryRestoreCardWhenPullOutFailed) {
     EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(StockPileWithCardsAfterPullOutTest, tryRestorePulledOutCardAfterSelectingNextCard) {
+TEST_F(StockPileWithCardsAfterPullOutTest,
+       tryRestorePulledOutCardAfterSelectingNextCard)
+{
     pile.selectNextCard();
     pile.tryRestoreLastPulledOutCard();
 

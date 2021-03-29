@@ -10,8 +10,16 @@ TEST(CardTest, hasValueOneGreaterThanOtherCard) {
     const Suit heart = Suit::Heart;
     EXPECT_FALSE(Card (Value::King, heart).hasValueOneGreaterThan(Card (Value::King, heart)));
     EXPECT_TRUE(Card (Value::King, heart).hasValueOneGreaterThan(Card (Value::Queen, heart)));
-    EXPECT_FALSE(Card (Value::Queen, heart).hasValueOneGreaterThan(Card (Value::King, heart)));
     EXPECT_FALSE(Card (Value::King, heart).hasValueOneGreaterThan(Card (Value::Jack, heart)));
+    EXPECT_FALSE(Card (Value::Queen, heart).hasValueOneGreaterThan(Card (Value::King, heart)));
+}
+
+TEST(CardTest, hasSameSuit) {
+    const Value king = Value::King;
+    EXPECT_TRUE(Card (king, Suit::Heart).hasSameSuitAs(Card {king, Suit::Heart}));
+    EXPECT_TRUE(Card (king, Suit::Spade).hasSameSuitAs(Card {king, Suit::Spade}));
+    EXPECT_FALSE(Card (king, Suit::Heart).hasSameSuitAs(Card {king, Suit::Spade}));
+    EXPECT_FALSE(Card (king, Suit::Spade).hasSameSuitAs(Card {king, Suit::Heart}));
 }
 
 TEST(CardTest, hasRedColor) {

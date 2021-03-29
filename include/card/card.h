@@ -15,6 +15,7 @@ public:
     Suit getSuit() const;
 
     bool hasValueOneGreaterThan(const Card& card) const;
+    bool hasSameSuitAs(const Card& card) const;
     bool hasDifferentColorThan(const Card& card) const;
     bool hasRedColor() const;
 

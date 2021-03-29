@@ -185,7 +185,7 @@ TEST_F(TableauPileWithUncoveredTopTwoCardsTest, tryPullOutZeroCards) {
 }
 
 TEST_F(TableauPileWithUncoveredTopTwoCardsTest, tryPullOutOneCard) {
-    const Cards pulledOutCards {std::prev(pileCards.end()), pileCards.end()};
+    const Cards pulledOutCards {pileCards.back()};
     pileCards.pop_back();
 
     EXPECT_THAT(pile.tryPullOutCards(1), ContainerEq(pulledOutCards));
@@ -205,6 +205,13 @@ TEST_F(TableauPileWithUncoveredTopTwoCardsTest, tryPullOutTwoCards) {
 
 TEST_F(TableauPileWithUncoveredTopTwoCardsTest, tryPullOutTooMuchCards) {
     EXPECT_TRUE(pile.tryPullOutCards(3).empty());
+    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+}
+
+TEST_F(TableauPileWithUncoveredTopTwoCardsTest,
+       tryRestoreCardWhenNothingPulledOut)
+{
+    pile.tryRestoreLastPulledOutCards();
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
@@ -290,9 +297,12 @@ TEST_F(TableauPileWithUncoveredTopTwoCardsAndOnePulledOutTest,
 TEST_F(TableauPileWithUncoveredTopTwoCardsAndOnePulledOutTest,
        tryRestorePulledOutCardsAfterAddOperation)
 {
-    Cards noCards;
-    pile.tryAddCards(noCards);
+    pileCards.push_back(Card {Value::Three, Suit::Heart});
+    Cards cardsToAdd {pileCards.back()};
+
+    pile.tryAddCards(cardsToAdd);
     pile.tryRestoreLastPulledOutCards();
+
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 

@@ -32,6 +32,7 @@ add_library(${SOLITAIRE_LIB} STATIC)
 
 target_sources(${SOLITAIRE_LIB} PRIVATE
     src/card/Card.cpp
+    src/piles/FoundationPile.cpp
     src/piles/StockPile.cpp
     src/piles/TableauPile.cpp
 )

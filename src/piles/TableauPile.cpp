@@ -11,11 +11,11 @@ TableauPile::TableauPile(const Cards::const_iterator& begin,
     reset(begin, end);
 }
 
-void TableauPile::reset(const card::Cards::const_iterator& begin,
-                        const card::Cards::const_iterator& end) {
+void TableauPile::reset(const Cards::const_iterator& begin,
+                        const Cards::const_iterator& end) {
     cards.assign(begin, end);
     lastPulledOutCards.clear();
-    placeInOrderOfFirstCoveredCard = cards.size() > 0 ? cards.size() - 1 : 0;
+    placeInOrderOfFirstCoveredCard = cards.empty() ? 0 : cards.size() - 1;
 }
 
 void TableauPile::tryUncoverTopCard() {
@@ -41,7 +41,7 @@ bool TableauPile::shouldAddCards(const Cards& cardsToAdd) const {
 }
 
 bool TableauPile::isTopCardCovered() const {
-    return cards.size() > 0 and cards.size() == placeInOrderOfFirstCoveredCard;
+    return not cards.empty() and cards.size() == placeInOrderOfFirstCoveredCard;
 }
 
 bool TableauPile::isFirstCardToAddKing(const Cards& cardsToAdd) const {
