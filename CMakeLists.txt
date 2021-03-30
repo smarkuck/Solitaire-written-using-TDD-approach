@@ -31,8 +31,8 @@ set(SOLITAIRE_LIB ${PROJECT_NAME}Lib)
 add_library(${SOLITAIRE_LIB} STATIC)
 
 target_sources(${SOLITAIRE_LIB} PRIVATE
-    src/card/Card.cpp
-    src/card/ShuffledCardsGenerator.cpp
+    src/cards/Card.cpp
+    src/cards/ShuffledCardsGenerator.cpp
     src/piles/FoundationPile.cpp
     src/piles/StockPile.cpp
     src/piles/TableauPile.cpp

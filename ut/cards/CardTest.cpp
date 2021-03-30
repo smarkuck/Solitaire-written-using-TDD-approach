@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
-#include "card/Card.h"
+#include "cards/Card.h"
 
 using namespace testing;
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 TEST(CardTest, hasValueOneGreaterThanOtherCard) {
     const Suit heart = Suit::Heart;

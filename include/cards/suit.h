@@ -1,7 +1,7 @@
 #include <string>
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 enum class Suit {
     Heart, Spade, Diamond, Club

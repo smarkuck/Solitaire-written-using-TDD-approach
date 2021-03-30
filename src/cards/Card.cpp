@@ -1,7 +1,7 @@
-#include "card/Card.h"
+#include "cards/Card.h"
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 Card::Card(Value value, Suit suit):
     value(value), suit(suit) {
@@ -29,7 +29,7 @@ bool Card::hasDifferentColorThan(const Card& card) const {
 }
 
 bool Card::hasRedColor() const {
-    return suit == card::Suit::Heart or suit == card::Suit::Diamond;
+    return suit == Suit::Heart or suit == Suit::Diamond;
 }
 
 }

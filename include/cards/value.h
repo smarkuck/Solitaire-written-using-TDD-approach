@@ -1,7 +1,7 @@
 #include <string>
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 enum class Value {
     Ace, Two, Three, Four, Five,

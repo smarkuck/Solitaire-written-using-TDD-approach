@@ -1,20 +1,20 @@
 #include <optional>
 
-#include "card/Cards.h"
+#include "cards/Cards.h"
 
 namespace solitaire {
 namespace piles {
 
 class StockPile {
 public:
-    void initialize(const card::Cards::const_iterator& begin,
-                    const card::Cards::const_iterator& end);
+    void initialize(const cards::Cards::const_iterator& begin,
+                    const cards::Cards::const_iterator& end);
 
     void selectNextCard();
-    std::optional<card::Card> tryPullOutCard();
+    std::optional<cards::Card> tryPullOutCard();
     void tryRestoreLastPulledOutCard();
 
-    const card::Cards& getCards() const;
+    const cards::Cards& getCards() const;
     std::optional<unsigned> getSelectedCardIndex() const;
 
 private:
@@ -22,8 +22,8 @@ private:
     void decrementSelectedCardIndex();
     void restoreLastPulledOutCard();
 
-    card::Cards cards;
-    std::optional<card::Card> lastPulledOutCard;
+    cards::Cards cards;
+    std::optional<cards::Card> lastPulledOutCard;
     std::optional<unsigned> selectedCardIndex;
 };
 

@@ -1,6 +1,6 @@
 #include "piles/TableauPile.h"
 
-using namespace solitaire::card;
+using namespace solitaire::cards;
 
 namespace solitaire {
 namespace piles {

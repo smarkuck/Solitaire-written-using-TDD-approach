@@ -3,7 +3,7 @@
 #include "Cards.h"
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 class ShuffledCardsGenerator {
 public:

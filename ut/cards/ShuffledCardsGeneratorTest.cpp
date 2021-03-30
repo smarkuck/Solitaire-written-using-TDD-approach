@@ -2,12 +2,12 @@
 #include <vector>
 
 #include "gmock/gmock.h"
-#include "card/ShuffledCardsGenerator.h"
+#include "cards/ShuffledCardsGenerator.h"
 
 using namespace testing;
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 namespace {
 const std::vector<Value> values {

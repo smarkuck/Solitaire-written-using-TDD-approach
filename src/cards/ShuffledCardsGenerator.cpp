@@ -1,10 +1,10 @@
 #include <algorithm>
 #include <random>
 
-#include "card/ShuffledCardsGenerator.h"
+#include "cards/ShuffledCardsGenerator.h"
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 const std::vector<Value> ShuffledCardsGenerator::values {
     Value::Ace, Value::Two, Value::Three, Value::Four, Value::Five,

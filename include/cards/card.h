@@ -5,7 +5,7 @@
 #include "Suit.h"
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 class Card {
 public:

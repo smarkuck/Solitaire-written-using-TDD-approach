@@ -2,7 +2,7 @@
 #include "piles/StockPile.h"
 
 using namespace testing;
-using namespace solitaire::card;
+using namespace solitaire::cards;
 
 namespace solitaire {
 namespace piles {

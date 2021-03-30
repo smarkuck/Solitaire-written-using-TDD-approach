@@ -1,8 +1,8 @@
 add_executable(UnitTests)
 
 target_sources(UnitTests PRIVATE
-    card/CardTest.cpp
-    card/ShuffledCardsGeneratorTest.cpp
+    cards/CardTest.cpp
+    cards/ShuffledCardsGeneratorTest.cpp
     piles/FoundationPileTest.cpp
     piles/StockPileTest.cpp
     piles/TableauPileTest.cpp

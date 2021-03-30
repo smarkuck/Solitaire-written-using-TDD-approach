@@ -3,7 +3,7 @@
 #include "Card.h"
 
 namespace solitaire {
-namespace card {
+namespace cards {
 
 using Cards = std::vector<Card>;
 

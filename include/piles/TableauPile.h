@@ -1,30 +1,30 @@
-#include "card/Cards.h"
+#include "cards/Cards.h"
 
 namespace solitaire {
 namespace piles {
 
 class TableauPile {
 public:
-    void initialize(const card::Cards::const_iterator& begin,
-                    const card::Cards::const_iterator& end);
+    void initialize(const cards::Cards::const_iterator& begin,
+                    const cards::Cards::const_iterator& end);
 
     void tryUncoverTopCard();
-    void tryAddCards(card::Cards& cardsToAdd);
-    card::Cards tryPullOutCards(unsigned quantity);
+    void tryAddCards(cards::Cards& cardsToAdd);
+    cards::Cards tryPullOutCards(unsigned quantity);
     void tryRestoreLastPulledOutCards();
 
-    const card::Cards& getCards() const;
+    const cards::Cards& getCards() const;
     unsigned getPlaceInOrderOfFirstCoveredCard() const;
 
 private:
-    bool shouldAddCards(const card::Cards& cardsToAdd) const;
+    bool shouldAddCards(const cards::Cards& cardsToAdd) const;
     bool shouldPullOutCards(unsigned quantity) const;
     bool isTopCardCovered() const;
-    bool isFirstCardToAddKing(const card::Cards& cardsToAdd) const;
-    bool isFirstCardToAddCorrect(const card::Cards& cardsToAdd) const;
+    bool isFirstCardToAddKing(const cards::Cards& cardsToAdd) const;
+    bool isFirstCardToAddCorrect(const cards::Cards& cardsToAdd) const;
 
-    card::Cards cards;
-    card::Cards lastPulledOutCards;
+    cards::Cards cards;
+    cards::Cards lastPulledOutCards;
     unsigned placeInOrderOfFirstCoveredCard {0};
 };
 
