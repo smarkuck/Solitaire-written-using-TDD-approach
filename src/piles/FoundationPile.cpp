@@ -5,7 +5,7 @@ using namespace solitaire::card;
 namespace solitaire {
 namespace piles {
 
-void FoundationPile::reset() {
+void FoundationPile::initialize() {
     cards.clear();
     lastPulledOutCard.reset();
 }

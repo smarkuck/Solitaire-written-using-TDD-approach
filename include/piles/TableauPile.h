@@ -5,11 +5,8 @@ namespace piles {
 
 class TableauPile {
 public:
-    TableauPile(const card::Cards::const_iterator& begin,
-                const card::Cards::const_iterator& end);
-
-    void reset(const card::Cards::const_iterator& begin,
-               const card::Cards::const_iterator& end);
+    void initialize(const card::Cards::const_iterator& begin,
+                    const card::Cards::const_iterator& end);
 
     void tryUncoverTopCard();
     void tryAddCards(card::Cards& cardsToAdd);
@@ -28,7 +25,7 @@ private:
 
     card::Cards cards;
     card::Cards lastPulledOutCards;
-    unsigned placeInOrderOfFirstCoveredCard;
+    unsigned placeInOrderOfFirstCoveredCard {0};
 };
 
 }

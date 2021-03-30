@@ -5,14 +5,9 @@ using namespace solitaire::card;
 namespace solitaire {
 namespace piles {
 
-StockPile::StockPile(const Cards::const_iterator& begin,
-                     const Cards::const_iterator& end)
+void StockPile::initialize(const Cards::const_iterator& begin,
+                           const Cards::const_iterator& end)
 {
-    reset(begin, end);
-}
-
-void StockPile::reset(const Cards::const_iterator& begin,
-            const Cards::const_iterator& end) {
     cards.assign(begin, end);
     selectedCardIndex.reset();
     lastPulledOutCard.reset();

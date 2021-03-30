@@ -5,14 +5,8 @@ using namespace solitaire::card;
 namespace solitaire {
 namespace piles {
 
-TableauPile::TableauPile(const Cards::const_iterator& begin,
-                         const Cards::const_iterator& end)
-{
-    reset(begin, end);
-}
-
-void TableauPile::reset(const Cards::const_iterator& begin,
-                        const Cards::const_iterator& end) {
+void TableauPile::initialize(const Cards::const_iterator& begin,
+                             const Cards::const_iterator& end) {
     cards.assign(begin, end);
     lastPulledOutCards.clear();
     placeInOrderOfFirstCoveredCard = cards.empty() ? 0 : cards.size() - 1;

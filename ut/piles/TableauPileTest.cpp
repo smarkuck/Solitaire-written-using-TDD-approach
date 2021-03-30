@@ -7,38 +7,38 @@ using namespace solitaire::card;
 namespace solitaire {
 namespace piles {
 
-namespace {
-    const Cards noCards;
-}
+class TableauPileTest: public Test {
+public:
+    TableauPile pile;
+};
 
-TEST(TableauPileTest, createEmptyPile) {
-    TableauPile pile{noCards.begin(), noCards.begin()};
+TEST_F(TableauPileTest, createPile) {
     EXPECT_TRUE(pile.getCards().empty());
     EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 0);
 }
 
-TEST(TableauPileTest, createPileWithOneCard) {
+TEST_F(TableauPileTest, initializePileWithOneCard) {
     const Cards cards {
         Card {Value::Ace, Suit::Heart}
     };
 
-    TableauPile pile{cards.begin(), cards.end()};
+    pile.initialize(cards.begin(), cards.end());
     EXPECT_THAT(pile.getCards(), ContainerEq(cards));
     EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 0);
 }
 
-TEST(TableauPileTest, createPileWithTwoCards) {
+TEST_F(TableauPileTest, initializePileWithTwoCards) {
     const Cards cards {
         Card {Value::Ace, Suit::Heart},
         Card {Value::Two, Suit::Spade}
     };
 
-    TableauPile pile{cards.begin(), cards.end()};
+    pile.initialize(cards.begin(), cards.end());
     EXPECT_THAT(pile.getCards(), ContainerEq(cards));
     EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 1);
 }
 
-TEST(TableauPileTest, createPileWithSevenCards) {
+TEST_F(TableauPileTest, initializePileWithSevenCards) {
     const Cards cards {
         Card {Value::Ace, Suit::Heart},
         Card {Value::Two, Suit::Spade},
@@ -49,17 +49,12 @@ TEST(TableauPileTest, createPileWithSevenCards) {
         Card {Value::Seven, Suit::Diamond}
     };
 
-    TableauPile pile{cards.begin(), cards.end()};
+    pile.initialize(cards.begin(), cards.end());
     EXPECT_THAT(pile.getCards(), ContainerEq(cards));
     EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 6);
 }
 
-class EmptyTableauPileTest: public Test {
-public:
-    TableauPile pile {noCards.begin(), noCards.end()};
-};
-
-TEST_F(EmptyTableauPileTest, tryAddNoCards) {
+TEST_F(TableauPileTest, tryAddNoCards) {
     Cards noCardsToAdd;
     pile.tryAddCards(noCardsToAdd);
 
@@ -67,7 +62,7 @@ TEST_F(EmptyTableauPileTest, tryAddNoCards) {
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-TEST_F(EmptyTableauPileTest, tryAddCardsWhenKingIsNotFirst) {
+TEST_F(TableauPileTest, tryAddCardsWhenKingIsNotFirst) {
     Cards cardsToAdd {
         Card {Value::Queen, Suit::Heart},
         Card {Value::King, Suit::Spade},
@@ -81,7 +76,7 @@ TEST_F(EmptyTableauPileTest, tryAddCardsWhenKingIsNotFirst) {
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-TEST_F(EmptyTableauPileTest, tryAddCardsWhenKingIsFirst) {
+TEST_F(TableauPileTest, tryAddCardsWhenKingIsFirst) {
     Cards cardsToAdd {
         Card {Value::King, Suit::Heart},
         Card {Value::Queen, Suit::Spade},
@@ -95,15 +90,25 @@ TEST_F(EmptyTableauPileTest, tryAddCardsWhenKingIsFirst) {
     EXPECT_THAT(pile.getCards(), ContainerEq(cardsInPileAfterAdding));
 }
 
-TEST_F(EmptyTableauPileTest, tryUncoverTopCard) {
+TEST_F(TableauPileTest, tryUncoverTopCard) {
     EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 0);
 
     pile.tryUncoverTopCard();
     EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 0);
 }
 
-class TableauPileTestBase: public Test {
+class InitializedTableauPileTest: public TableauPileTest {
 public:
+    InitializedTableauPileTest() {
+        pile.initialize(pileCards.begin(), pileCards.end());
+    }
+
+    Cards concatenateCards(const Cards& lhs, const Cards& rhs) {
+        auto result = lhs;
+        result.insert(result.end(), rhs.begin(), rhs.end());
+        return result;
+    }
+
     Cards pileCards {
         Card {Value::Ace, Suit::Heart},
         Card {Value::Ten, Suit::Spade},
@@ -111,14 +116,8 @@ public:
     };
 };
 
-class TableauPileWithUncoveredTopCardTest: public TableauPileTestBase {
+class TableauPileWithUncoveredTopCardTest: public InitializedTableauPileTest {
 public:
-    Cards concatenateCards(const Cards& lhs, const Cards& rhs) {
-        auto result = lhs;
-        result.insert(result.end(), rhs.begin(), rhs.end());
-        return result;
-    }
-
     Cards cardsToAdd {
         Card {Value::Four, Suit::Club},
         Card {Value::Three, Suit::Heart},
@@ -127,9 +126,6 @@ public:
 };
 
 TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardColorIsIncorrect) {
-    pileCards.back() = Card {pileCards.back().getValue(), Suit::Heart};
-    TableauPile pile {pileCards.begin(), pileCards.end()};
-
     cardsToAdd.front() = Card {cardsToAdd.front().getValue(), Suit::Diamond};
     const auto cardsLeftAfterAdding = cardsToAdd;
 
@@ -140,9 +136,6 @@ TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardColorIsIncor
 }
 
 TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardValueIsIncorrect) {
-    pileCards.back() = Card {Value::Five, pileCards.back().getSuit()};
-    TableauPile pile {pileCards.begin(), pileCards.end()};
-
     cardsToAdd.front() = Card {Value::Three, cardsToAdd.front().getSuit()};
     const auto cardsLeftAfterAdding = cardsToAdd;
 
@@ -153,7 +146,6 @@ TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardValueIsIncor
 }
 
 TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardIsCorrect) {
-    TableauPile pile{pileCards.begin(), pileCards.end()};
     const auto cardsInPileAfterAdding = concatenateCards(pileCards, cardsToAdd);
 
     pile.tryAddCards(cardsToAdd);
@@ -162,12 +154,37 @@ TEST_F(TableauPileWithUncoveredTopCardTest, tryAddCardsWhenFirstCardIsCorrect) {
     EXPECT_THAT(pile.getCards(), ContainerEq(cardsInPileAfterAdding));
 }
 
-class TableauPileTestBaseWithCreatedPile: public TableauPileTestBase {
+class TableauPileWithCoveredTopCardTest: public InitializedTableauPileTest {
 public:
-    TableauPile pile {pileCards.begin(), pileCards.end()};
+    TableauPileWithCoveredTopCardTest() {
+        pileCards.pop_back();
+        pile.tryPullOutCards(1);
+    }
 };
 
-class TableauPileWithUncoveredTopTwoCardsTest: public TableauPileTestBaseWithCreatedPile {
+TEST_F(TableauPileWithCoveredTopCardTest, tryAddCardsOnCoveredTopCard) {
+    Cards cardsToAdd {
+        Card {Value::Nine, Suit::Diamond}
+    };
+    const auto cardsLeftAfterAdding = cardsToAdd;
+
+    pile.tryAddCards(cardsToAdd);
+
+    EXPECT_THAT(cardsToAdd, ContainerEq(cardsLeftAfterAdding));
+    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+}
+
+TEST_F(TableauPileWithCoveredTopCardTest, tryUncoverTopCard) {
+    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 2);
+
+    pile.tryUncoverTopCard();
+    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 1);
+
+    pile.tryUncoverTopCard();
+    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 1);
+}
+
+class TableauPileWithUncoveredTopTwoCardsTest: public InitializedTableauPileTest {
 public:
     TableauPileWithUncoveredTopTwoCardsTest() {
         Cards cardsToAdd {
@@ -213,36 +230,6 @@ TEST_F(TableauPileWithUncoveredTopTwoCardsTest,
 {
     pile.tryRestoreLastPulledOutCards();
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-}
-
-class TableauPileWithCoveredTopCardTest: public TableauPileTestBaseWithCreatedPile {
-public:
-    TableauPileWithCoveredTopCardTest() {
-        pileCards.pop_back();
-        pile.tryPullOutCards(1);
-    }
-};
-
-TEST_F(TableauPileWithCoveredTopCardTest, tryAddCardsOnCoveredTopCard) {
-    Cards cardsToAdd {
-        Card {Value::Nine, Suit::Diamond}
-    };
-    const auto cardsLeftAfterAdding = cardsToAdd;
-
-    pile.tryAddCards(cardsToAdd);
-
-    EXPECT_THAT(cardsToAdd, ContainerEq(cardsLeftAfterAdding));
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-}
-
-TEST_F(TableauPileWithCoveredTopCardTest, tryUncoverTopCard) {
-    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 2);
-
-    pile.tryUncoverTopCard();
-    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 1);
-
-    pile.tryUncoverTopCard();
-    EXPECT_EQ(pile.getPlaceInOrderOfFirstCoveredCard(), 1);
 }
 
 class TableauPileWithUncoveredTopTwoCardsAndOnePulledOutTest:
@@ -306,13 +293,15 @@ TEST_F(TableauPileWithUncoveredTopTwoCardsAndOnePulledOutTest,
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(TableauPileWithUncoveredTopTwoCardsAndOnePulledOutTest, resetPile) {
+TEST_F(TableauPileWithUncoveredTopTwoCardsAndOnePulledOutTest,
+       initializePileAfterOperations)
+{
     const Cards newPileCards {
         Card {Value::Six, Suit::Club},
         Card {Value::Ten, Suit::Spade}
     };
 
-    pile.reset(newPileCards.begin(), newPileCards.end());
+    pile.initialize(newPileCards.begin(), newPileCards.end());
     pile.tryRestoreLastPulledOutCards();
 
     EXPECT_THAT(pile.getCards(), ContainerEq(newPileCards));

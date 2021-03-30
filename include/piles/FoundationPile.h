@@ -7,7 +7,7 @@ namespace piles {
 
 class FoundationPile {
 public:
-    void reset();
+    void initialize();
 
     void tryAddCard(std::optional<card::Card>& cardToAdd);
     std::optional<card::Card> tryPullOutCard();

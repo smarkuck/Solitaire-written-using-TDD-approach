@@ -7,11 +7,8 @@ namespace piles {
 
 class StockPile {
 public:
-    StockPile(const card::Cards::const_iterator& begin,
-              const card::Cards::const_iterator& end);
-
-    void reset(const card::Cards::const_iterator& begin,
-               const card::Cards::const_iterator& end);
+    void initialize(const card::Cards::const_iterator& begin,
+                    const card::Cards::const_iterator& end);
 
     void selectNextCard();
     std::optional<card::Card> tryPullOutCard();

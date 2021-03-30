@@ -7,17 +7,17 @@ using namespace solitaire::card;
 namespace solitaire {
 namespace piles {
 
-class EmptyFoundationPileTest: public Test {
+class FoundationPileTest: public Test {
 public:
     FoundationPile pile;
 };
 
-TEST_F(EmptyFoundationPileTest, createPile) {
+TEST_F(FoundationPileTest, createPile) {
     EXPECT_TRUE(pile.getCards().empty());
     EXPECT_EQ(pile.getTopCardValue(), std::nullopt);
 }
 
-TEST_F(EmptyFoundationPileTest, tryAddNotCard) {
+TEST_F(FoundationPileTest, tryAddNotCard) {
     std::optional<Card> notCard = std::nullopt;
 
     pile.tryAddCard(notCard);
@@ -26,7 +26,7 @@ TEST_F(EmptyFoundationPileTest, tryAddNotCard) {
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-TEST_F(EmptyFoundationPileTest, tryAddNotAce) {
+TEST_F(FoundationPileTest, tryAddNotAce) {
     const Card cardToAddAfterOperation {Value::Two, Suit::Heart};
     std::optional<Card> cardToAdd = cardToAddAfterOperation;
 
@@ -36,7 +36,7 @@ TEST_F(EmptyFoundationPileTest, tryAddNotAce) {
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-TEST_F(EmptyFoundationPileTest, tryAddAce) {
+TEST_F(FoundationPileTest, tryAddAce) {
     const Cards pileCards {
         Card {Value::Ace, Suit::Heart}
     };
@@ -50,12 +50,12 @@ TEST_F(EmptyFoundationPileTest, tryAddAce) {
     EXPECT_EQ(pile.getTopCardValue(), Value::Ace);
 }
 
-TEST_F(EmptyFoundationPileTest, tryPullOutCard) {
+TEST_F(FoundationPileTest, tryPullOutCard) {
     EXPECT_EQ(pile.tryPullOutCard(), std::nullopt);
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-class FoundationPileWithAceTest: public EmptyFoundationPileTest {
+class FoundationPileWithAceTest: public FoundationPileTest {
 public:
     FoundationPileWithAceTest() {
         std::optional<Card> cardToAdd = pileCards.front();
@@ -179,8 +179,8 @@ TEST_F(FoundationPileWithTwoAndPulledOutThreeTest,
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithTwoAndPulledOutThreeTest, resetPile) {
-    pile.reset();
+TEST_F(FoundationPileWithTwoAndPulledOutThreeTest, initializePileAfterOperations) {
+    pile.initialize();
     pile.tryRestoreLastPulledOutCard();
 
     EXPECT_TRUE(pile.getCards().empty());

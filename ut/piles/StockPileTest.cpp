@@ -7,37 +7,35 @@ using namespace solitaire::card;
 namespace solitaire {
 namespace piles {
 
-namespace {
-    const Cards noCards;
-}
-
-class EmptyStockPileTest: public Test {
+class StockPileTest: public Test {
 public:
-    StockPile pile{noCards.begin(), noCards.end()};
+    StockPile pile;
 };
 
-TEST_F(EmptyStockPileTest, createPile) {
+TEST_F(StockPileTest, createPile) {
     EXPECT_TRUE(pile.getCards().empty());
     EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(EmptyStockPileTest, selectNextCard) {
+TEST_F(StockPileTest, selectNextCard) {
     pile.selectNextCard();
     EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
 
-class StockPileWithCardsTest: public Test {
+class StockPileWithCardsTest: public StockPileTest {
 public:
+    StockPileWithCardsTest() {
+        pile.initialize(pileCards.begin(), pileCards.end());
+    }
+
     Cards pileCards {
         Card {Value::Ten, Suit::Heart},
         Card {Value::Three, Suit::Spade},
         Card {Value::Two, Suit::Diamond}
     };
-
-    StockPile pile{pileCards.begin(), pileCards.end()};
 };
 
-TEST_F(StockPileWithCardsTest, createPile) {
+TEST_F(StockPileWithCardsTest, initializePileWithCards) {
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
     EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
@@ -106,13 +104,14 @@ TEST_F(StockPileWithCardsTest, tryRestoreCardWhenNothingPulledOut)
     EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
 
-class StockPileWithCardsAfterPullOutTest: public Test {
+class StockPileWithCardsAfterPullOutTest: public StockPileTest {
 public:
     StockPileWithCardsAfterPullOutTest() {
-        pileCards.erase(pileCards.begin());
-
+        pile.initialize(pileCards.begin(), pileCards.end());
         pile.selectNextCard();
         pile.tryPullOutCard();
+
+        pileCards.erase(pileCards.begin());
     }
 
     Cards pileCards {
@@ -121,8 +120,6 @@ public:
         Card {Value::Three, Suit::Spade},
         Card {Value::Two, Suit::Diamond}
     };
-
-    StockPile pile{pileCards.begin(), pileCards.end()};
 };
 
 TEST_F(StockPileWithCardsAfterPullOutTest, tryRestoreFirstPulledOutCardTwoTimes) {
@@ -168,13 +165,13 @@ TEST_F(StockPileWithCardsAfterPullOutTest,
     EXPECT_EQ(pile.getSelectedCardIndex(), 0);
 }
 
-TEST_F(StockPileWithCardsAfterPullOutTest, resetPile) {
+TEST_F(StockPileWithCardsAfterPullOutTest, initializePileAfterOperations) {
     const Cards newPileCards {
         Card {Value::Six, Suit::Club},
         Card {Value::Ten, Suit::Spade}
     };
 
-    pile.reset(newPileCards.begin(), newPileCards.end());
+    pile.initialize(newPileCards.begin(), newPileCards.end());
     pile.tryRestoreLastPulledOutCard();
 
     EXPECT_THAT(pile.getCards(), ContainerEq(newPileCards));
