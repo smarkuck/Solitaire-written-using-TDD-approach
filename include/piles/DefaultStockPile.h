@@ -1,3 +1,5 @@
+#pragma once
+
 #include "StockPile.h"
 
 namespace solitaire {

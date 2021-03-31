@@ -22,8 +22,8 @@ const std::vector<Suit> suits {
 
 Cards createExpectedCards() {
     Cards expectedCards;
-    for (const auto& suit : suits)
-        for (const auto& value : values)
+    for (const auto& suit: suits)
+        for (const auto& value: values)
             expectedCards.emplace_back(value, suit);
     return expectedCards;
 }

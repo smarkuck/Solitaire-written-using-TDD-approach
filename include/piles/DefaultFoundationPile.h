@@ -1,3 +1,5 @@
+#pragma once
+
 #include "FoundationPile.h"
 
 namespace solitaire {

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "TableauPile.h"
 
 namespace solitaire {

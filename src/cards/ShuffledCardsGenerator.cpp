@@ -26,8 +26,8 @@ Cards ShuffledCardsGenerator::generate() const {
 
 Cards ShuffledCardsGenerator::generateSortedCards() const {
     Cards generatedCards;
-    for (const auto& suit : suits)
-        for (const auto& value : values)
+    for (const auto& suit: suits)
+        for (const auto& value: values)
             generatedCards.emplace_back(value, suit);
     return generatedCards;
 }
