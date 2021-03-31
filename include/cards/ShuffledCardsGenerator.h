@@ -1,13 +1,11 @@
-#include <vector>
-
-#include "Cards.h"
+#include "CardsGenerator.h"
 
 namespace solitaire {
 namespace cards {
 
-class ShuffledCardsGenerator {
+class ShuffledCardsGenerator: public CardsGenerator {
 public:
-    Cards generate() const;
+    Cards generate() const override;
 
 private:
     Cards generateSortedCards() const;

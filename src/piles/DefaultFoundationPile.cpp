@@ -1,16 +1,16 @@
-#include "piles/FoundationPile.h"
+#include "piles/DefaultFoundationPile.h"
 
 using namespace solitaire::cards;
 
 namespace solitaire {
 namespace piles {
 
-void FoundationPile::initialize() {
+void DefaultFoundationPile::initialize() {
     cards.clear();
     lastPulledOutCard.reset();
 }
 
-void FoundationPile::tryAddCard(std::optional<Card>& cardToAdd) {
+void DefaultFoundationPile::tryAddCard(std::optional<Card>& cardToAdd) {
     lastPulledOutCard.reset();
 
     if (shouldAddCard(cardToAdd)) {
@@ -19,23 +19,23 @@ void FoundationPile::tryAddCard(std::optional<Card>& cardToAdd) {
     }
 }
 
-bool FoundationPile::shouldAddCard(std::optional<Card>& cardToAdd) const {
+bool DefaultFoundationPile::shouldAddCard(std::optional<Card>& cardToAdd) const {
     if (not cardToAdd) return false;
     if (cards.empty()) return isCardToAddAce(cardToAdd.value());
     return isCardToAddCorrect(cardToAdd.value());
 }
 
-bool FoundationPile::isCardToAddAce(const Card& cardToAdd) const {
+bool DefaultFoundationPile::isCardToAddAce(const Card& cardToAdd) const {
     return cardToAdd.getValue() == Value::Ace;
 }
 
-bool FoundationPile::isCardToAddCorrect(const Card& cardToAdd) const {
+bool DefaultFoundationPile::isCardToAddCorrect(const Card& cardToAdd) const {
     const Card& topPileCard = cards.back();
     return cardToAdd.hasValueOneGreaterThan(topPileCard) and
            cardToAdd.hasSameSuitAs(topPileCard);
 }
 
-std::optional<Card> FoundationPile::tryPullOutCard() {
+std::optional<Card> DefaultFoundationPile::tryPullOutCard() {
     if (not cards.empty()) {
         lastPulledOutCard = cards.back();
         cards.pop_back();
@@ -46,18 +46,18 @@ std::optional<Card> FoundationPile::tryPullOutCard() {
     return std::nullopt;
 }
 
-void FoundationPile::tryRestoreLastPulledOutCard() {
+void DefaultFoundationPile::tryRestoreLastPulledOutCard() {
     if (lastPulledOutCard) {
         cards.push_back(lastPulledOutCard.value());
         lastPulledOutCard.reset();
     }
 }
 
-const Cards& FoundationPile::getCards() const {
+const Cards& DefaultFoundationPile::getCards() const {
     return cards;
 }
 
-std::optional<Value> FoundationPile::getTopCardValue() const {
+std::optional<Value> DefaultFoundationPile::getTopCardValue() const {
     if (cards.empty())
         return std::nullopt;
     return cards.back().getValue();

@@ -7,24 +7,17 @@ namespace piles {
 
 class StockPile {
 public:
-    void initialize(const cards::Cards::const_iterator& begin,
-                    const cards::Cards::const_iterator& end);
+    virtual ~StockPile() = default;
 
-    void selectNextCard();
-    std::optional<cards::Card> tryPullOutCard();
-    void tryRestoreLastPulledOutCard();
+    virtual void initialize(const cards::Cards::const_iterator& begin,
+                            const cards::Cards::const_iterator& end) = 0;
 
-    const cards::Cards& getCards() const;
-    std::optional<unsigned> getSelectedCardIndex() const;
+    virtual void selectNextCard() = 0;
+    virtual std::optional<cards::Card> tryPullOutCard() = 0;
+    virtual void tryRestoreLastPulledOutCard() = 0;
 
-private:
-    void incrementSelectedCardIndex();
-    void decrementSelectedCardIndex();
-    void restoreLastPulledOutCard();
-
-    cards::Cards cards;
-    std::optional<cards::Card> lastPulledOutCard;
-    std::optional<unsigned> selectedCardIndex;
+    virtual const cards::Cards& getCards() const = 0;
+    virtual std::optional<unsigned> getSelectedCardIndex() const = 0;
 };
 
 }

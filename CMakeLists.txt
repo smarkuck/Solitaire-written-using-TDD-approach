@@ -33,9 +33,9 @@ add_library(${SOLITAIRE_LIB} STATIC)
 target_sources(${SOLITAIRE_LIB} PRIVATE
     src/cards/Card.cpp
     src/cards/ShuffledCardsGenerator.cpp
-    src/piles/FoundationPile.cpp
-    src/piles/StockPile.cpp
-    src/piles/TableauPile.cpp
+    src/piles/DefaultFoundationPile.cpp
+    src/piles/DefaultStockPile.cpp
+    src/piles/DefaultTableauPile.cpp
 )
 
 add_executable(${PROJECT_NAME} WIN32 src/main.cpp)

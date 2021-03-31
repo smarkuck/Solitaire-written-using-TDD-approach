@@ -1,5 +1,5 @@
 #include "gmock/gmock.h"
-#include "piles/FoundationPile.h"
+#include "piles/DefaultFoundationPile.h"
 
 using namespace testing;
 using namespace solitaire::cards;
@@ -7,17 +7,17 @@ using namespace solitaire::cards;
 namespace solitaire {
 namespace piles {
 
-class FoundationPileTest: public Test {
+class DefaultFoundationPileTest: public Test {
 public:
-    FoundationPile pile;
+    DefaultFoundationPile pile;
 };
 
-TEST_F(FoundationPileTest, createPile) {
+TEST_F(DefaultFoundationPileTest, createPile) {
     EXPECT_TRUE(pile.getCards().empty());
     EXPECT_EQ(pile.getTopCardValue(), std::nullopt);
 }
 
-TEST_F(FoundationPileTest, tryAddNotCard) {
+TEST_F(DefaultFoundationPileTest, tryAddNotCard) {
     std::optional<Card> notCard = std::nullopt;
 
     pile.tryAddCard(notCard);
@@ -26,7 +26,7 @@ TEST_F(FoundationPileTest, tryAddNotCard) {
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-TEST_F(FoundationPileTest, tryAddNotAce) {
+TEST_F(DefaultFoundationPileTest, tryAddNotAce) {
     const Card cardToAddAfterOperation {Value::Two, Suit::Heart};
     std::optional<Card> cardToAdd = cardToAddAfterOperation;
 
@@ -36,7 +36,7 @@ TEST_F(FoundationPileTest, tryAddNotAce) {
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-TEST_F(FoundationPileTest, tryAddAce) {
+TEST_F(DefaultFoundationPileTest, tryAddAce) {
     const Cards pileCards {
         Card {Value::Ace, Suit::Heart}
     };
@@ -50,14 +50,14 @@ TEST_F(FoundationPileTest, tryAddAce) {
     EXPECT_EQ(pile.getTopCardValue(), Value::Ace);
 }
 
-TEST_F(FoundationPileTest, tryPullOutCard) {
+TEST_F(DefaultFoundationPileTest, tryPullOutCard) {
     EXPECT_EQ(pile.tryPullOutCard(), std::nullopt);
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-class FoundationPileWithAceTest: public FoundationPileTest {
+class DefaultFoundationPileWithAceTest: public DefaultFoundationPileTest {
 public:
-    FoundationPileWithAceTest() {
+    DefaultFoundationPileWithAceTest() {
         std::optional<Card> cardToAdd = pileCards.front();
         pile.tryAddCard(cardToAdd);
     }
@@ -67,7 +67,7 @@ public:
     };
 };
 
-TEST_F(FoundationPileWithAceTest, tryAddSameCardAsOnTopOfPile) {
+TEST_F(DefaultFoundationPileWithAceTest, tryAddSameCardAsOnTopOfPile) {
     const auto sameCardAsOnTopOfPile = pileCards.back();
     std::optional<Card> cardToAdd = sameCardAsOnTopOfPile;
 
@@ -77,7 +77,9 @@ TEST_F(FoundationPileWithAceTest, tryAddSameCardAsOnTopOfPile) {
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithAceTest, tryAddCardWithValueTwoGreaterThanOnTopOfPile) {
+TEST_F(DefaultFoundationPileWithAceTest,
+       tryAddCardWithValueTwoGreaterThanOnTopOfPile)
+{
     const Card cardWithValueTwoGreaterThanOnTopOfPile {Value::Three, Suit::Heart};
     std::optional<Card> cardToAdd = cardWithValueTwoGreaterThanOnTopOfPile;
 
@@ -87,7 +89,9 @@ TEST_F(FoundationPileWithAceTest, tryAddCardWithValueTwoGreaterThanOnTopOfPile) 
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithAceTest, tryAddCardWithDifferentSuitThanOnTopOfPile) {
+TEST_F(DefaultFoundationPileWithAceTest,
+       tryAddCardWithDifferentSuitThanOnTopOfPile)
+{
     const Card cardWithDifferentSuitThanOnTopOfPile {Value::Two, Suit::Spade};
     std::optional<Card> cardToAdd = cardWithDifferentSuitThanOnTopOfPile;
 
@@ -97,7 +101,7 @@ TEST_F(FoundationPileWithAceTest, tryAddCardWithDifferentSuitThanOnTopOfPile) {
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithAceTest, tryAddTwoWithSameSuitAsOnTopOfPile) {
+TEST_F(DefaultFoundationPileWithAceTest, tryAddTwoWithSameSuitAsOnTopOfPile) {
     pileCards.push_back(Card {Value::Two, Suit::Heart});
     std::optional<Card> cardToAdd = pileCards.back();
 
@@ -108,13 +112,13 @@ TEST_F(FoundationPileWithAceTest, tryAddTwoWithSameSuitAsOnTopOfPile) {
     EXPECT_EQ(pile.getTopCardValue(), Value::Two);
 }
 
-TEST_F(FoundationPileWithAceTest, tryPullOutCard) {
+TEST_F(DefaultFoundationPileWithAceTest, tryPullOutCard) {
     const auto pulledOutCard = pileCards.back();
     EXPECT_EQ(pile.tryPullOutCard(), pulledOutCard);
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-TEST_F(FoundationPileWithAceTest, tryPullOutCardFromPileWithTwoOnTop) {
+TEST_F(DefaultFoundationPileWithAceTest, tryPullOutCardFromPileWithTwoOnTop) {
     const Card pulledOutCard = Card {Value::Two, Suit::Heart};
     std::optional<Card> cardToAdd = pulledOutCard;
 
@@ -124,27 +128,29 @@ TEST_F(FoundationPileWithAceTest, tryPullOutCardFromPileWithTwoOnTop) {
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithAceTest, tryRestoreCardWhenNothingPulledOut) {
+TEST_F(DefaultFoundationPileWithAceTest, tryRestoreCardWhenNothingPulledOut) {
     pile.tryRestoreLastPulledOutCard();
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithAceTest, tryRestorePulledOutAce) {
+TEST_F(DefaultFoundationPileWithAceTest, tryRestorePulledOutAce) {
     pile.tryPullOutCard();
     pile.tryRestoreLastPulledOutCard();
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithAceTest, tryRestoreCardWhenPullOutFailed) {
+TEST_F(DefaultFoundationPileWithAceTest, tryRestoreCardWhenPullOutFailed) {
     pile.tryPullOutCard();
     pile.tryPullOutCard();
     pile.tryRestoreLastPulledOutCard();
     EXPECT_TRUE(pile.getCards().empty());
 }
 
-class FoundationPileWithTwoAndPulledOutThreeTest: public FoundationPileWithAceTest {
+class DefaultFoundationPileWithTwoAndPulledOutThreeTest:
+    public DefaultFoundationPileWithAceTest
+{
 public:
-    FoundationPileWithTwoAndPulledOutThreeTest() {
+    DefaultFoundationPileWithTwoAndPulledOutThreeTest() {
         pileCards.push_back(Card {Value::Two, Suit::Heart});
 
         std::optional<Card> cardToAdd = pileCards.back();
@@ -156,7 +162,7 @@ public:
     }
 };
 
-TEST_F(FoundationPileWithTwoAndPulledOutThreeTest,
+TEST_F(DefaultFoundationPileWithTwoAndPulledOutThreeTest,
        tryRestoreLastPulledOutCardTwoTimes)
 {
     pile.tryPullOutCard();
@@ -167,7 +173,7 @@ TEST_F(FoundationPileWithTwoAndPulledOutThreeTest,
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithTwoAndPulledOutThreeTest,
+TEST_F(DefaultFoundationPileWithTwoAndPulledOutThreeTest,
        tryRestorePulledOutCardAfterAddOperation)
 {
     pileCards.push_back(Card {Value::Three, Suit::Heart});
@@ -179,7 +185,9 @@ TEST_F(FoundationPileWithTwoAndPulledOutThreeTest,
     EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(FoundationPileWithTwoAndPulledOutThreeTest, initializePileAfterOperations) {
+TEST_F(DefaultFoundationPileWithTwoAndPulledOutThreeTest,
+       initializePileAfterOperations)
+{
     pile.initialize();
     pile.tryRestoreLastPulledOutCard();
 

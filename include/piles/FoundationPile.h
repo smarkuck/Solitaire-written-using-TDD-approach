@@ -7,22 +7,16 @@ namespace piles {
 
 class FoundationPile {
 public:
-    void initialize();
+    virtual ~FoundationPile() = default;
 
-    void tryAddCard(std::optional<cards::Card>& cardToAdd);
-    std::optional<cards::Card> tryPullOutCard();
-    void tryRestoreLastPulledOutCard();
+    virtual void initialize() = 0;
 
-    const cards::Cards& getCards() const;
-    std::optional<cards::Value> getTopCardValue() const;
+    virtual void tryAddCard(std::optional<cards::Card>& cardToAdd) = 0;
+    virtual std::optional<cards::Card> tryPullOutCard() = 0;
+    virtual void tryRestoreLastPulledOutCard() = 0;
 
-private:
-    bool shouldAddCard(std::optional<cards::Card>& cardToAdd) const;
-    bool isCardToAddAce(const cards::Card& cardToAdd) const;
-    bool isCardToAddCorrect(const cards::Card& cardToAdd) const;
-
-    cards::Cards cards;
-    std::optional<cards::Card> lastPulledOutCard;
+    virtual const cards::Cards& getCards() const = 0;
+    virtual std::optional<cards::Value> getTopCardValue() const = 0;
 };
 
 }

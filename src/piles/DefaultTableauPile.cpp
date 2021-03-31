@@ -1,25 +1,25 @@
-#include "piles/TableauPile.h"
+#include "piles/DefaultTableauPile.h"
 
 using namespace solitaire::cards;
 
 namespace solitaire {
 namespace piles {
 
-void TableauPile::initialize(const Cards::const_iterator& begin,
-                             const Cards::const_iterator& end) {
+void DefaultTableauPile::initialize(const Cards::const_iterator& begin,
+                                    const Cards::const_iterator& end) {
     cards.assign(begin, end);
     lastPulledOutCards.clear();
     placeInOrderOfFirstCoveredCard = cards.empty() ? 0 : cards.size() - 1;
 }
 
-void TableauPile::tryUncoverTopCard() {
+void DefaultTableauPile::tryUncoverTopCard() {
     lastPulledOutCards.clear();
 
     if (isTopCardCovered())
         --placeInOrderOfFirstCoveredCard;
 }
 
-void TableauPile::tryAddCards(Cards& cardsToAdd) {
+void DefaultTableauPile::tryAddCards(Cards& cardsToAdd) {
     lastPulledOutCards.clear();
 
     if (shouldAddCards(cardsToAdd)) {
@@ -28,21 +28,21 @@ void TableauPile::tryAddCards(Cards& cardsToAdd) {
     }
 }
 
-bool TableauPile::shouldAddCards(const Cards& cardsToAdd) const {
+bool DefaultTableauPile::shouldAddCards(const Cards& cardsToAdd) const {
     if (cardsToAdd.empty() or isTopCardCovered()) return false;
     if (cards.empty()) return isFirstCardToAddKing(cardsToAdd);
     return isFirstCardToAddCorrect(cardsToAdd);
 }
 
-bool TableauPile::isTopCardCovered() const {
+bool DefaultTableauPile::isTopCardCovered() const {
     return not cards.empty() and cards.size() == placeInOrderOfFirstCoveredCard;
 }
 
-bool TableauPile::isFirstCardToAddKing(const Cards& cardsToAdd) const {
+bool DefaultTableauPile::isFirstCardToAddKing(const Cards& cardsToAdd) const {
     return cardsToAdd.front().getValue() == Value::King;
 }
 
-bool TableauPile::isFirstCardToAddCorrect(const Cards& cardsToAdd) const {
+bool DefaultTableauPile::isFirstCardToAddCorrect(const Cards& cardsToAdd) const {
     const Card& topPileCard = cards.back();
     const Card& firstCardToAdd = cardsToAdd.front();
 
@@ -50,7 +50,7 @@ bool TableauPile::isFirstCardToAddCorrect(const Cards& cardsToAdd) const {
            topPileCard.hasDifferentColorThan(firstCardToAdd);
 }
 
-Cards TableauPile::tryPullOutCards(unsigned quantity) {
+Cards DefaultTableauPile::tryPullOutCards(unsigned quantity) {
     if (shouldPullOutCards(quantity)) {
         const auto firstCardToPullOut = std::prev(cards.end(), quantity);
         lastPulledOutCards.assign(firstCardToPullOut, cards.end());
@@ -62,20 +62,20 @@ Cards TableauPile::tryPullOutCards(unsigned quantity) {
     return Cards {};
 }
 
-bool TableauPile::shouldPullOutCards(unsigned quantity) const {
+bool DefaultTableauPile::shouldPullOutCards(unsigned quantity) const {
     return cards.size() - placeInOrderOfFirstCoveredCard >= quantity;
 }
 
-void TableauPile::tryRestoreLastPulledOutCards() {
+void DefaultTableauPile::tryRestoreLastPulledOutCards() {
     cards.insert(cards.end(), lastPulledOutCards.begin(), lastPulledOutCards.end());
     lastPulledOutCards.clear();
 }
 
-const Cards& TableauPile::getCards() const {
+const Cards& DefaultTableauPile::getCards() const {
     return cards;
 }
 
-unsigned TableauPile::getPlaceInOrderOfFirstCoveredCard() const {
+unsigned DefaultTableauPile::getPlaceInOrderOfFirstCoveredCard() const {
     return placeInOrderOfFirstCoveredCard;
 }
 

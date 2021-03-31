@@ -5,27 +5,18 @@ namespace piles {
 
 class TableauPile {
 public:
-    void initialize(const cards::Cards::const_iterator& begin,
-                    const cards::Cards::const_iterator& end);
+    virtual ~TableauPile() = default;
 
-    void tryUncoverTopCard();
-    void tryAddCards(cards::Cards& cardsToAdd);
-    cards::Cards tryPullOutCards(unsigned quantity);
-    void tryRestoreLastPulledOutCards();
+    virtual void initialize(const cards::Cards::const_iterator& begin,
+                            const cards::Cards::const_iterator& end) = 0;
 
-    const cards::Cards& getCards() const;
-    unsigned getPlaceInOrderOfFirstCoveredCard() const;
+    virtual void tryUncoverTopCard() = 0;
+    virtual void tryAddCards(cards::Cards& cardsToAdd) = 0;
+    virtual cards::Cards tryPullOutCards(unsigned quantity) = 0;
+    virtual void tryRestoreLastPulledOutCards() = 0;
 
-private:
-    bool shouldAddCards(const cards::Cards& cardsToAdd) const;
-    bool shouldPullOutCards(unsigned quantity) const;
-    bool isTopCardCovered() const;
-    bool isFirstCardToAddKing(const cards::Cards& cardsToAdd) const;
-    bool isFirstCardToAddCorrect(const cards::Cards& cardsToAdd) const;
-
-    cards::Cards cards;
-    cards::Cards lastPulledOutCards;
-    unsigned placeInOrderOfFirstCoveredCard {0};
+    virtual const cards::Cards& getCards() const = 0;
+    virtual unsigned getPlaceInOrderOfFirstCoveredCard() const = 0;
 };
 
 }
