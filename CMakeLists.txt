@@ -25,10 +25,9 @@ else ()
     find_package(SDL2 REQUIRED)
 endif ()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${SDL2_INCLUDE_DIRS})
-
 set(SOLITAIRE_LIB ${PROJECT_NAME}Lib)
 add_library(${SOLITAIRE_LIB} STATIC)
+target_include_directories(${SOLITAIRE_LIB} PUBLIC include)
 
 target_sources(${SOLITAIRE_LIB} PRIVATE
     src/cards/Card.cpp
@@ -39,6 +38,7 @@ target_sources(${SOLITAIRE_LIB} PRIVATE
 )
 
 add_executable(${PROJECT_NAME} WIN32 src/main.cpp)
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
 
 add_subdirectory(libs)

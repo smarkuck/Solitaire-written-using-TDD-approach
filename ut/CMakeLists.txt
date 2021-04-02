@@ -1,11 +1,11 @@
 add_executable(UnitTests)
 
 target_sources(UnitTests PRIVATE
-    cards/CardTest.cpp
-    cards/ShuffledCardsGeneratorTest.cpp
-    piles/DefaultFoundationPileTest.cpp
-    piles/DefaultStockPileTest.cpp
-    piles/DefaultTableauPileTest.cpp
+    src/cards/CardTest.cpp
+    src/cards/ShuffledCardsGeneratorTest.cpp
+    src/piles/DefaultFoundationPileTest.cpp
+    src/piles/DefaultStockPileTest.cpp
+    src/piles/DefaultTableauPileTest.cpp
 )
 
-target_link_libraries(UnitTests PRIVATE ${SOLITAIRE_LIB} gmock_main)
+target_link_libraries(UnitTests PRIVATE ${SOLITAIRE_LIB} mock_ptr gmock_main)
