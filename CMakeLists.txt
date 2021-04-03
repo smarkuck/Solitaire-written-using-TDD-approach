@@ -11,18 +11,18 @@ if (MSVC)
 endif ()
 
 add_library(SolitaireLib STATIC)
-target_include_directories(SolitaireLib PUBLIC include)
+target_include_directories(SolitaireLib PUBLIC headers)
 
 target_sources(SolitaireLib PRIVATE
-    src/cards/Card.cpp
-    src/cards/ShuffledCardsGenerator.cpp
-    src/piles/DefaultFoundationPile.cpp
-    src/piles/DefaultStockPile.cpp
-    src/piles/DefaultTableauPile.cpp
+    sources/cards/Card.cpp
+    sources/cards/ShuffledCardsGenerator.cpp
+    sources/piles/DefaultFoundationPile.cpp
+    sources/piles/DefaultStockPile.cpp
+    sources/piles/DefaultTableauPile.cpp
 )
 
-add_executable(${PROJECT_NAME} WIN32 src/main.cpp)
+add_executable(${PROJECT_NAME} WIN32 sources/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
 
-add_subdirectory(libs)
-add_subdirectory(ut)
+add_subdirectory(externalLibs)
+add_subdirectory(unitTests)
