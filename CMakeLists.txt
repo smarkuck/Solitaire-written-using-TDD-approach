@@ -8,28 +8,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
     add_compile_options(/permissive-)
-
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(VC_LIB_PATH_SUFFIX lib/x64)
-    else()
-        set(VC_LIB_PATH_SUFFIX lib/x86)
-    endif()
-
-    set(SDL2_DIR "${CMAKE_SOURCE_DIR}/libs/SDL2-devel-2.0.14-VC")
-    set(SDL2_INCLUDE_DIRS "${SDL2_DIR}/include")
-    set(SDL2_LIBRARIES_DIR "${SDL2_DIR}/${VC_LIB_PATH_SUFFIX}")
-    set(SDL2_LIBRARY "${SDL2_LIBRARIES_DIR}/SDL2.lib")
-    set(SDL2_MAIN_LIBRARY "${SDL2_LIBRARIES_DIR}/SDL2main.lib")
-    set(SDL2_LIBRARIES ${SDL2_LIBRARY} ${SDL2_MAIN_LIBRARY})
-else ()
-    find_package(SDL2 REQUIRED)
 endif ()
 
-set(SOLITAIRE_LIB ${PROJECT_NAME}Lib)
-add_library(${SOLITAIRE_LIB} STATIC)
-target_include_directories(${SOLITAIRE_LIB} PUBLIC include)
+add_library(SolitaireLib STATIC)
+target_include_directories(SolitaireLib PUBLIC include)
 
-target_sources(${SOLITAIRE_LIB} PRIVATE
+target_sources(SolitaireLib PRIVATE
     src/cards/Card.cpp
     src/cards/ShuffledCardsGenerator.cpp
     src/piles/DefaultFoundationPile.cpp
@@ -38,8 +22,7 @@ target_sources(${SOLITAIRE_LIB} PRIVATE
 )
 
 add_executable(${PROJECT_NAME} WIN32 src/main.cpp)
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
 
 add_subdirectory(libs)
 add_subdirectory(ut)
