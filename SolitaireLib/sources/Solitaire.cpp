@@ -1,4 +1,9 @@
 #include "Solitaire.h"
+#include "cards/Card.h"
+#include "cards/CardsGenerator.h"
+#include "piles/FoundationPile.h"
+#include "piles/StockPile.h"
+#include "piles/TableauPile.h"
 
 using namespace solitaire::cards;
 using namespace solitaire::piles;

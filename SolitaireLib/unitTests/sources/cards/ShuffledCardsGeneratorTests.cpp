@@ -1,9 +1,9 @@
 #include <algorithm>
-#include <vector>
 
-#include "gmock/gmock.h"
+#include "cards/Card.h"
 #include "cards/CardsGeneratorUtils.h"
 #include "cards/ShuffledCardsGenerator.h"
+#include "gmock/gmock.h"
 
 using namespace testing;
 
@@ -27,7 +27,8 @@ TEST_F(ShuffledCardsGeneratorTest, generateShuffledCards) {
     auto generatedCards = generator.generate();
 
     EXPECT_FALSE(std::is_sorted(
-        generatedCards.begin(), generatedCards.end(), cardsComparator));
+        generatedCards.begin(), generatedCards.end(), cardsComparator
+    ));
 
     std::sort(generatedCards.begin(), generatedCards.end(), cardsComparator);
     EXPECT_THAT(generatedCards, ContainerEq(createSortedCards()));

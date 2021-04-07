@@ -1,3 +1,6 @@
+#include "cards/Card.h"
+#include "cards/Suit.h"
+#include "cards/Value.h"
 #include "gmock/gmock.h"
 #include "piles/DefaultStockPile.h"
 

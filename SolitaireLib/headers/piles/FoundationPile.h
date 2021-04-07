@@ -1,10 +1,13 @@
 #pragma once
 
 #include <optional>
-
 #include "cards/Cards.h"
 
 namespace solitaire {
+namespace cards {
+    enum class Value;
+}
+
 namespace piles {
 
 class FoundationPile {

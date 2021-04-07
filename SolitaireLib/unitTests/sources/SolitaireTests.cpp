@@ -1,10 +1,11 @@
 #include <algorithm>
 
-#include "gmock/gmock.h"
 #include "mock_ptr_array.h"
 #include "Solitaire.h"
+#include "cards/Card.h"
 #include "cards/CardsGeneratorMock.h"
 #include "cards/CardsGeneratorUtils.h"
+#include "gmock/gmock.h"
 #include "piles/FoundationPileMock.h"
 #include "piles/StockPileMock.h"
 #include "piles/TableauPileMock.h"

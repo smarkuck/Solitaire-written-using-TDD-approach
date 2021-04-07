@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "Card.h"
-
 namespace solitaire {
 namespace cards {
+
+class Card;
 
 using Cards = std::vector<Card>;
 

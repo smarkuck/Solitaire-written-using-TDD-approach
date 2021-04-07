@@ -3,12 +3,18 @@
 #include <array>
 #include <memory>
 
-#include "cards/CardsGenerator.h"
-#include "piles/StockPile.h"
-#include "piles/FoundationPile.h"
-#include "piles/TableauPile.h"
+#include "cards/Cards.h"
 
 namespace solitaire {
+namespace cards {
+    class CardsGenerator;
+}
+
+namespace piles {
+    class FoundationPile;
+    class StockPile;
+    class TableauPile;
+}
 
 class Solitaire {
     using FoundationPiles = std::array<std::unique_ptr<piles::FoundationPile>, 4>;

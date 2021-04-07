@@ -1,3 +1,4 @@
+#include "cards/Card.h"
 #include "piles/DefaultStockPile.h"
 
 using namespace solitaire::cards;

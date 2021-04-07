@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include "Cards.h"
 
 namespace solitaire {

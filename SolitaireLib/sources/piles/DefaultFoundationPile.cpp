@@ -1,3 +1,5 @@
+#include "cards/Card.h"
+#include "cards/Value.h"
 #include "piles/DefaultFoundationPile.h"
 
 using namespace solitaire::cards;

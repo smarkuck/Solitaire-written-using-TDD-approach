@@ -1,13 +1,12 @@
 #pragma once
 
 #include <ostream>
-#include <type_traits>
-
-#include "Value.h"
-#include "Suit.h"
 
 namespace solitaire {
 namespace cards {
+
+enum class Value;
+enum class Suit;
 
 class Card {
 public:
@@ -26,15 +25,8 @@ private:
     Suit suit;
 };
 
-inline bool operator==(const Card& lhs, const Card& rhs) {
-    return (lhs.getValue() == rhs.getValue()) and (lhs.getSuit() == rhs.getSuit());
-}
-
-inline std::ostream& operator<<(std::ostream& os, const Card& card)
-{
-    return os << "Card {value: " << to_string(card.getValue())
-              << ", suit: " << to_string(card.getSuit()) << '}';
-}
+bool operator==(const Card& lhs, const Card& rhs);
+std::ostream& operator<<(std::ostream& os, const Card& card);
 
 }
 }

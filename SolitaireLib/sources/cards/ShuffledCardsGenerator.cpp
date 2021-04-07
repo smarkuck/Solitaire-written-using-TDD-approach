@@ -1,7 +1,10 @@
 #include <algorithm>
 #include <random>
 
+#include "cards/Card.h"
 #include "cards/ShuffledCardsGenerator.h"
+#include "cards/Suit.h"
+#include "cards/Value.h"
 
 namespace solitaire {
 namespace cards {

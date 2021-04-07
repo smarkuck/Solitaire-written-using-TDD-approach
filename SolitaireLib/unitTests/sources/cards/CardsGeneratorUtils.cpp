@@ -1,4 +1,7 @@
-#include "cards/Cards.h"
+#include "cards/CardsGeneratorUtils.h"
+#include "cards/Card.h"
+#include "cards/Suit.h"
+#include "cards/Value.h"
 
 namespace solitaire {
 namespace cards {

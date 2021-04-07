@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gmock/gmock.h"
 #include "piles/FoundationPile.h"
 
 namespace solitaire {

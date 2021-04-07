@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cards/CardsGenerator.h"
+#include "gmock/gmock.h"
 
 namespace solitaire {
 namespace cards {
