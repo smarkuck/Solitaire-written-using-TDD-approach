@@ -2,6 +2,7 @@ add_library(SolitaireLib STATIC)
 target_include_directories(SolitaireLib PUBLIC headers)
 
 target_sources(SolitaireLib PRIVATE
+    sources/Solitaire.cpp
     sources/cards/Card.cpp
     sources/cards/ShuffledCardsGenerator.cpp
     sources/piles/DefaultFoundationPile.cpp
