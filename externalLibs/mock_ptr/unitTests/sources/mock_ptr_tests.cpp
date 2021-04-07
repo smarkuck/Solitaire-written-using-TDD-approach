@@ -3,6 +3,7 @@
 
 using namespace testing;
 
+namespace {
 class DestructionTestMock {
 public:
     DestructionTestMock() {
@@ -15,6 +16,16 @@ public:
 
     MOCK_METHOD(void, destroy, (), ());
 };
+
+class ExecutionTestMock {
+public:
+    ExecutionTestMock() {
+        EXPECT_CALL(*this, execute());
+    }
+
+    MOCK_METHOD(void, execute, (), ());
+};
+}
 
 class mock_ptr_destructionTest: public Test {
 public:
@@ -31,15 +42,6 @@ TEST_F(mock_ptr_destructionTest, throwExceptionOnCreationOfSecondUniquePointer) 
     mockPtr.make_unique();
     EXPECT_THROW(mockPtr.make_unique(), std::runtime_error);
 }
-
-class ExecutionTestMock {
-public:
-    ExecutionTestMock() {
-        EXPECT_CALL(*this, execute());
-    }
-
-    MOCK_METHOD(void, execute, (), ());
-};
 
 class mock_ptr_executionTest: public Test {
 public:

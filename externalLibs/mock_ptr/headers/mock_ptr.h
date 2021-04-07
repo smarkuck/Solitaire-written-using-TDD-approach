@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <memory>
 
-template<class T>
+template <class T>
 class mock_ptr {
 public:
     ~mock_ptr() {
