@@ -3,8 +3,7 @@
 #include "gmock/gmock.h"
 #include "piles/StockPile.h"
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class StockPileMock: public StockPile {
 public:
@@ -17,5 +16,4 @@ public:
     MOCK_METHOD(std::optional<unsigned>, getSelectedCardIndex, (), (const, override));
 };
 
-}
 }

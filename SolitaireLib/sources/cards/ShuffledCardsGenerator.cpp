@@ -6,8 +6,7 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 const std::vector<Value> ShuffledCardsGenerator::values {
     Value::Ace, Value::Two, Value::Three, Value::Four, Value::Five,
@@ -35,5 +34,4 @@ Cards ShuffledCardsGenerator::generateSortedCards() const {
     return generatedCards;
 }
 
-}
 }

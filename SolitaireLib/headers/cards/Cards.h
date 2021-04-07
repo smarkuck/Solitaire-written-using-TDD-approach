@@ -2,12 +2,9 @@
 
 #include <vector>
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 class Card;
-
 using Cards = std::vector<Card>;
 
-}
 }

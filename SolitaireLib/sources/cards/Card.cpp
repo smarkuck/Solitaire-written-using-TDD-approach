@@ -2,8 +2,7 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 Card::Card(Value value, Suit suit):
     value(value), suit(suit) {
@@ -44,5 +43,4 @@ std::ostream& operator<<(std::ostream& os, const Card& card)
               << ", suit: " << to_string(card.getSuit()) << '}';
 }
 
-}
 }

@@ -4,8 +4,7 @@
 
 using namespace solitaire::cards;
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 void DefaultFoundationPile::initialize() {
     cards.clear();
@@ -65,5 +64,4 @@ std::optional<Value> DefaultFoundationPile::getTopCardValue() const {
     return cards.back().getValue();
 }
 
-}
 }

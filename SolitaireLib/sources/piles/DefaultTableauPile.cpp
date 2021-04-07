@@ -4,8 +4,7 @@
 
 using namespace solitaire::cards;
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 void DefaultTableauPile::initialize(const Cards::const_iterator& begin,
                                     const Cards::const_iterator& end) {
@@ -81,5 +80,4 @@ unsigned DefaultTableauPile::getPlaceInOrderOfFirstCoveredCard() const {
     return placeInOrderOfFirstCoveredCard;
 }
 
-}
 }

@@ -3,8 +3,7 @@
 #include <optional>
 #include "cards/Cards.h"
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class StockPile {
 public:
@@ -21,5 +20,4 @@ public:
     virtual std::optional<unsigned> getSelectedCardIndex() const = 0;
 };
 
-}
 }

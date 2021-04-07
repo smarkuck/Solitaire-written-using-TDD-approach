@@ -2,8 +2,7 @@
 
 #include "StockPile.h"
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class DefaultStockPile: public StockPile {
 public:
@@ -27,5 +26,4 @@ private:
     std::optional<unsigned> selectedCardIndex;
 };
 
-}
 }

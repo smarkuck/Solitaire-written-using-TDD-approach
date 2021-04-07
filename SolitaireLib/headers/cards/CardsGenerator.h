@@ -2,8 +2,7 @@
 
 #include "Cards.h"
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 class CardsGenerator {
 public:
@@ -11,5 +10,4 @@ public:
     virtual Cards generate() const = 0;
 };
 
-}
 }

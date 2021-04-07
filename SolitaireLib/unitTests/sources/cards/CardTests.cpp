@@ -5,8 +5,7 @@
 
 using namespace testing;
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 TEST(CardTest, hasValueOneGreaterThanOtherCard) {
     const Suit heart = Suit::Heart;
@@ -40,5 +39,4 @@ TEST(CardTest, hasDifferentColorThanOtherCard) {
     EXPECT_TRUE(Card (king, Suit::Spade).hasDifferentColorThan(Card {king, Suit::Heart}));
 }
 
-}
 }

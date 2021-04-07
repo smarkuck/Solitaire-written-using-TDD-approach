@@ -2,8 +2,7 @@
 
 #include "TableauPile.h"
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class DefaultTableauPile: public TableauPile {
 public:
@@ -30,5 +29,4 @@ private:
     unsigned placeInOrderOfFirstCoveredCard {0};
 };
 
-}
 }

@@ -2,10 +2,8 @@
 
 #include "cards/Cards.h"
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 Cards createSortedCards();
 
-}
 }

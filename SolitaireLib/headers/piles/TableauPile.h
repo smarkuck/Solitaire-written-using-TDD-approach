@@ -2,8 +2,7 @@
 
 #include "cards/Cards.h"
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class TableauPile {
 public:
@@ -21,5 +20,4 @@ public:
     virtual unsigned getPlaceInOrderOfFirstCoveredCard() const = 0;
 };
 
-}
 }

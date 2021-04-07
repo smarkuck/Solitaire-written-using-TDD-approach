@@ -3,8 +3,7 @@
 #include "gmock/gmock.h"
 #include "piles/TableauPile.h"
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class TableauPileMock: public TableauPile {
 public:
@@ -18,5 +17,4 @@ public:
     MOCK_METHOD(unsigned, getPlaceInOrderOfFirstCoveredCard, (), (const, override));
 };
 
-}
 }

@@ -2,8 +2,7 @@
 
 #include "FoundationPile.h"
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class DefaultFoundationPile: FoundationPile {
 public:
@@ -25,5 +24,4 @@ private:
     std::optional<cards::Card> lastPulledOutCard;
 };
 
-}
 }

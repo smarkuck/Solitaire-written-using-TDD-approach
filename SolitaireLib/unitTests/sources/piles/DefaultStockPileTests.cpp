@@ -7,8 +7,7 @@
 using namespace testing;
 using namespace solitaire::cards;
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class DefaultStockPileTest: public Test {
 public:
@@ -183,5 +182,4 @@ TEST_F(DefaultStockPileWithCardsAfterPullOutTest, initializePileAfterOperations)
     EXPECT_EQ(pile.getSelectedCardIndex(), std::nullopt);
 }
 
-}
 }

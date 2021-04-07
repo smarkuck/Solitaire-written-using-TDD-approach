@@ -3,8 +3,7 @@
 
 using namespace solitaire::cards;
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 void DefaultStockPile::initialize(const Cards::const_iterator& begin,
                                   const Cards::const_iterator& end)
@@ -68,5 +67,4 @@ std::optional<unsigned> DefaultStockPile::getSelectedCardIndex() const {
     return selectedCardIndex;
 }
 
-}
 }

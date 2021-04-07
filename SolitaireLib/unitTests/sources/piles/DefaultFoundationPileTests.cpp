@@ -7,8 +7,7 @@
 using namespace testing;
 using namespace solitaire::cards;
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class DefaultFoundationPileTest: public Test {
 public:
@@ -198,5 +197,4 @@ TEST_F(DefaultFoundationPileWithTwoAndPulledOutThreeTest,
     EXPECT_EQ(pile.getTopCardValue(), std::nullopt);
 }
 
-}
 }

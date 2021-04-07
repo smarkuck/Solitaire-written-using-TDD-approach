@@ -3,8 +3,7 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 namespace {
 const std::vector<Value> values {
@@ -26,5 +25,4 @@ Cards createSortedCards() {
     return expectedCards;
 }
 
-}
 }

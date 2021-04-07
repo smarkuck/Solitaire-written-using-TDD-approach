@@ -2,8 +2,7 @@
 
 #include <string>
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 enum class Suit {
     Heart, Spade, Diamond, Club
@@ -24,5 +23,4 @@ inline std::string to_string(const Suit& color) {
     }
 }
 
-}
 }

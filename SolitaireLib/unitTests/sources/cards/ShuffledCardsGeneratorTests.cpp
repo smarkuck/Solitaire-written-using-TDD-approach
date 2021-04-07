@@ -7,8 +7,7 @@
 
 using namespace testing;
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 namespace {
 bool cardsComparator(const Card& lhs, const Card& rhs) {
@@ -38,5 +37,4 @@ TEST_F(ShuffledCardsGeneratorTest, generatedCardsHaveDifferentOrder) {
     EXPECT_NE(generator.generate(), generator.generate());
 }
 
-}
 }

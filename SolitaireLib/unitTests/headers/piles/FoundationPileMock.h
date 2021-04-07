@@ -3,8 +3,7 @@
 #include "gmock/gmock.h"
 #include "piles/FoundationPile.h"
 
-namespace solitaire {
-namespace piles {
+namespace solitaire::piles {
 
 class FoundationPileMock: public FoundationPile {
 public:
@@ -16,5 +15,4 @@ public:
     MOCK_METHOD(std::optional<cards::Value>, getTopCardValue, (), (const, override));
 };
 
-}
 }

@@ -2,8 +2,7 @@
 
 #include <ostream>
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 enum class Value;
 enum class Suit;
@@ -28,5 +27,4 @@ private:
 bool operator==(const Card& lhs, const Card& rhs);
 std::ostream& operator<<(std::ostream& os, const Card& card);
 
-}
 }

@@ -2,8 +2,7 @@
 
 #include <string>
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 enum class Value {
     Ace, Two, Three, Four, Five,
@@ -44,5 +43,4 @@ inline std::string to_string(const Value& value) {
     }
 }
 
-}
 }

@@ -3,8 +3,7 @@
 #include <vector>
 #include "CardsGenerator.h"
 
-namespace solitaire {
-namespace cards {
+namespace solitaire::cards {
 
 enum class Suit;
 enum class Value;
@@ -20,5 +19,4 @@ private:
     static const std::vector<Suit> suits;
 };
 
-}
 }
