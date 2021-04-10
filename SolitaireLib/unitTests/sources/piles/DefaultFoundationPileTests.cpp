@@ -146,16 +146,14 @@ TEST_F(DefaultFoundationPileWithTwoTest, tryPullOutCard) {
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(DefaultFoundationPileWithTwoTest, initializePileAfterOperations)
-{
+TEST_F(DefaultFoundationPileWithTwoTest, initializePileAfterOperations) {
     pile->initialize();
 
     EXPECT_TRUE(pile->getCards().empty());
     EXPECT_EQ(pile->getTopCardValue(), std::nullopt);
 }
 
-TEST_F(DefaultFoundationPileWithTwoTest, restorePileStateUsingSnapshot)
-{
+TEST_F(DefaultFoundationPileWithTwoTest, restorePileStateUsingSnapshot) {
     const auto snapshot = pile->createSnapshot();
     pile->initialize();
     snapshot->restore();

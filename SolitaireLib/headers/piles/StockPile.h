@@ -1,11 +1,13 @@
 #pragma once
 
 #include <optional>
+
+#include "archivers/Archiver.h"
 #include "cards/Cards.h"
 
 namespace solitaire::piles {
 
-class StockPile {
+class StockPile: public archivers::Archiver {
 public:
     virtual ~StockPile() = default;
 
@@ -14,7 +16,6 @@ public:
 
     virtual void selectNextCard() = 0;
     virtual std::optional<cards::Card> tryPullOutCard() = 0;
-    virtual void tryRestoreLastPulledOutCard() = 0;
 
     virtual const cards::Cards& getCards() const = 0;
     virtual std::optional<unsigned> getSelectedCardIndex() const = 0;

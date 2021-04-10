@@ -10,12 +10,13 @@ void DefaultStockPile::initialize(const Cards::const_iterator& begin,
 {
     cards.assign(begin, end);
     selectedCardIndex.reset();
-    lastPulledOutCard.reset();
+}
+
+std::unique_ptr<archivers::Snapshot> DefaultStockPile::createSnapshot() {
+    return std::make_unique<Snapshot>(shared_from_this(), cards, selectedCardIndex);
 }
 
 void DefaultStockPile::selectNextCard() {
-    lastPulledOutCard.reset();
-
     incrementSelectedCardIndex();
     if (selectedCardIndex == cards.size())
         selectedCardIndex.reset();
@@ -23,13 +24,12 @@ void DefaultStockPile::selectNextCard() {
 
 std::optional<Card> DefaultStockPile::tryPullOutCard() {
     if (selectedCardIndex) {
-        lastPulledOutCard = cards.at(selectedCardIndex.value());
+        const auto pulledOutCard = cards.at(selectedCardIndex.value());
         cards.erase(std::next(cards.begin(), selectedCardIndex.value()));
         decrementSelectedCardIndex();
-        return lastPulledOutCard;
+        return pulledOutCard;
     }
 
-    lastPulledOutCard.reset();
     return std::nullopt;
 }
 
@@ -44,27 +44,25 @@ void DefaultStockPile::decrementSelectedCardIndex() {
         selectedCardIndex.reset();
 }
 
-void DefaultStockPile::tryRestoreLastPulledOutCard() {
-    if (lastPulledOutCard) {
-        restoreLastPulledOutCard();
-        lastPulledOutCard.reset();
-    }
-}
-
-void DefaultStockPile::restoreLastPulledOutCard() {
-    incrementSelectedCardIndex();
-
-    const auto placeToInsertCard =
-        std::next(cards.begin(), selectedCardIndex.value());
-    cards.insert(placeToInsertCard, lastPulledOutCard.value());
-}
-
 const Cards& DefaultStockPile::getCards() const {
     return cards;
 }
 
 std::optional<unsigned> DefaultStockPile::getSelectedCardIndex() const {
     return selectedCardIndex;
+}
+
+DefaultStockPile::Snapshot::Snapshot(
+    std::shared_ptr<DefaultStockPile> stockPile, Cards pileCards,
+    std::optional<unsigned> selectedCardIndex):
+    stockPile{std::move(stockPile)},
+    pileCards{std::move(pileCards)},
+    selectedCardIndex{std::move(selectedCardIndex)} {
+}
+
+void DefaultStockPile::Snapshot::restore() const {
+    stockPile->cards = pileCards;
+    stockPile->selectedCardIndex = selectedCardIndex;
 }
 
 }
