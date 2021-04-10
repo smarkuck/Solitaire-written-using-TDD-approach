@@ -55,9 +55,9 @@ std::optional<unsigned> DefaultStockPile::getSelectedCardIndex() const {
 DefaultStockPile::Snapshot::Snapshot(
     std::shared_ptr<DefaultStockPile> stockPile, Cards pileCards,
     std::optional<unsigned> selectedCardIndex):
-    stockPile{std::move(stockPile)},
-    pileCards{std::move(pileCards)},
-    selectedCardIndex{std::move(selectedCardIndex)} {
+    stockPile {std::move(stockPile)},
+    pileCards {std::move(pileCards)},
+    selectedCardIndex {std::move(selectedCardIndex)} {
 }
 
 void DefaultStockPile::Snapshot::restore() const {

@@ -7,12 +7,10 @@ namespace solitaire::piles {
 
 class DefaultStockPile: public std::enable_shared_from_this<DefaultStockPile>,
                         public StockPile {
-private:
-    class Snapshot;
-
 public:
     void initialize(const cards::Cards::const_iterator& begin,
                     const cards::Cards::const_iterator& end) override;
+
     std::unique_ptr<archivers::Snapshot> createSnapshot() override;
 
     void selectNextCard() override;
@@ -22,6 +20,8 @@ public:
     std::optional<unsigned> getSelectedCardIndex() const override;
 
 private:
+    class Snapshot;
+
     void incrementSelectedCardIndex();
     void decrementSelectedCardIndex();
 

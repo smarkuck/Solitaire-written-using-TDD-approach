@@ -59,8 +59,8 @@ std::optional<Value> DefaultFoundationPile::getTopCardValue() const {
 
 DefaultFoundationPile::Snapshot::Snapshot(
     std::shared_ptr<DefaultFoundationPile> foundationPile, Cards pileCards):
-    foundationPile{std::move(foundationPile)},
-    pileCards{std::move(pileCards)} {
+    foundationPile {std::move(foundationPile)},
+    pileCards {std::move(pileCards)} {
 }
 
 void DefaultFoundationPile::Snapshot::restore() const {

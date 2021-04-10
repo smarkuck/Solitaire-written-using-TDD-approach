@@ -9,9 +9,6 @@ namespace solitaire::piles {
 
 class DefaultFoundationPile: public std::enable_shared_from_this<DefaultFoundationPile>,
                              public FoundationPile {
-private:
-    class Snapshot;
-
 public:
     void initialize() override;
     std::unique_ptr<archivers::Snapshot> createSnapshot() override;
@@ -23,6 +20,8 @@ public:
     std::optional<cards::Value> getTopCardValue() const override;
 
 private:
+    class Snapshot;
+
     bool shouldAddCard(std::optional<cards::Card>& cardToAdd) const;
     bool isCardToAddAce(const cards::Card& cardToAdd) const;
     bool isCardToAddCorrect(const cards::Card& cardToAdd) const;

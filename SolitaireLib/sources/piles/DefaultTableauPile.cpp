@@ -9,20 +9,20 @@ namespace solitaire::piles {
 void DefaultTableauPile::initialize(const Cards::const_iterator& begin,
                                     const Cards::const_iterator& end) {
     cards.assign(begin, end);
-    lastPulledOutCards.clear();
     placeInOrderOfFirstCoveredCard = cards.empty() ? 0 : cards.size() - 1;
 }
 
-void DefaultTableauPile::tryUncoverTopCard() {
-    lastPulledOutCards.clear();
+std::unique_ptr<archivers::Snapshot> DefaultTableauPile::createSnapshot() {
+    return std::make_unique<Snapshot>(shared_from_this(), cards,
+                                      placeInOrderOfFirstCoveredCard);
+}
 
+void DefaultTableauPile::tryUncoverTopCard() {
     if (isTopCardCovered())
         --placeInOrderOfFirstCoveredCard;
 }
 
 void DefaultTableauPile::tryAddCards(Cards& cardsToAdd) {
-    lastPulledOutCards.clear();
-
     if (shouldAddCards(cardsToAdd)) {
         cards.insert(cards.end(), cardsToAdd.begin(), cardsToAdd.end());
         cardsToAdd.clear();
@@ -54,22 +54,16 @@ bool DefaultTableauPile::isFirstCardToAddCorrect(const Cards& cardsToAdd) const 
 Cards DefaultTableauPile::tryPullOutCards(unsigned quantity) {
     if (shouldPullOutCards(quantity)) {
         const auto firstCardToPullOut = std::prev(cards.end(), quantity);
-        lastPulledOutCards.assign(firstCardToPullOut, cards.end());
+        const Cards pulledOutCards {firstCardToPullOut, cards.end()};
         cards.erase(firstCardToPullOut, cards.end());
-        return lastPulledOutCards;
+        return pulledOutCards;
     }
 
-    lastPulledOutCards.clear();
     return Cards {};
 }
 
 bool DefaultTableauPile::shouldPullOutCards(unsigned quantity) const {
     return cards.size() - placeInOrderOfFirstCoveredCard >= quantity;
-}
-
-void DefaultTableauPile::tryRestoreLastPulledOutCards() {
-    cards.insert(cards.end(), lastPulledOutCards.begin(), lastPulledOutCards.end());
-    lastPulledOutCards.clear();
 }
 
 const Cards& DefaultTableauPile::getCards() const {
@@ -78,6 +72,19 @@ const Cards& DefaultTableauPile::getCards() const {
 
 unsigned DefaultTableauPile::getPlaceInOrderOfFirstCoveredCard() const {
     return placeInOrderOfFirstCoveredCard;
+}
+
+DefaultTableauPile::Snapshot::Snapshot(
+    std::shared_ptr<DefaultTableauPile> tableauPile,
+    Cards pileCards, unsigned placeInOrderOfFirstCoveredCard):
+    tableauPile {std::move(tableauPile)},
+    pileCards {std::move(pileCards)},
+    placeInOrderOfFirstCoveredCard {std::move(placeInOrderOfFirstCoveredCard)} {
+}
+
+void DefaultTableauPile::Snapshot::restore() const {
+    tableauPile->cards = pileCards;
+    tableauPile->placeInOrderOfFirstCoveredCard = placeInOrderOfFirstCoveredCard;
 }
 
 }
