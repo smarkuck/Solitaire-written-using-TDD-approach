@@ -28,6 +28,9 @@ public:
               TableauPiles tableauPiles);
 
     void startNewGame();
+    const piles::FoundationPile& getFoundationPile(unsigned id) const;
+    const piles::TableauPile& getTableauPile(unsigned id) const;
+    const piles::StockPile& getStockPile() const;
 
 private:
     cards::Cards::const_iterator

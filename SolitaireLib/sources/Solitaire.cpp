@@ -1,3 +1,5 @@
+#include <string>
+
 #include "Solitaire.h"
 #include "cards/Card.h"
 #include "cards/CardsGenerator.h"
@@ -42,6 +44,22 @@ Solitaire::initializeTableauPilesAndReturnFirstNotUsedCard(const Cards& cards) {
     }
 
     return firstNotUsedCard;
+}
+
+const FoundationPile& Solitaire::getFoundationPile(unsigned id) const {
+    if (id >= foundationPiles.size())
+        throw std::runtime_error{"Cannot access foundation pile with id: " + std::to_string(id)};
+    return *foundationPiles[id];
+}
+
+const TableauPile& Solitaire::getTableauPile(unsigned id) const {
+    if (id >= tableauPiles.size())
+        throw std::runtime_error{"Cannot access tableau pile with id: " + std::to_string(id)};
+    return *tableauPiles[id];
+}
+
+const StockPile& Solitaire::getStockPile() const {
+    return *stockPile;
 }
 
 }

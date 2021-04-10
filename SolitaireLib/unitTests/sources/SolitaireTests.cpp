@@ -93,4 +93,24 @@ TEST_F(SolitaireTest, onNewGameGenerateAndDistributeCards) {
     solitaire.startNewGame();
 }
 
+TEST_F(SolitaireTest, throwExceptionWhenTryingToAccessFoundationPileWithIdGreaterThanThree) {
+    EXPECT_THROW(solitaire.getFoundationPile(4), std::runtime_error);
+}
+
+TEST_F(SolitaireTest, getFoundationPile) {
+    EXPECT_EQ(&solitaire.getFoundationPile(3), foundationPileMocks[3].get());
+}
+
+TEST_F(SolitaireTest, throwExceptionWhenTryingToAccessTableauPileWithIdGreaterThanSix) {
+    EXPECT_THROW(solitaire.getTableauPile(7), std::runtime_error);
+}
+
+TEST_F(SolitaireTest, getTableauPile) {
+    EXPECT_EQ(&solitaire.getTableauPile(6), tableauPileMocks[6].get());
+}
+
+TEST_F(SolitaireTest, getStockPile) {
+    EXPECT_EQ(&solitaire.getStockPile(), stockPileMock.get());
+}
+
 }
