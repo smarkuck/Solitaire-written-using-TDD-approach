@@ -9,6 +9,7 @@ enum class Suit;
 
 class Card {
 public:
+    Card();
     Card(Value value, Suit suit);
 
     Value getValue() const;

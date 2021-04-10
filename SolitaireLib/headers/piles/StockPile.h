@@ -4,6 +4,7 @@
 
 #include "archivers/Archiver.h"
 #include "cards/Cards.h"
+#include "cards/Deck.h"
 
 namespace solitaire::piles {
 
@@ -11,8 +12,8 @@ class StockPile: public archivers::Archiver {
 public:
     virtual ~StockPile() = default;
 
-    virtual void initialize(const cards::Cards::const_iterator& begin,
-                            const cards::Cards::const_iterator& end) = 0;
+    virtual void initialize(const cards::Deck::const_iterator& begin,
+                            const cards::Deck::const_iterator& end) = 0;
 
     virtual void selectNextCard() = 0;
     virtual std::optional<cards::Card> tryPullOutCard() = 0;

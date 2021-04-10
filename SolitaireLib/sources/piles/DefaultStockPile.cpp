@@ -5,8 +5,8 @@ using namespace solitaire::cards;
 
 namespace solitaire::piles {
 
-void DefaultStockPile::initialize(const Cards::const_iterator& begin,
-                                  const Cards::const_iterator& end)
+void DefaultStockPile::initialize(const Deck::const_iterator& begin,
+                                  const Deck::const_iterator& end)
 {
     cards.assign(begin, end);
     selectedCardIndex.reset();

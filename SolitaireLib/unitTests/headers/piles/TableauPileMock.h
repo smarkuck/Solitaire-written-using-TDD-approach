@@ -7,8 +7,8 @@ namespace solitaire::piles {
 
 class TableauPileMock: public TableauPile {
 public:
-    MOCK_METHOD(void, initialize, (const cards::Cards::const_iterator&,
-                                   const cards::Cards::const_iterator&), (override));
+    MOCK_METHOD(void, initialize, (const cards::Deck::const_iterator&,
+                                   const cards::Deck::const_iterator&), (override));
     MOCK_METHOD(std::unique_ptr<archivers::Snapshot>, createSnapshot, (), (override));
     MOCK_METHOD(void, tryUncoverTopCard, (), (override));
     MOCK_METHOD(void, tryAddCards, (cards::Cards&), (override));

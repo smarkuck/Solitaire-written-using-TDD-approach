@@ -3,6 +3,7 @@
 #include "cards/Value.h"
 #include "gmock/gmock.h"
 #include "piles/DefaultStockPile.h"
+#include "piles/PileUtils.h"
 
 using namespace testing;
 using namespace solitaire::cards;
@@ -34,7 +35,7 @@ TEST_F(EmptyDefaultStockPileTest, selectNextCard) {
 class DefaultStockPileWithCardsTest: public EmptyDefaultStockPileTest {
 public:
     DefaultStockPileWithCardsTest() {
-        pile->initialize(pileCards.begin(), pileCards.end());
+        initializePile(*pile, pileCards);
     }
 
     Cards pileCards {
@@ -115,7 +116,7 @@ public:
 };
 
 TEST_F(DefaultStockPileInitializationTest, initializePileAfterOperations) {
-    pile->initialize(newPileCards.begin(), newPileCards.end());
+    initializePile(*pile, newPileCards);
 
     EXPECT_THAT(pile->getCards(), ContainerEq(newPileCards));
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
@@ -124,7 +125,7 @@ TEST_F(DefaultStockPileInitializationTest, initializePileAfterOperations) {
 TEST_F(DefaultStockPileInitializationTest, restorePileStateUsingSnapshot) {
     pile->selectNextCard();
     const auto snapshot = pile->createSnapshot();
-    pile->initialize(newPileCards.begin(), newPileCards.end());
+    initializePile(*pile, newPileCards);
     snapshot->restore();
 
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));

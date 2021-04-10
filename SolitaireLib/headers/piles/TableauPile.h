@@ -2,6 +2,7 @@
 
 #include "archivers/Archiver.h"
 #include "cards/Cards.h"
+#include "cards/Deck.h"
 
 namespace solitaire::piles {
 
@@ -9,8 +10,8 @@ class TableauPile: public archivers::Archiver {
 public:
     virtual ~TableauPile() = default;
 
-    virtual void initialize(const cards::Cards::const_iterator& begin,
-                            const cards::Cards::const_iterator& end) = 0;
+    virtual void initialize(const cards::Deck::const_iterator& begin,
+                            const cards::Deck::const_iterator& end) = 0;
 
     virtual void tryUncoverTopCard() = 0;
     virtual void tryAddCards(cards::Cards& cardsToAdd) = 0;

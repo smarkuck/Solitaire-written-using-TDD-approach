@@ -3,9 +3,8 @@
 #include "mock_ptr.h"
 #include "Solitaire.h"
 #include "archivers/Snapshot.h"
-#include "cards/Card.h"
-#include "cards/CardsGeneratorMock.h"
-#include "cards/CardsGeneratorUtils.h"
+#include "cards/DeckGeneratorMock.h"
+#include "cards/DeckGeneratorUtils.h"
 #include "gmock/gmock.h"
 #include "piles/FoundationPileMock.h"
 #include "piles/StockPileMock.h"
@@ -18,7 +17,7 @@ using namespace solitaire::piles;
 namespace solitaire {
 
 namespace {
-    const auto expectedCards {createSortedCards()};
+    const auto deck {createSortedDeck()};
 }
 
 MATCHER_P2(RangeEq, begin, end, "") {
@@ -45,7 +44,7 @@ public:
         return copy;
     }
 
-    mock_ptr<CardsGeneratorMock> cardsGeneratorMock;
+    mock_ptr<DeckGeneratorMock> deckGeneratorMock;
     std::shared_ptr<StockPileMock> stockPileMock {std::make_shared<StockPileMock>()};
 
     std::array<std::shared_ptr<FoundationPileMock>, 4>
@@ -55,40 +54,40 @@ public:
         tableauPileMocks {makeSharedPtrArray<TableauPileMock, 7>()};
 
     Solitaire solitaire {
-        cardsGeneratorMock.make_unique(),
+        deckGeneratorMock.make_unique(),
         stockPileMock,
         copySharedPtrArray<FoundationPile>(foundationPileMocks),
         copySharedPtrArray<TableauPile>(tableauPileMocks)
     };
 
-    void expectTableauPilesInitialization(const Cards& cards) {
+    void expectTableauPilesInitialization(const Deck& deck) {
         EXPECT_CALL(*tableauPileMocks[0], initialize(_, _))
-            .With(AllArgs(RangeEq(cards.begin(), std::next(cards.begin()))));
+            .With(AllArgs(RangeEq(deck.begin(), std::next(deck.begin()))));
         EXPECT_CALL(*tableauPileMocks[1], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(cards.begin()), std::next(cards.begin(), 3))));
+            .With(AllArgs(RangeEq(std::next(deck.begin()), std::next(deck.begin(), 3))));
         EXPECT_CALL(*tableauPileMocks[2], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(cards.begin(), 3), std::next(cards.begin(), 6))));
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 3), std::next(deck.begin(), 6))));
         EXPECT_CALL(*tableauPileMocks[3], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(cards.begin(), 6), std::next(cards.begin(), 10))));
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 6), std::next(deck.begin(), 10))));
         EXPECT_CALL(*tableauPileMocks[4], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(cards.begin(), 10), std::next(cards.begin(), 15))));
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 10), std::next(deck.begin(), 15))));
         EXPECT_CALL(*tableauPileMocks[5], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(cards.begin(), 15), std::next(cards.begin(), 21))));
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 15), std::next(deck.begin(), 21))));
         EXPECT_CALL(*tableauPileMocks[6], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(cards.begin(), 21), std::next(cards.begin(), 28))));
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 21), std::next(deck.begin(), 28))));
     }
 };
 
 TEST_F(SolitaireTest, onNewGameGenerateAndDistributeCards) {
-    EXPECT_CALL(*cardsGeneratorMock, generate()).WillOnce(Return(expectedCards));
+    EXPECT_CALL(*deckGeneratorMock, generate()).WillOnce(Return(deck));
 
     for (auto& pile: foundationPileMocks)
         EXPECT_CALL(*pile, initialize());
 
-    expectTableauPilesInitialization(expectedCards);
+    expectTableauPilesInitialization(deck);
 
     EXPECT_CALL(*stockPileMock, initialize(_, _))
-        .With(AllArgs(RangeEq(std::next(expectedCards.begin(), 28), expectedCards.end())));
+        .With(AllArgs(RangeEq(std::next(deck.begin(), 28), deck.end())));
 
     solitaire.startNewGame();
 }

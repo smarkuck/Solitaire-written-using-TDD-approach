@@ -8,8 +8,8 @@ namespace solitaire::piles {
 class DefaultStockPile: public std::enable_shared_from_this<DefaultStockPile>,
                         public StockPile {
 public:
-    void initialize(const cards::Cards::const_iterator& begin,
-                    const cards::Cards::const_iterator& end) override;
+    void initialize(const cards::Deck::const_iterator& begin,
+                    const cards::Deck::const_iterator& end) override;
 
     std::unique_ptr<archivers::Snapshot> createSnapshot() override;
 

@@ -1,19 +1,19 @@
 #pragma once
 
 #include <vector>
-#include "CardsGenerator.h"
+#include "DeckGenerator.h"
 
 namespace solitaire::cards {
 
 enum class Suit;
 enum class Value;
 
-class ShuffledCardsGenerator: public CardsGenerator {
+class ShuffledDeckGenerator: public DeckGenerator {
 public:
-    Cards generate() const override;
+    Deck generate() const override;
 
 private:
-    Cards generateSortedCards() const;
+    Deck generateSortedDeck() const;
 
     static const std::vector<Value> values;
     static const std::vector<Suit> suits;

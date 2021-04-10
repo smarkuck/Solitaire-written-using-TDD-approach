@@ -1,8 +1,7 @@
 #include <string>
 
 #include "Solitaire.h"
-#include "cards/Card.h"
-#include "cards/CardsGenerator.h"
+#include "cards/DeckGenerator.h"
 #include "piles/FoundationPile.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
@@ -12,29 +11,29 @@ using namespace solitaire::piles;
 
 namespace solitaire {
 
-Solitaire::Solitaire(std::unique_ptr<CardsGenerator> cardsGenerator,
+Solitaire::Solitaire(std::unique_ptr<DeckGenerator> deckGenerator,
                      std::shared_ptr<StockPile> stockPile,
                      FoundationPiles foundationPiles,
                      TableauPiles tableauPiles):
-    cardsGenerator {std::move(cardsGenerator)},
+    deckGenerator {std::move(deckGenerator)},
     stockPile {std::move(stockPile)},
     foundationPiles {std::move(foundationPiles)},
     tableauPiles {std::move(tableauPiles)} {
 }
 
 void Solitaire::startNewGame() {
-    const auto cards = cardsGenerator->generate();
+    const auto deck = deckGenerator->generate();
 
     for (auto& pile: foundationPiles)
         pile->initialize();
 
-    const auto firstNotUsedCard = initializeTableauPilesAndReturnFirstNotUsedCard(cards);
-    stockPile->initialize(firstNotUsedCard, cards.end());
+    const auto firstNotUsedCard = initializeTableauPilesAndReturnFirstNotUsedCard(deck);
+    stockPile->initialize(firstNotUsedCard, deck.end());
 }
 
-Cards::const_iterator
-Solitaire::initializeTableauPilesAndReturnFirstNotUsedCard(const Cards& cards) {
-    auto firstNotUsedCard = cards.begin();
+Deck::const_iterator
+Solitaire::initializeTableauPilesAndReturnFirstNotUsedCard(const Deck& deck) {
+    auto firstNotUsedCard = deck.begin();
     unsigned currentPileCardsCount = 1;
 
     for (auto& pile: tableauPiles) {

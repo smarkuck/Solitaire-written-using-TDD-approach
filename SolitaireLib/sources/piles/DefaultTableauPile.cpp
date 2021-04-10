@@ -6,8 +6,8 @@ using namespace solitaire::cards;
 
 namespace solitaire::piles {
 
-void DefaultTableauPile::initialize(const Cards::const_iterator& begin,
-                                    const Cards::const_iterator& end) {
+void DefaultTableauPile::initialize(const Deck::const_iterator& begin,
+                                    const Deck::const_iterator& end) {
     cards.assign(begin, end);
     placeInOrderOfFirstCoveredCard = cards.empty() ? 0 : cards.size() - 1;
 }

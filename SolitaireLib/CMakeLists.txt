@@ -4,7 +4,7 @@ target_include_directories(SolitaireLib PUBLIC headers)
 target_sources(SolitaireLib PRIVATE
     sources/Solitaire.cpp
     sources/cards/Card.cpp
-    sources/cards/ShuffledCardsGenerator.cpp
+    sources/cards/ShuffledDeckGenerator.cpp
     sources/piles/DefaultFoundationPile.cpp
     sources/piles/DefaultStockPile.cpp
     sources/piles/DefaultTableauPile.cpp

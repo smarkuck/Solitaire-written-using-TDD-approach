@@ -4,8 +4,8 @@ target_include_directories(SolitaireLibUnitTests PRIVATE headers)
 target_sources(SolitaireLibUnitTests PRIVATE
     sources/SolitaireTests.cpp
     sources/cards/CardTests.cpp
-    sources/cards/CardsGeneratorUtils.cpp
-    sources/cards/ShuffledCardsGeneratorTests.cpp
+    sources/cards/DeckGeneratorUtils.cpp
+    sources/cards/ShuffledDeckGeneratorTests.cpp
     sources/piles/DefaultFoundationPileTests.cpp
     sources/piles/DefaultStockPileTests.cpp
     sources/piles/DefaultTableauPileTests.cpp

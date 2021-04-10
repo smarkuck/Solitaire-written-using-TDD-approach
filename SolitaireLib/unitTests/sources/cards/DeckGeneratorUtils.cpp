@@ -1,4 +1,6 @@
-#include "cards/CardsGeneratorUtils.h"
+#include <vector>
+
+#include "cards/DeckGeneratorUtils.h"
 #include "cards/Card.h"
 #include "cards/Suit.h"
 #include "cards/Value.h"
@@ -21,15 +23,16 @@ std::vector<Suit> createSuits() {
 }
 }
 
-Cards createSortedCards() {
+Deck createSortedDeck() {
     static const auto values {createValues()};
     static const auto suits {createSuits()};
 
-    Cards expectedCards;
+    Deck sortedDeck;
+    unsigned index = 0;
     for (const auto& suit: suits)
         for (const auto& value: values)
-            expectedCards.emplace_back(value, suit);
-    return expectedCards;
+            sortedDeck[index++] = Card {value, suit};
+    return sortedDeck;
 }
 
 }

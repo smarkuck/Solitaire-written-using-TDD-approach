@@ -3,6 +3,7 @@
 #include "cards/Value.h"
 #include "gmock/gmock.h"
 #include "piles/DefaultTableauPile.h"
+#include "piles/PileUtils.h"
 
 using namespace testing;
 using namespace solitaire::cards;
@@ -31,7 +32,7 @@ TEST_F(EmptyDefaultTableauPileTest, initializePileWithOneCard) {
         Card {Value::Ace, Suit::Heart}
     };
 
-    pile->initialize(cards.begin(), cards.end());
+    initializePile(*pile, cards);
     EXPECT_THAT(pile->getCards(), ContainerEq(cards));
     EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 0);
 }
@@ -42,7 +43,7 @@ TEST_F(EmptyDefaultTableauPileTest, initializePileWithTwoCards) {
         Card {Value::Two, Suit::Spade}
     };
 
-    pile->initialize(cards.begin(), cards.end());
+    initializePile(*pile, cards);
     EXPECT_THAT(pile->getCards(), ContainerEq(cards));
     EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 1);
 }
@@ -58,7 +59,7 @@ TEST_F(EmptyDefaultTableauPileTest, initializePileWithSevenCards) {
         Card {Value::Seven, Suit::Diamond}
     };
 
-    pile->initialize(cards.begin(), cards.end());
+    initializePile(*pile, cards);
     EXPECT_THAT(pile->getCards(), ContainerEq(cards));
     EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 6);
 }
@@ -109,7 +110,7 @@ TEST_F(EmptyDefaultTableauPileTest, tryUncoverTopCard) {
 class InitializedDefaultTableauPileTest: public EmptyDefaultTableauPileTest {
 public:
     InitializedDefaultTableauPileTest() {
-        pile->initialize(pileCards.begin(), pileCards.end());
+        initializePile(*pile, pileCards);
     }
 
     Cards concatenateCards(const Cards& lhs, const Cards& rhs) {
@@ -257,15 +258,14 @@ public:
 };
 
 TEST_F(DefaultTableauPileInitializationTest, initializePileAfterOperations) {
-    pile->initialize(newPileCards.begin(), newPileCards.end());
-
+    initializePile(*pile, newPileCards);
     EXPECT_THAT(pile->getCards(), ContainerEq(newPileCards));
     EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 1);
 }
 
 TEST_F(DefaultTableauPileInitializationTest, restorePileStateUsingSnapshot) {
     const auto snapshot = pile->createSnapshot();
-    pile->initialize(newPileCards.begin(), newPileCards.end());
+    initializePile(*pile, newPileCards);
     snapshot->restore();
 
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));

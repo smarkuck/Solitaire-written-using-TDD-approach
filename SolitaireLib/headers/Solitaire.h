@@ -3,11 +3,12 @@
 #include <array>
 #include <memory>
 
-#include "cards/Cards.h"
+#include "cards/Card.h"
+#include "cards/Deck.h"
 
 namespace solitaire {
 namespace cards {
-    class CardsGenerator;
+    class DeckGenerator;
 }
 
 namespace piles {
@@ -22,7 +23,7 @@ private:
     using TableauPiles = std::array<std::shared_ptr<piles::TableauPile>, 7>;
 
 public:
-    Solitaire(std::unique_ptr<cards::CardsGenerator> cardsGenerator,
+    Solitaire(std::unique_ptr<cards::DeckGenerator> deckGenerator,
               std::shared_ptr<piles::StockPile> stockPile,
               FoundationPiles foundationPiles,
               TableauPiles tableauPiles);
@@ -33,10 +34,10 @@ public:
     const piles::StockPile& getStockPile() const;
 
 private:
-    cards::Cards::const_iterator
-    initializeTableauPilesAndReturnFirstNotUsedCard(const cards::Cards&);
+    cards::Deck::const_iterator
+    initializeTableauPilesAndReturnFirstNotUsedCard(const cards::Deck&);
 
-    std::unique_ptr<cards::CardsGenerator> cardsGenerator;
+    std::unique_ptr<cards::DeckGenerator> deckGenerator;
     std::shared_ptr<piles::StockPile> stockPile;
     FoundationPiles foundationPiles;
     TableauPiles tableauPiles;
