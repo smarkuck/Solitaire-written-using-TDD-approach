@@ -17,6 +17,10 @@ using namespace solitaire::piles;
 
 namespace solitaire {
 
+namespace {
+    const auto expectedCards {createSortedCards()};
+}
+
 MATCHER_P2(RangeEq, begin, end, "") {
     return std::equal(std::get<0>(arg), std::get<1>(arg), begin, end);
 }
@@ -76,17 +80,15 @@ public:
 };
 
 TEST_F(SolitaireTest, onNewGameGenerateAndDistributeCards) {
-    const auto cards = createSortedCards();
-
-    EXPECT_CALL(*cardsGeneratorMock, generate()).WillOnce(Return(cards));
+    EXPECT_CALL(*cardsGeneratorMock, generate()).WillOnce(Return(expectedCards));
 
     for (auto& pile: foundationPileMocks)
         EXPECT_CALL(*pile, initialize());
 
-    expectTableauPilesInitialization(cards);
+    expectTableauPilesInitialization(expectedCards);
 
     EXPECT_CALL(*stockPileMock, initialize(_, _))
-        .With(AllArgs(RangeEq(std::next(cards.begin(), 28), cards.end())));
+        .With(AllArgs(RangeEq(std::next(expectedCards.begin(), 28), expectedCards.end())));
 
     solitaire.startNewGame();
 }

@@ -6,18 +6,25 @@
 namespace solitaire::cards {
 
 namespace {
-const std::vector<Value> values {
-    Value::Ace, Value::Two, Value::Three, Value::Four, Value::Five,
-    Value::Six, Value::Seven, Value::Eight, Value::Nine, Value::Ten,
-    Value::Jack, Value::Queen, Value::King
-};
+std::vector<Value> createValues() {
+    return std::vector<Value> {
+        Value::Ace, Value::Two, Value::Three, Value::Four, Value::Five,
+        Value::Six, Value::Seven, Value::Eight, Value::Nine, Value::Ten,
+        Value::Jack, Value::Queen, Value::King
+    };
+}
 
-const std::vector<Suit> suits {
-    Suit::Heart, Suit::Spade, Suit::Diamond, Suit::Club
-};
+std::vector<Suit> createSuits() {
+    return std::vector<Suit> {
+        Suit::Heart, Suit::Spade, Suit::Diamond, Suit::Club
+    };
+}
 }
 
 Cards createSortedCards() {
+    static const auto values {createValues()};
+    static const auto suits {createSuits()};
+
     Cards expectedCards;
     for (const auto& suit: suits)
         for (const auto& value: values)
