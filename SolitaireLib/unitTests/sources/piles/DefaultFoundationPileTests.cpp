@@ -9,59 +9,66 @@ using namespace solitaire::cards;
 
 namespace solitaire::piles {
 
-class DefaultFoundationPileTest: public Test {
-public:
+TEST(DefaultFoundationPileTest,
+     throwExceptionOnSnapshotCreationWhenPileNotCreatedBySharedPtr)
+{
     DefaultFoundationPile pile;
+    EXPECT_THROW(pile.createSnapshot(), std::bad_weak_ptr);
+}
+
+class EmptyDefaultFoundationPileTest: public Test {
+public:
+    std::shared_ptr<DefaultFoundationPile> pile {std::make_shared<DefaultFoundationPile>()};
 };
 
-TEST_F(DefaultFoundationPileTest, createPile) {
-    EXPECT_TRUE(pile.getCards().empty());
-    EXPECT_EQ(pile.getTopCardValue(), std::nullopt);
+TEST_F(EmptyDefaultFoundationPileTest, createPile) {
+    EXPECT_TRUE(pile->getCards().empty());
+    EXPECT_EQ(pile->getTopCardValue(), std::nullopt);
 }
 
-TEST_F(DefaultFoundationPileTest, tryAddNotCard) {
+TEST_F(EmptyDefaultFoundationPileTest, tryAddNotCard) {
     std::optional<Card> notCard = std::nullopt;
 
-    pile.tryAddCard(notCard);
+    pile->tryAddCard(notCard);
 
     EXPECT_EQ(notCard, std::nullopt);
-    EXPECT_TRUE(pile.getCards().empty());
+    EXPECT_TRUE(pile->getCards().empty());
 }
 
-TEST_F(DefaultFoundationPileTest, tryAddNotAce) {
+TEST_F(EmptyDefaultFoundationPileTest, tryAddNotAce) {
     const Card cardToAddAfterOperation {Value::Two, Suit::Heart};
     std::optional<Card> cardToAdd = cardToAddAfterOperation;
 
-    pile.tryAddCard(cardToAdd);
+    pile->tryAddCard(cardToAdd);
 
     EXPECT_EQ(cardToAdd, cardToAddAfterOperation);
-    EXPECT_TRUE(pile.getCards().empty());
+    EXPECT_TRUE(pile->getCards().empty());
 }
 
-TEST_F(DefaultFoundationPileTest, tryAddAce) {
+TEST_F(EmptyDefaultFoundationPileTest, tryAddAce) {
     const Cards pileCards {
         Card {Value::Ace, Suit::Heart}
     };
 
     std::optional<Card> cardToAdd = pileCards.front();
 
-    pile.tryAddCard(cardToAdd);
+    pile->tryAddCard(cardToAdd);
 
     EXPECT_EQ(cardToAdd, std::nullopt);
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-    EXPECT_EQ(pile.getTopCardValue(), Value::Ace);
+    EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
+    EXPECT_EQ(pile->getTopCardValue(), Value::Ace);
 }
 
-TEST_F(DefaultFoundationPileTest, tryPullOutCard) {
-    EXPECT_EQ(pile.tryPullOutCard(), std::nullopt);
-    EXPECT_TRUE(pile.getCards().empty());
+TEST_F(EmptyDefaultFoundationPileTest, tryPullOutCard) {
+    EXPECT_EQ(pile->tryPullOutCard(), std::nullopt);
+    EXPECT_TRUE(pile->getCards().empty());
 }
 
-class DefaultFoundationPileWithAceTest: public DefaultFoundationPileTest {
+class DefaultFoundationPileWithAceTest: public EmptyDefaultFoundationPileTest {
 public:
     DefaultFoundationPileWithAceTest() {
         std::optional<Card> cardToAdd = pileCards.front();
-        pile.tryAddCard(cardToAdd);
+        pile->tryAddCard(cardToAdd);
     }
 
     Cards pileCards {
@@ -73,10 +80,10 @@ TEST_F(DefaultFoundationPileWithAceTest, tryAddSameCardAsOnTopOfPile) {
     const auto sameCardAsOnTopOfPile = pileCards.back();
     std::optional<Card> cardToAdd = sameCardAsOnTopOfPile;
 
-    pile.tryAddCard(cardToAdd);
+    pile->tryAddCard(cardToAdd);
 
     EXPECT_EQ(cardToAdd, sameCardAsOnTopOfPile);
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+    EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
 TEST_F(DefaultFoundationPileWithAceTest,
@@ -85,10 +92,10 @@ TEST_F(DefaultFoundationPileWithAceTest,
     const Card cardWithValueTwoGreaterThanOnTopOfPile {Value::Three, Suit::Heart};
     std::optional<Card> cardToAdd = cardWithValueTwoGreaterThanOnTopOfPile;
 
-    pile.tryAddCard(cardToAdd);
+    pile->tryAddCard(cardToAdd);
 
     EXPECT_EQ(cardToAdd, cardWithValueTwoGreaterThanOnTopOfPile);
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+    EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
 TEST_F(DefaultFoundationPileWithAceTest,
@@ -97,104 +104,64 @@ TEST_F(DefaultFoundationPileWithAceTest,
     const Card cardWithDifferentSuitThanOnTopOfPile {Value::Two, Suit::Spade};
     std::optional<Card> cardToAdd = cardWithDifferentSuitThanOnTopOfPile;
 
-    pile.tryAddCard(cardToAdd);
+    pile->tryAddCard(cardToAdd);
 
     EXPECT_EQ(cardToAdd, cardWithDifferentSuitThanOnTopOfPile);
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+    EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
 TEST_F(DefaultFoundationPileWithAceTest, tryAddTwoWithSameSuitAsOnTopOfPile) {
     pileCards.push_back(Card {Value::Two, Suit::Heart});
     std::optional<Card> cardToAdd = pileCards.back();
 
-    pile.tryAddCard(cardToAdd);
+    pile->tryAddCard(cardToAdd);
 
     EXPECT_EQ(cardToAdd, std::nullopt);
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-    EXPECT_EQ(pile.getTopCardValue(), Value::Two);
+    EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
+    EXPECT_EQ(pile->getTopCardValue(), Value::Two);
 }
 
 TEST_F(DefaultFoundationPileWithAceTest, tryPullOutCard) {
     const auto pulledOutCard = pileCards.back();
-    EXPECT_EQ(pile.tryPullOutCard(), pulledOutCard);
-    EXPECT_TRUE(pile.getCards().empty());
+    EXPECT_EQ(pile->tryPullOutCard(), pulledOutCard);
+    EXPECT_TRUE(pile->getCards().empty());
 }
 
-TEST_F(DefaultFoundationPileWithAceTest, tryPullOutCardFromPileWithTwoOnTop) {
-    const Card pulledOutCard = Card {Value::Two, Suit::Heart};
-    std::optional<Card> cardToAdd = pulledOutCard;
-
-    pile.tryAddCard(cardToAdd);
-
-    EXPECT_EQ(pile.tryPullOutCard(), pulledOutCard);
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-}
-
-TEST_F(DefaultFoundationPileWithAceTest, tryRestoreCardWhenNothingPulledOut) {
-    pile.tryRestoreLastPulledOutCard();
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-}
-
-TEST_F(DefaultFoundationPileWithAceTest, tryRestorePulledOutAce) {
-    pile.tryPullOutCard();
-    pile.tryRestoreLastPulledOutCard();
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
-}
-
-TEST_F(DefaultFoundationPileWithAceTest, tryRestoreCardWhenPullOutFailed) {
-    pile.tryPullOutCard();
-    pile.tryPullOutCard();
-    pile.tryRestoreLastPulledOutCard();
-    EXPECT_TRUE(pile.getCards().empty());
-}
-
-class DefaultFoundationPileWithTwoAndPulledOutThreeTest:
-    public DefaultFoundationPileWithAceTest
+class DefaultFoundationPileWithTwoTest: public DefaultFoundationPileWithAceTest
 {
 public:
-    DefaultFoundationPileWithTwoAndPulledOutThreeTest() {
+    DefaultFoundationPileWithTwoTest() {
         pileCards.push_back(Card {Value::Two, Suit::Heart});
 
         std::optional<Card> cardToAdd = pileCards.back();
-        pile.tryAddCard(cardToAdd);
-
-        cardToAdd = Card {Value::Three, Suit::Heart};
-        pile.tryAddCard(cardToAdd);
-        pile.tryPullOutCard();
+        pile->tryAddCard(cardToAdd);
     }
 };
 
-TEST_F(DefaultFoundationPileWithTwoAndPulledOutThreeTest,
-       tryRestoreLastPulledOutCardTwoTimes)
-{
-    pile.tryPullOutCard();
-    pile.tryRestoreLastPulledOutCard();
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+TEST_F(DefaultFoundationPileWithTwoTest, tryPullOutCard) {
+    const Card pulledOutCard = pileCards.back();
+    pileCards.pop_back();
 
-    pile.tryRestoreLastPulledOutCard();
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+    EXPECT_EQ(pile->tryPullOutCard(), pulledOutCard);
+    EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(DefaultFoundationPileWithTwoAndPulledOutThreeTest,
-       tryRestorePulledOutCardAfterAddOperation)
+TEST_F(DefaultFoundationPileWithTwoTest, initializePileAfterOperations)
 {
-    pileCards.push_back(Card {Value::Three, Suit::Heart});
-    std::optional<Card> cardToAdd = pileCards.back();
+    pile->initialize();
 
-    pile.tryAddCard(cardToAdd);
-    pile.tryRestoreLastPulledOutCard();
-
-    EXPECT_THAT(pile.getCards(), ContainerEq(pileCards));
+    EXPECT_TRUE(pile->getCards().empty());
+    EXPECT_EQ(pile->getTopCardValue(), std::nullopt);
 }
 
-TEST_F(DefaultFoundationPileWithTwoAndPulledOutThreeTest,
-       initializePileAfterOperations)
+TEST_F(DefaultFoundationPileWithTwoTest, restorePileStateUsingSnapshot)
 {
-    pile.initialize();
-    pile.tryRestoreLastPulledOutCard();
+    const auto snapshot = pile->createSnapshot();
+    pile->initialize();
+    snapshot->restore();
 
-    EXPECT_TRUE(pile.getCards().empty());
-    EXPECT_EQ(pile.getTopCardValue(), std::nullopt);
+    EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
+    EXPECT_EQ(pile->getTopCardValue(), pileCards.back().getValue());
 }
 
 }

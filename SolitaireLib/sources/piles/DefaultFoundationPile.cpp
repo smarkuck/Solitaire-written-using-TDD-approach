@@ -8,12 +8,13 @@ namespace solitaire::piles {
 
 void DefaultFoundationPile::initialize() {
     cards.clear();
-    lastPulledOutCard.reset();
+}
+
+std::unique_ptr<archivers::Snapshot> DefaultFoundationPile::createSnapshot() {
+    return std::make_unique<Snapshot>(shared_from_this(), cards);
 }
 
 void DefaultFoundationPile::tryAddCard(std::optional<Card>& cardToAdd) {
-    lastPulledOutCard.reset();
-
     if (shouldAddCard(cardToAdd)) {
         cards.push_back(cardToAdd.value());
         cardToAdd.reset();
@@ -38,20 +39,12 @@ bool DefaultFoundationPile::isCardToAddCorrect(const Card& cardToAdd) const {
 
 std::optional<Card> DefaultFoundationPile::tryPullOutCard() {
     if (not cards.empty()) {
-        lastPulledOutCard = cards.back();
+        const auto pulledOutCard = cards.back();
         cards.pop_back();
-        return lastPulledOutCard;
+        return pulledOutCard;
     }
 
-    lastPulledOutCard.reset();
     return std::nullopt;
-}
-
-void DefaultFoundationPile::tryRestoreLastPulledOutCard() {
-    if (lastPulledOutCard) {
-        cards.push_back(lastPulledOutCard.value());
-        lastPulledOutCard.reset();
-    }
 }
 
 const Cards& DefaultFoundationPile::getCards() const {
@@ -62,6 +55,16 @@ std::optional<Value> DefaultFoundationPile::getTopCardValue() const {
     if (cards.empty())
         return std::nullopt;
     return cards.back().getValue();
+}
+
+DefaultFoundationPile::Snapshot::Snapshot(
+    std::shared_ptr<DefaultFoundationPile> foundationPile, Cards pileCards):
+    foundationPile{std::move(foundationPile)},
+    pileCards{std::move(pileCards)} {
+}
+
+void DefaultFoundationPile::Snapshot::restore() const {
+    foundationPile->cards = pileCards;
 }
 
 }

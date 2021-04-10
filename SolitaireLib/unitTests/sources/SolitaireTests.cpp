@@ -2,6 +2,7 @@
 
 #include "mock_ptr_array.h"
 #include "Solitaire.h"
+#include "archivers/Snapshot.h"
 #include "cards/Card.h"
 #include "cards/CardsGeneratorMock.h"
 #include "cards/CardsGeneratorUtils.h"
