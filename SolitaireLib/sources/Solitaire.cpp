@@ -11,13 +11,13 @@ using namespace solitaire::piles;
 namespace solitaire {
 
 Solitaire::Solitaire(std::unique_ptr<CardsGenerator> cardsGenerator,
-                     std::unique_ptr<StockPile> stockPile,
+                     std::shared_ptr<StockPile> stockPile,
                      FoundationPiles foundationPiles,
                      TableauPiles tableauPiles):
-    cardsGenerator{std::move(cardsGenerator)},
-    stockPile{std::move(stockPile)},
-    foundationPiles{std::move(foundationPiles)},
-    tableauPiles{std::move(tableauPiles)} {
+    cardsGenerator {std::move(cardsGenerator)},
+    stockPile {std::move(stockPile)},
+    foundationPiles {std::move(foundationPiles)},
+    tableauPiles {std::move(tableauPiles)} {
 }
 
 void Solitaire::startNewGame() {

@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "mock_ptr_array.h"
+#include "mock_ptr.h"
 #include "Solitaire.h"
 #include "archivers/Snapshot.h"
 #include "cards/Card.h"
@@ -23,16 +23,38 @@ MATCHER_P2(RangeEq, begin, end, "") {
 
 class SolitaireTest: public Test {
 public:
+    template <class T, std::size_t N>
+    using SharedPtrArray = std::array<std::shared_ptr<T>, N>;
+
+    template <class T, std::size_t N>
+    SharedPtrArray<T, N> makeSharedPtrArray() {
+        SharedPtrArray<T, N> result;
+        for (auto& ptr: result)
+            ptr = std::make_shared<T>();
+        return result;
+    }
+
+    template <class CopiedArrayType, class T, std::size_t N>
+    SharedPtrArray<CopiedArrayType, N> copySharedPtrArray(const SharedPtrArray<T, N>& source) {
+        SharedPtrArray<CopiedArrayType, N> copy;
+        std::copy(source.begin(), source.end(), copy.begin());
+        return copy;
+    }
+
     mock_ptr<CardsGeneratorMock> cardsGeneratorMock;
-    mock_ptr<StockPileMock> stockPileMock;
-    mock_ptr_array<FoundationPileMock, 4> foundationPileMocks;
-    mock_ptr_array<TableauPileMock, 7> tableauPileMocks;
+    std::shared_ptr<StockPileMock> stockPileMock {std::make_shared<StockPileMock>()};
+
+    std::array<std::shared_ptr<FoundationPileMock>, 4>
+        foundationPileMocks {makeSharedPtrArray<FoundationPileMock, 4>()};
+
+    std::array<std::shared_ptr<TableauPileMock>, 7>
+        tableauPileMocks {makeSharedPtrArray<TableauPileMock, 7>()};
 
     Solitaire solitaire {
         cardsGeneratorMock.make_unique(),
-        stockPileMock.make_unique(),
-        foundationPileMocks.make_unique<FoundationPile>(),
-        tableauPileMocks.make_unique<TableauPile>()
+        stockPileMock,
+        copySharedPtrArray<FoundationPile>(foundationPileMocks),
+        copySharedPtrArray<TableauPile>(tableauPileMocks)
     };
 
     void expectTableauPilesInitialization(const Cards& cards) {

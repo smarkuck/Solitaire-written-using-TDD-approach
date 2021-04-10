@@ -17,12 +17,13 @@ namespace piles {
 }
 
 class Solitaire {
-    using FoundationPiles = std::array<std::unique_ptr<piles::FoundationPile>, 4>;
-    using TableauPiles = std::array<std::unique_ptr<piles::TableauPile>, 7>;
+private:
+    using FoundationPiles = std::array<std::shared_ptr<piles::FoundationPile>, 4>;
+    using TableauPiles = std::array<std::shared_ptr<piles::TableauPile>, 7>;
 
 public:
     Solitaire(std::unique_ptr<cards::CardsGenerator> cardsGenerator,
-              std::unique_ptr<piles::StockPile> stockPile,
+              std::shared_ptr<piles::StockPile> stockPile,
               FoundationPiles foundationPiles,
               TableauPiles tableauPiles);
 
@@ -33,7 +34,7 @@ private:
     initializeTableauPilesAndReturnFirstNotUsedCard(const cards::Cards&);
 
     std::unique_ptr<cards::CardsGenerator> cardsGenerator;
-    std::unique_ptr<piles::StockPile> stockPile;
+    std::shared_ptr<piles::StockPile> stockPile;
     FoundationPiles foundationPiles;
     TableauPiles tableauPiles;
 };
