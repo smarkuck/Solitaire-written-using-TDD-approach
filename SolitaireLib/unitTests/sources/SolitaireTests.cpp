@@ -71,23 +71,6 @@ public:
         copySharedPtrArray<FoundationPile>(foundationPileMocks),
         copySharedPtrArray<TableauPile>(tableauPileMocks)
     };
-
-    void expectTableauPilesInitialization(const Deck& deck) {
-        EXPECT_CALL(*tableauPileMocks[0], initialize(_, _))
-            .With(AllArgs(RangeEq(deck.begin(), std::next(deck.begin()))));
-        EXPECT_CALL(*tableauPileMocks[1], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(deck.begin()), std::next(deck.begin(), 3))));
-        EXPECT_CALL(*tableauPileMocks[2], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(deck.begin(), 3), std::next(deck.begin(), 6))));
-        EXPECT_CALL(*tableauPileMocks[3], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(deck.begin(), 6), std::next(deck.begin(), 10))));
-        EXPECT_CALL(*tableauPileMocks[4], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(deck.begin(), 10), std::next(deck.begin(), 15))));
-        EXPECT_CALL(*tableauPileMocks[5], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(deck.begin(), 15), std::next(deck.begin(), 21))));
-        EXPECT_CALL(*tableauPileMocks[6], initialize(_, _))
-            .With(AllArgs(RangeEq(std::next(deck.begin(), 21), std::next(deck.begin(), 28))));
-    }
 };
 
 TEST_F(SolitaireTest, afterInitializationHandIsEmpty) {
@@ -158,8 +141,7 @@ TEST_F(SolitaireTest, getStockPile) {
     EXPECT_EQ(&solitaire.getStockPile(), stockPileMock.get());
 }
 
-class SolitaireEmptyHandTest: public SolitaireTest {
-};
+class SolitaireEmptyHandTest: public SolitaireTest {};
 
 TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromFoundationPile) {
     EXPECT_CALL(*foundationPileMocks[foundationPileId], tryPullOutCard())
@@ -230,18 +212,63 @@ TEST_F(SolitaireEmptyHandTest, tryPullOutCardFromStockPile) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(cardsInHand));
 }
 
-TEST_F(SolitaireTest, onNewGameGenerateAndDistributeCards) {
+class SolitaireHandWithOneCardTest: public SolitaireEmptyHandTest {
+public:
+    SolitaireHandWithOneCardTest() {
+        EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(deck.back()));
+        solitaire.tryPullOutCardFromStockPile();
+    }
+
+    void expectFoundationPilesInitialization() {
+        for (auto& pile: foundationPileMocks)
+            EXPECT_CALL(*pile, initialize());
+    }
+
+    void expectTableauPilesInitialization() {
+        EXPECT_CALL(*tableauPileMocks[0], initialize(_, _))
+            .With(AllArgs(RangeEq(deck.begin(), std::next(deck.begin()))));
+        EXPECT_CALL(*tableauPileMocks[1], initialize(_, _))
+            .With(AllArgs(RangeEq(std::next(deck.begin()), std::next(deck.begin(), 3))));
+        EXPECT_CALL(*tableauPileMocks[2], initialize(_, _))
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 3), std::next(deck.begin(), 6))));
+        EXPECT_CALL(*tableauPileMocks[3], initialize(_, _))
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 6), std::next(deck.begin(), 10))));
+        EXPECT_CALL(*tableauPileMocks[4], initialize(_, _))
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 10), std::next(deck.begin(), 15))));
+        EXPECT_CALL(*tableauPileMocks[5], initialize(_, _))
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 15), std::next(deck.begin(), 21))));
+        EXPECT_CALL(*tableauPileMocks[6], initialize(_, _))
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 21), std::next(deck.begin(), 28))));
+    }
+
+    void expectStockPileInitialization() {
+        EXPECT_CALL(*stockPileMock, initialize(_, _))
+            .With(AllArgs(RangeEq(std::next(deck.begin(), 28), deck.end())));
+    }
+};
+
+TEST_F(SolitaireHandWithOneCardTest, onNewGameClearHandAndDistributeCards) {
     EXPECT_CALL(*deckGeneratorMock, generate()).WillOnce(Return(deck));
-
-    for (auto& pile: foundationPileMocks)
-        EXPECT_CALL(*pile, initialize());
-
-    expectTableauPilesInitialization(deck);
-
-    EXPECT_CALL(*stockPileMock, initialize(_, _))
-        .With(AllArgs(RangeEq(std::next(deck.begin(), 28), deck.end())));
+    expectFoundationPilesInitialization();
+    expectTableauPilesInitialization();
+    expectStockPileInitialization();
 
     solitaire.startNewGame();
+    EXPECT_TRUE(solitaire.getCardsInHand().empty());
+}
+
+TEST_F(SolitaireHandWithOneCardTest, someOperationsShouldBeIgnored) {
+    EXPECT_CALL(*foundationPileMocks[foundationPileId], tryPullOutCard()).Times(0);
+    EXPECT_CALL(*tableauPileMocks[tableauPileId], tryUncoverTopCard()).Times(0);
+    EXPECT_CALL(*tableauPileMocks[tableauPileId], tryPullOutCards(_)).Times(0);
+    EXPECT_CALL(*stockPileMock, selectNextCard()).Times(0);
+    EXPECT_CALL(*stockPileMock, tryPullOutCard()).Times(0);
+
+    solitaire.tryPullOutCardFromFoundationPile(foundationPileId);
+    solitaire.tryUncoverTableauPileTopCard(tableauPileId);
+    solitaire.tryPullOutCardsFromTableauPile(tableauPileId, quantityToPullOut);
+    solitaire.selectNextStockPileCard();
+    solitaire.tryPullOutCardFromStockPile();
 }
 
 }

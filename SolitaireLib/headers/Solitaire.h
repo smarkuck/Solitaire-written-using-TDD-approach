@@ -53,6 +53,8 @@ public:
     const cards::Cards& getCardsInHand() const;
 
 private:
+    void initializeFoundationPiles();
+
     cards::Deck::const_iterator
     initializeTableauPilesAndReturnFirstNotUsedCard(const cards::Deck&);
 

@@ -22,13 +22,17 @@ Solitaire::Solitaire(std::unique_ptr<DeckGenerator> deckGenerator,
 }
 
 void Solitaire::startNewGame() {
+    cardsInHand.clear();
     const auto deck = deckGenerator->generate();
 
-    for (auto& pile: foundationPiles)
-        pile->initialize();
-
+    initializeFoundationPiles();
     const auto firstNotUsedCard = initializeTableauPilesAndReturnFirstNotUsedCard(deck);
     stockPile->initialize(firstNotUsedCard, deck.end());
+}
+
+void Solitaire::initializeFoundationPiles() {
+    for (auto& pile: foundationPiles)
+        pile->initialize();
 }
 
 Deck::const_iterator
@@ -47,9 +51,12 @@ Solitaire::initializeTableauPilesAndReturnFirstNotUsedCard(const Deck& deck) {
 
 void Solitaire::tryPullOutCardFromFoundationPile(const PileId id) {
     throwExceptionOnInvalidFoundationPileId(id);
-    const auto pulledOutCard = foundationPiles[id]->tryPullOutCard();
-    if (pulledOutCard)
-        cardsInHand.push_back(*pulledOutCard);
+
+    if (cardsInHand.empty()) {
+        const auto pulledOutCard = foundationPiles[id]->tryPullOutCard();
+        if (pulledOutCard)
+            cardsInHand.push_back(*pulledOutCard);
+    }
 }
 
 void Solitaire::tryAddCardOnFoundationPile(const piles::PileId id) {
@@ -58,12 +65,16 @@ void Solitaire::tryAddCardOnFoundationPile(const piles::PileId id) {
 
 void Solitaire::tryUncoverTableauPileTopCard(const piles::PileId id) {
     throwExceptionOnInvalidTableauPileId(id);
-    tableauPiles[id]->tryUncoverTopCard();
+
+    if (cardsInHand.empty())
+        tableauPiles[id]->tryUncoverTopCard();
 }
 
 void Solitaire::tryPullOutCardsFromTableauPile(const PileId id, const unsigned quantity) {
     throwExceptionOnInvalidTableauPileId(id);
-    cardsInHand = tableauPiles[id]->tryPullOutCards(quantity);
+
+    if (cardsInHand.empty())
+        cardsInHand = tableauPiles[id]->tryPullOutCards(quantity);
 }
 
 void Solitaire::tryAddCardsOnTableauPile(const piles::PileId id) {
@@ -71,13 +82,16 @@ void Solitaire::tryAddCardsOnTableauPile(const piles::PileId id) {
 }
 
 void Solitaire::selectNextStockPileCard() {
-    stockPile->selectNextCard();
+    if (cardsInHand.empty())
+        stockPile->selectNextCard();
 }
 
 void Solitaire::tryPullOutCardFromStockPile() {
-    const auto pulledOutCard = stockPile->tryPullOutCard();
-    if (pulledOutCard)
-        cardsInHand.push_back(*pulledOutCard);
+    if (cardsInHand.empty()) {
+        const auto pulledOutCard = stockPile->tryPullOutCard();
+        if (pulledOutCard)
+            cardsInHand.push_back(*pulledOutCard);
+    }
 }
 
 const FoundationPile& Solitaire::getFoundationPile(const PileId id) const {
