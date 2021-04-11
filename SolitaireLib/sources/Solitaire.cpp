@@ -52,9 +52,26 @@ void Solitaire::tryPullOutCardFromFoundationPile(const PileId id) {
         cardsInHand.push_back(*pulledOutCard);
 }
 
+void Solitaire::tryAddCardOnFoundationPile(const piles::PileId id) {
+    throwExceptionOnInvalidFoundationPileId(id);
+}
+
+void Solitaire::tryUncoverTableauPileTopCard(const piles::PileId id) {
+    throwExceptionOnInvalidTableauPileId(id);
+    tableauPiles[id]->tryUncoverTopCard();
+}
+
 void Solitaire::tryPullOutCardsFromTableauPile(const PileId id, const unsigned quantity) {
     throwExceptionOnInvalidTableauPileId(id);
     cardsInHand = tableauPiles[id]->tryPullOutCards(quantity);
+}
+
+void Solitaire::tryAddCardsOnTableauPile(const piles::PileId id) {
+    throwExceptionOnInvalidTableauPileId(id);
+}
+
+void Solitaire::selectNextStockPileCard() {
+    stockPile->selectNextCard();
 }
 
 void Solitaire::tryPullOutCardFromStockPile() {

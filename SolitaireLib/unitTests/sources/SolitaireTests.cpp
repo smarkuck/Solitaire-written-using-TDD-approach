@@ -94,7 +94,21 @@ TEST_F(SolitaireTest, afterInitializationHandIsEmpty) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireTest, tryGetFoundationPileWithIdGreaterThanThree) {
+TEST_F(SolitaireTest, tryPullOutCardFromFoundationPileWithIdGreaterThanThree) {
+    EXPECT_THROW(
+        solitaire.tryPullOutCardFromFoundationPile(invalidFoundationPileId),
+        std::runtime_error
+    );
+}
+
+TEST_F(SolitaireTest, tryAddCardOnFoundationPileWithIdGreaterThanThree) {
+    EXPECT_THROW(
+        solitaire.tryAddCardOnFoundationPile(invalidFoundationPileId),
+        std::runtime_error
+    );
+}
+
+TEST_F(SolitaireTest, getFoundationPileWithIdGreaterThanThree) {
     EXPECT_THROW(
         solitaire.getFoundationPile(invalidFoundationPileId),
         std::runtime_error
@@ -108,7 +122,28 @@ TEST_F(SolitaireTest, getFoundationPile) {
     );
 }
 
-TEST_F(SolitaireTest, tryGetTableauPileWithIdGreaterThanSix) {
+TEST_F(SolitaireTest, tryUncoverTableauPileTopCardWithIdGreaterThanSix) {
+    EXPECT_THROW(
+        solitaire.tryUncoverTableauPileTopCard(invalidTableauPileId),
+        std::runtime_error
+    );
+}
+
+TEST_F(SolitaireTest, tryPullOutCardsFromTableauPileWithIdGreaterThanSix) {
+    EXPECT_THROW(
+        solitaire.tryPullOutCardsFromTableauPile(invalidTableauPileId, quantityToPullOut),
+        std::runtime_error
+    );
+}
+
+TEST_F(SolitaireTest, tryAddCardsOnTableauPileWithIdGreaterThanSix) {
+    EXPECT_THROW(
+        solitaire.tryAddCardsOnTableauPile(invalidTableauPileId),
+        std::runtime_error
+    );
+}
+
+TEST_F(SolitaireTest, getTableauPileWithIdGreaterThanSix) {
     EXPECT_THROW(solitaire.getTableauPile(invalidTableauPileId), std::runtime_error);
 }
 
@@ -123,14 +158,10 @@ TEST_F(SolitaireTest, getStockPile) {
     EXPECT_EQ(&solitaire.getStockPile(), stockPileMock.get());
 }
 
-TEST_F(SolitaireTest, tryPullOutCardFromFoundationPileWithIdGreaterThanThree) {
-    EXPECT_THROW(
-        solitaire.tryPullOutCardFromFoundationPile(invalidFoundationPileId),
-        std::runtime_error
-    );
-}
+class SolitaireEmptyHandTest: public SolitaireTest {
+};
 
-TEST_F(SolitaireTest, tryPullOutNoCardsFromFoundationPileWhenHandIsEmpty) {
+TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromFoundationPile) {
     EXPECT_CALL(*foundationPileMocks[foundationPileId], tryPullOutCard())
         .WillOnce(Return(std::nullopt));
 
@@ -138,7 +169,7 @@ TEST_F(SolitaireTest, tryPullOutNoCardsFromFoundationPileWhenHandIsEmpty) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireTest, tryPullOutCardFromFoundationPileWhenHandIsEmpty) {
+TEST_F(SolitaireEmptyHandTest, tryPullOutCardFromFoundationPile) {
     Cards cardsInHand {deck.back()};
 
     EXPECT_CALL(*foundationPileMocks[foundationPileId], tryPullOutCard())
@@ -148,14 +179,17 @@ TEST_F(SolitaireTest, tryPullOutCardFromFoundationPileWhenHandIsEmpty) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(cardsInHand));
 }
 
-TEST_F(SolitaireTest, tryPullOutCardsFromTableauPileWithIdGreaterThanSix) {
-    EXPECT_THROW(
-        solitaire.tryPullOutCardsFromTableauPile(invalidTableauPileId, quantityToPullOut),
-        std::runtime_error
-    );
+TEST_F(SolitaireEmptyHandTest, tryAddCardOnFoundationPile) {
+    EXPECT_CALL(*foundationPileMocks[foundationPileId], tryAddCard(_)).Times(0);
+    solitaire.tryAddCardOnFoundationPile(foundationPileId);
 }
 
-TEST_F(SolitaireTest, tryPullOutNoCardsFromTableauPileWhenHandIsEmpty) {
+TEST_F(SolitaireEmptyHandTest, tryUncoverTableauPileTopCard) {
+    EXPECT_CALL(*tableauPileMocks[tableauPileId], tryUncoverTopCard());
+    solitaire.tryUncoverTableauPileTopCard(tableauPileId);
+}
+
+TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromTableauPile) {
     EXPECT_CALL(*tableauPileMocks[tableauPileId], tryPullOutCards(quantityToPullOut))
         .WillOnce(Return(noCards));
 
@@ -163,11 +197,8 @@ TEST_F(SolitaireTest, tryPullOutNoCardsFromTableauPileWhenHandIsEmpty) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireTest, tryPullOutCardsFromTableauPileWhenHandIsEmpty) {
-    Cards cards {
-        Card {Value::Five, Suit::Spade},
-        Card {Value::Four, Suit::Diamond}
-    };
+TEST_F(SolitaireEmptyHandTest, tryPullOutCardsFromTableauPile) {
+    Cards cards {deck[0], deck[1]};
 
     EXPECT_CALL(*tableauPileMocks[tableauPileId], tryPullOutCards(quantityToPullOut))
         .WillOnce(Return(cards));
@@ -176,13 +207,23 @@ TEST_F(SolitaireTest, tryPullOutCardsFromTableauPileWhenHandIsEmpty) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(cards));
 }
 
-TEST_F(SolitaireTest, tryPullOutNoCardsFromStockPileWhenHandIsEmpty) {
+TEST_F(SolitaireEmptyHandTest, tryAddCardsOnTableauPile) {
+    EXPECT_CALL(*tableauPileMocks[tableauPileId], tryAddCards(_)).Times(0);
+    solitaire.tryAddCardsOnTableauPile(tableauPileId);
+}
+
+TEST_F(SolitaireEmptyHandTest, selectNextStockPileCard) {
+    EXPECT_CALL(*stockPileMock, selectNextCard());
+    solitaire.selectNextStockPileCard();
+}
+
+TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromStockPile) {
     EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(std::nullopt));
     solitaire.tryPullOutCardFromStockPile();
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireTest, tryPullOutCardFromStockPileWhenHandIsEmpty) {
+TEST_F(SolitaireEmptyHandTest, tryPullOutCardFromStockPile) {
     Cards cardsInHand {deck.back()};
     EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(deck.back()));
     solitaire.tryPullOutCardFromStockPile();

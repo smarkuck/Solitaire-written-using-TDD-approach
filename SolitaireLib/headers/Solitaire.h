@@ -36,8 +36,15 @@ public:
               TableauPiles tableauPiles);
 
     void startNewGame();
+
     void tryPullOutCardFromFoundationPile(const piles::PileId);
+    void tryAddCardOnFoundationPile(const piles::PileId);
+
+    void tryUncoverTableauPileTopCard(const piles::PileId);
     void tryPullOutCardsFromTableauPile(const piles::PileId, const unsigned quantity);
+    void tryAddCardsOnTableauPile(const piles::PileId);
+
+    void selectNextStockPileCard();
     void tryPullOutCardFromStockPile();
 
     const piles::FoundationPile& getFoundationPile(const piles::PileId) const;
