@@ -45,20 +45,54 @@ Solitaire::initializeTableauPilesAndReturnFirstNotUsedCard(const Deck& deck) {
     return firstNotUsedCard;
 }
 
-const FoundationPile& Solitaire::getFoundationPile(unsigned id) const {
-    if (id >= foundationPiles.size())
-        throw std::runtime_error{"Cannot access foundation pile with id: " + std::to_string(id)};
+void Solitaire::tryPullOutCardFromFoundationPile(const PileId id) {
+    throwExceptionOnInvalidFoundationPileId(id);
+    const auto pulledOutCard = foundationPiles[id]->tryPullOutCard();
+    if (pulledOutCard)
+        cardsInHand.push_back(*pulledOutCard);
+}
+
+void Solitaire::tryPullOutCardsFromTableauPile(const PileId id, const unsigned quantity) {
+    throwExceptionOnInvalidTableauPileId(id);
+    cardsInHand = tableauPiles[id]->tryPullOutCards(quantity);
+}
+
+void Solitaire::tryPullOutCardFromStockPile() {
+    const auto pulledOutCard = stockPile->tryPullOutCard();
+    if (pulledOutCard)
+        cardsInHand.push_back(*pulledOutCard);
+}
+
+const FoundationPile& Solitaire::getFoundationPile(const PileId id) const {
+    throwExceptionOnInvalidFoundationPileId(id);
     return *foundationPiles[id];
 }
 
-const TableauPile& Solitaire::getTableauPile(unsigned id) const {
-    if (id >= tableauPiles.size())
-        throw std::runtime_error{"Cannot access tableau pile with id: " + std::to_string(id)};
+const TableauPile& Solitaire::getTableauPile(const PileId id) const {
+    throwExceptionOnInvalidTableauPileId(id);
     return *tableauPiles[id];
 }
 
 const StockPile& Solitaire::getStockPile() const {
     return *stockPile;
+}
+
+void Solitaire::throwExceptionOnInvalidFoundationPileId(const piles::PileId id) const {
+    if (id.t >= foundationPilesCount)
+        throw std::runtime_error{
+            "Cannot access foundation pile with id: " + std::to_string(id)
+        };
+}
+
+void Solitaire::throwExceptionOnInvalidTableauPileId(const piles::PileId id) const {
+    if (id.t >= tableauPilesCount)
+        throw std::runtime_error{
+            "Cannot access tableau pile with id: " + std::to_string(id)
+        };
+}
+
+const cards::Cards& Solitaire::getCardsInHand() const {
+    return cardsInHand;
 }
 
 }

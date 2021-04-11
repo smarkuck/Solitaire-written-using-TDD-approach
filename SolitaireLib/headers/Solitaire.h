@@ -4,7 +4,9 @@
 #include <memory>
 
 #include "cards/Card.h"
+#include "cards/Cards.h"
 #include "cards/Deck.h"
+#include "piles/PileId.h"
 
 namespace solitaire {
 namespace cards {
@@ -19,8 +21,13 @@ namespace piles {
 
 class Solitaire {
 private:
-    using FoundationPiles = std::array<std::shared_ptr<piles::FoundationPile>, 4>;
-    using TableauPiles = std::array<std::shared_ptr<piles::TableauPile>, 7>;
+    static constexpr unsigned foundationPilesCount {4};
+    static constexpr unsigned tableauPilesCount {7};
+
+    using FoundationPiles =
+        std::array<std::shared_ptr<piles::FoundationPile>, foundationPilesCount>;
+    using TableauPiles =
+        std::array<std::shared_ptr<piles::TableauPile>, tableauPilesCount>;
 
 public:
     Solitaire(std::unique_ptr<cards::DeckGenerator> deckGenerator,
@@ -29,18 +36,27 @@ public:
               TableauPiles tableauPiles);
 
     void startNewGame();
-    const piles::FoundationPile& getFoundationPile(unsigned id) const;
-    const piles::TableauPile& getTableauPile(unsigned id) const;
+    void tryPullOutCardFromFoundationPile(const piles::PileId);
+    void tryPullOutCardsFromTableauPile(const piles::PileId, const unsigned quantity);
+    void tryPullOutCardFromStockPile();
+
+    const piles::FoundationPile& getFoundationPile(const piles::PileId) const;
+    const piles::TableauPile& getTableauPile(const piles::PileId) const;
     const piles::StockPile& getStockPile() const;
+    const cards::Cards& getCardsInHand() const;
 
 private:
     cards::Deck::const_iterator
     initializeTableauPilesAndReturnFirstNotUsedCard(const cards::Deck&);
 
+    void throwExceptionOnInvalidFoundationPileId(const piles::PileId) const;
+    void throwExceptionOnInvalidTableauPileId(const piles::PileId) const;
+
     std::unique_ptr<cards::DeckGenerator> deckGenerator;
     std::shared_ptr<piles::StockPile> stockPile;
     FoundationPiles foundationPiles;
     TableauPiles tableauPiles;
+    cards::Cards cardsInHand;
 };
 
 }

@@ -5,6 +5,8 @@
 #include "archivers/Snapshot.h"
 #include "cards/DeckGeneratorMock.h"
 #include "cards/DeckGeneratorUtils.h"
+#include "cards/Suit.h"
+#include "cards/Value.h"
 #include "gmock/gmock.h"
 #include "piles/FoundationPileMock.h"
 #include "piles/StockPileMock.h"
@@ -17,7 +19,15 @@ using namespace solitaire::piles;
 namespace solitaire {
 
 namespace {
-    const auto deck {createSortedDeck()};
+const PileId invalidFoundationPileId {4};
+const PileId foundationPileId {3};
+const PileId invalidTableauPileId {7};
+const PileId tableauPileId {6};
+
+const unsigned quantityToPullOut {2};
+
+const auto deck {createSortedDeck()};
+const Cards noCards;
 }
 
 MATCHER_P2(RangeEq, begin, end, "") {
@@ -38,7 +48,9 @@ public:
     }
 
     template <class CopiedArrayType, class T, std::size_t N>
-    SharedPtrArray<CopiedArrayType, N> copySharedPtrArray(const SharedPtrArray<T, N>& source) {
+    SharedPtrArray<CopiedArrayType, N> copySharedPtrArray(
+        const SharedPtrArray<T, N>& source)
+    {
         SharedPtrArray<CopiedArrayType, N> copy;
         std::copy(source.begin(), source.end(), copy.begin());
         return copy;
@@ -78,6 +90,105 @@ public:
     }
 };
 
+TEST_F(SolitaireTest, afterInitializationHandIsEmpty) {
+    EXPECT_TRUE(solitaire.getCardsInHand().empty());
+}
+
+TEST_F(SolitaireTest, tryGetFoundationPileWithIdGreaterThanThree) {
+    EXPECT_THROW(
+        solitaire.getFoundationPile(invalidFoundationPileId),
+        std::runtime_error
+    );
+}
+
+TEST_F(SolitaireTest, getFoundationPile) {
+    EXPECT_EQ(
+        &solitaire.getFoundationPile(foundationPileId),
+        foundationPileMocks[foundationPileId].get()
+    );
+}
+
+TEST_F(SolitaireTest, tryGetTableauPileWithIdGreaterThanSix) {
+    EXPECT_THROW(solitaire.getTableauPile(invalidTableauPileId), std::runtime_error);
+}
+
+TEST_F(SolitaireTest, getTableauPile) {
+    EXPECT_EQ(
+        &solitaire.getTableauPile(tableauPileId),
+        tableauPileMocks[tableauPileId].get()
+    );
+}
+
+TEST_F(SolitaireTest, getStockPile) {
+    EXPECT_EQ(&solitaire.getStockPile(), stockPileMock.get());
+}
+
+TEST_F(SolitaireTest, tryPullOutCardFromFoundationPileWithIdGreaterThanThree) {
+    EXPECT_THROW(
+        solitaire.tryPullOutCardFromFoundationPile(invalidFoundationPileId),
+        std::runtime_error
+    );
+}
+
+TEST_F(SolitaireTest, tryPullOutNoCardsFromFoundationPileWhenHandIsEmpty) {
+    EXPECT_CALL(*foundationPileMocks[foundationPileId], tryPullOutCard())
+        .WillOnce(Return(std::nullopt));
+
+    solitaire.tryPullOutCardFromFoundationPile(foundationPileId);
+    EXPECT_TRUE(solitaire.getCardsInHand().empty());
+}
+
+TEST_F(SolitaireTest, tryPullOutCardFromFoundationPileWhenHandIsEmpty) {
+    Cards cardsInHand {deck.back()};
+
+    EXPECT_CALL(*foundationPileMocks[foundationPileId], tryPullOutCard())
+        .WillOnce(Return(deck.back()));
+
+    solitaire.tryPullOutCardFromFoundationPile(foundationPileId);
+    EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(cardsInHand));
+}
+
+TEST_F(SolitaireTest, tryPullOutCardsFromTableauPileWithIdGreaterThanSix) {
+    EXPECT_THROW(
+        solitaire.tryPullOutCardsFromTableauPile(invalidTableauPileId, quantityToPullOut),
+        std::runtime_error
+    );
+}
+
+TEST_F(SolitaireTest, tryPullOutNoCardsFromTableauPileWhenHandIsEmpty) {
+    EXPECT_CALL(*tableauPileMocks[tableauPileId], tryPullOutCards(quantityToPullOut))
+        .WillOnce(Return(noCards));
+
+    solitaire.tryPullOutCardsFromTableauPile(tableauPileId, quantityToPullOut);
+    EXPECT_TRUE(solitaire.getCardsInHand().empty());
+}
+
+TEST_F(SolitaireTest, tryPullOutCardsFromTableauPileWhenHandIsEmpty) {
+    Cards cards {
+        Card {Value::Five, Suit::Spade},
+        Card {Value::Four, Suit::Diamond}
+    };
+
+    EXPECT_CALL(*tableauPileMocks[tableauPileId], tryPullOutCards(quantityToPullOut))
+        .WillOnce(Return(cards));
+
+    solitaire.tryPullOutCardsFromTableauPile(tableauPileId, quantityToPullOut);
+    EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(cards));
+}
+
+TEST_F(SolitaireTest, tryPullOutNoCardsFromStockPileWhenHandIsEmpty) {
+    EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(std::nullopt));
+    solitaire.tryPullOutCardFromStockPile();
+    EXPECT_TRUE(solitaire.getCardsInHand().empty());
+}
+
+TEST_F(SolitaireTest, tryPullOutCardFromStockPileWhenHandIsEmpty) {
+    Cards cardsInHand {deck.back()};
+    EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(deck.back()));
+    solitaire.tryPullOutCardFromStockPile();
+    EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(cardsInHand));
+}
+
 TEST_F(SolitaireTest, onNewGameGenerateAndDistributeCards) {
     EXPECT_CALL(*deckGeneratorMock, generate()).WillOnce(Return(deck));
 
@@ -90,26 +201,6 @@ TEST_F(SolitaireTest, onNewGameGenerateAndDistributeCards) {
         .With(AllArgs(RangeEq(std::next(deck.begin(), 28), deck.end())));
 
     solitaire.startNewGame();
-}
-
-TEST_F(SolitaireTest, throwExceptionWhenTryingToAccessFoundationPileWithIdGreaterThanThree) {
-    EXPECT_THROW(solitaire.getFoundationPile(4), std::runtime_error);
-}
-
-TEST_F(SolitaireTest, getFoundationPile) {
-    EXPECT_EQ(&solitaire.getFoundationPile(3), foundationPileMocks[3].get());
-}
-
-TEST_F(SolitaireTest, throwExceptionWhenTryingToAccessTableauPileWithIdGreaterThanSix) {
-    EXPECT_THROW(solitaire.getTableauPile(7), std::runtime_error);
-}
-
-TEST_F(SolitaireTest, getTableauPile) {
-    EXPECT_EQ(&solitaire.getTableauPile(6), tableauPileMocks[6].get());
-}
-
-TEST_F(SolitaireTest, getStockPile) {
-    EXPECT_EQ(&solitaire.getStockPile(), stockPileMock.get());
 }
 
 }

@@ -10,4 +10,6 @@ target_sources(SolitaireLib PRIVATE
     sources/piles/DefaultTableauPile.cpp
 )
 
+target_link_libraries(SolitaireLib PUBLIC Boost)
+
 add_subdirectory(unitTests)
