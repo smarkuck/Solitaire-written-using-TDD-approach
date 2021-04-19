@@ -4,6 +4,7 @@ target_include_directories(SolitaireLib PUBLIC headers)
 target_sources(SolitaireLib PRIVATE
     sources/Solitaire.cpp
     sources/archivers/HistoryTracker.cpp
+    sources/archivers/MoveCardsOperationSnapshotCreator.cpp
     sources/cards/Card.cpp
     sources/cards/ShuffledDeckGenerator.cpp
     sources/piles/DefaultFoundationPile.cpp

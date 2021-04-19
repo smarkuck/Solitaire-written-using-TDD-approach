@@ -24,6 +24,10 @@ TEST_F(HistoryTrackerTests, undoShouldThrowIfHistoryEmpty) {
     EXPECT_THROW(historyTracker.undo(), std::runtime_error);
 }
 
+TEST_F(HistoryTrackerTests, onSaveShouldThrowIfPassedNullptr) {
+    EXPECT_THROW(historyTracker.save(nullptr), std::runtime_error);
+}
+
 TEST_F(HistoryTrackerTests, onSaveHistorySizeShouldIncrease) {
     mock_ptr<SnapshotMock> snapshotMock;
     historyTracker.save(snapshotMock.make_unique());
