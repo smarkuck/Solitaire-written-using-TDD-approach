@@ -257,7 +257,7 @@ TEST_F(SolitaireHandWithOneCardTest, onNewGameClearHandAndDistributeCards) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireHandWithOneCardTest, someOperationsShouldBeIgnored) {
+TEST_F(SolitaireHandWithOneCardTest, ignoreSomeOperationsIfHandNotEmpty) {
     EXPECT_CALL(*foundationPileMocks[foundationPileId], tryPullOutCard()).Times(0);
     EXPECT_CALL(*tableauPileMocks[tableauPileId], tryUncoverTopCard()).Times(0);
     EXPECT_CALL(*tableauPileMocks[tableauPileId], tryPullOutCards(_)).Times(0);
