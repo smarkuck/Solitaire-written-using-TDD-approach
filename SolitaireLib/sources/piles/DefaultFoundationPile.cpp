@@ -67,4 +67,15 @@ void DefaultFoundationPile::Snapshot::restore() const {
     foundationPile->cards = pileCards;
 }
 
+bool DefaultFoundationPile::Snapshot::isSnapshotOfSameObject(
+    const archivers::Snapshot& snapshot) const
+try {
+    const auto& castedSnaphost =
+        dynamic_cast<const DefaultFoundationPile::Snapshot&>(snapshot);
+    return foundationPile == castedSnaphost.foundationPile;
+}
+catch (const std::bad_cast&) {
+    return false;
+}
+
 }

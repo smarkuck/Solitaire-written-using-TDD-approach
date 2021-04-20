@@ -1,3 +1,4 @@
+#include "archivers/SnapshotMock.h"
 #include "cards/Card.h"
 #include "cards/Suit.h"
 #include "cards/Value.h"
@@ -6,6 +7,7 @@
 #include "piles/PileUtils.h"
 
 using namespace testing;
+using namespace solitaire::archivers;
 using namespace solitaire::cards;
 
 namespace solitaire::piles {
@@ -130,6 +132,18 @@ TEST_F(DefaultStockPileInitializationTest, restorePileStateUsingSnapshot) {
 
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
     EXPECT_EQ(pile->getSelectedCardIndex(), 0);
+}
+
+TEST_F(DefaultStockPileInitializationTest, isSnapshotOfSameObject) {
+    const auto snapshot = pile->createSnapshot();
+    initializePile(*pile, newPileCards);
+    const auto snapshotOfSameObject = pile->createSnapshot();
+    const auto snapshotOfSameTypeObject = std::make_shared<DefaultStockPile>()->createSnapshot();
+    SnapshotMock snapshotOfDifferentTypeObject;
+
+    EXPECT_TRUE(snapshot->isSnapshotOfSameObject(*snapshotOfSameObject));
+    EXPECT_FALSE(snapshot->isSnapshotOfSameObject(*snapshotOfSameTypeObject));
+    EXPECT_FALSE(snapshot->isSnapshotOfSameObject(snapshotOfDifferentTypeObject));
 }
 
 }

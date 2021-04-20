@@ -8,6 +8,7 @@ namespace solitaire::archivers {
 class SnapshotMock: public Snapshot {
 public:
     MOCK_METHOD(void, restore, (), (const, override));
+    MOCK_METHOD(bool, isSnapshotOfSameObject, (const Snapshot&), (const, override));
 };
 
 }

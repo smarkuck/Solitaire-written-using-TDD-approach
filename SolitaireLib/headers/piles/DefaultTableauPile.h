@@ -39,6 +39,7 @@ public:
              unsigned placeInOrderOfFirstCoveredCard);
 
     void restore() const override;
+    bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
 
 private:
     const std::shared_ptr<DefaultTableauPile> tableauPile;

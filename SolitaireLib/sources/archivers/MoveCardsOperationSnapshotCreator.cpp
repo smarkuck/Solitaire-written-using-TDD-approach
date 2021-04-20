@@ -3,12 +3,15 @@
 
 namespace solitaire::archivers {
 
-std::unique_ptr<archivers::Snapshot>
-MoveCardsOperationSnapshotCreator::createSnapshot(
+std::optional<std::unique_ptr<archivers::Snapshot>>
+MoveCardsOperationSnapshotCreator::createSnapshotIfCardsMovedToOtherPile(
     std::unique_ptr<archivers::Snapshot> destinationPileSnapshot)
 {
     throwIfSourcePileSnapshotIsNullptr();
     throwIfSnapshotIsNullptr(destinationPileSnapshot);
+
+    if (sourcePileSnapshot->isSnapshotOfSameObject(*destinationPileSnapshot))
+        return std::nullopt;
 
     return std::make_unique<Snapshot>(
         std::move(sourcePileSnapshot), std::move(destinationPileSnapshot)
@@ -56,6 +59,12 @@ MoveCardsOperationSnapshotCreator::Snapshot::Snapshot(
 void MoveCardsOperationSnapshotCreator::Snapshot::restore() const {
     sourcePileSnapshot->restore();
     destinationPileSnapshot->restore();
+}
+
+bool MoveCardsOperationSnapshotCreator::Snapshot::isSnapshotOfSameObject(
+    const archivers::Snapshot&) const
+{
+    return false;
 }
 
 }

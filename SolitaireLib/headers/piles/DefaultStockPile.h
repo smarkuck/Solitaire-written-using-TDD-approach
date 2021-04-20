@@ -35,6 +35,7 @@ public:
              std::optional<unsigned> selectedCardIndex);
 
     void restore() const override;
+    bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
 
 private:
     const std::shared_ptr<DefaultStockPile> stockPile;

@@ -87,4 +87,15 @@ void DefaultTableauPile::Snapshot::restore() const {
     tableauPile->placeInOrderOfFirstCoveredCard = placeInOrderOfFirstCoveredCard;
 }
 
+bool DefaultTableauPile::Snapshot::isSnapshotOfSameObject(
+    const archivers::Snapshot& snapshot) const
+try {
+    const auto& castedSnaphost =
+        dynamic_cast<const DefaultTableauPile::Snapshot&>(snapshot);
+    return tableauPile == castedSnaphost.tableauPile;
+}
+catch (const std::bad_cast&) {
+    return false;
+}
+
 }

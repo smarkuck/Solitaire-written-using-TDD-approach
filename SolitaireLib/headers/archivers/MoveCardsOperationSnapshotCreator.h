@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <optional>
+
 #include "archivers/Snapshot.h"
 
 namespace solitaire::archivers {
@@ -12,7 +14,8 @@ private:
     class Snapshot;
 
 public:
-    std::unique_ptr<archivers::Snapshot> createSnapshot(
+    std::optional<std::unique_ptr<archivers::Snapshot>>
+    createSnapshotIfCardsMovedToOtherPile(
         std::unique_ptr<archivers::Snapshot> destinationPileSnapshot);
 
     void saveSourcePileSnapshot(std::unique_ptr<archivers::Snapshot>);
@@ -32,6 +35,7 @@ public:
                 std::unique_ptr<archivers::Snapshot> destinationPileSnapshot);
 
     void restore() const override;
+    bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
 
 private:
     std::unique_ptr<archivers::Snapshot> sourcePileSnapshot;

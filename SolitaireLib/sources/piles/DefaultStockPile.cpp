@@ -65,4 +65,15 @@ void DefaultStockPile::Snapshot::restore() const {
     stockPile->selectedCardIndex = selectedCardIndex;
 }
 
+bool DefaultStockPile::Snapshot::isSnapshotOfSameObject(
+    const archivers::Snapshot& snapshot) const
+try {
+    const auto& castedSnaphost =
+        dynamic_cast<const DefaultStockPile::Snapshot&>(snapshot);
+    return stockPile == castedSnaphost.stockPile;
+}
+catch (const std::bad_cast&) {
+    return false;
+}
+
 }

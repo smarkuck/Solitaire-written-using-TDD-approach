@@ -35,6 +35,7 @@ public:
              cards::Cards pileCards);
 
     void restore() const override;
+    bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
 
 private:
     const std::shared_ptr<DefaultFoundationPile> foundationPile;
