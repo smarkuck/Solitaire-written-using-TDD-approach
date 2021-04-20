@@ -8,8 +8,6 @@
 #include "archivers/Snapshot.h"
 #include "cards/DeckGeneratorMock.h"
 #include "cards/DeckGeneratorUtils.h"
-#include "cards/Suit.h"
-#include "cards/Value.h"
 #include "gmock/gmock.h"
 #include "piles/FoundationPileMock.h"
 #include "piles/StockPileMock.h"
