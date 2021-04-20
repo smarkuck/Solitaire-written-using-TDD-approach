@@ -1,10 +1,10 @@
 #include <stdexcept>
-#include "archivers/MoveCardsOperationSnapshotCreator.h"
+#include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 
 namespace solitaire::archivers {
 
 std::optional<std::unique_ptr<archivers::Snapshot>>
-MoveCardsOperationSnapshotCreator::createSnapshotIfCardsMovedToOtherPile(
+DefaultMoveCardsOperationSnapshotCreator::createSnapshotIfCardsMovedToOtherPile(
     std::unique_ptr<archivers::Snapshot> destinationPileSnapshot)
 {
     throwIfSourcePileSnapshotIsNullptr();
@@ -18,7 +18,7 @@ MoveCardsOperationSnapshotCreator::createSnapshotIfCardsMovedToOtherPile(
     );
 }
 
-void MoveCardsOperationSnapshotCreator::saveSourcePileSnapshot(
+void DefaultMoveCardsOperationSnapshotCreator::saveSourcePileSnapshot(
     std::unique_ptr<archivers::Snapshot> snapshot)
 {
     throwIfSourcePileSnapshotIsNotNullptr();
@@ -26,42 +26,42 @@ void MoveCardsOperationSnapshotCreator::saveSourcePileSnapshot(
     sourcePileSnapshot = std::move(snapshot);
 }
 
-void MoveCardsOperationSnapshotCreator::restoreSourcePile() {
+void DefaultMoveCardsOperationSnapshotCreator::restoreSourcePile() {
     throwIfSourcePileSnapshotIsNullptr();
     sourcePileSnapshot->restore();
     sourcePileSnapshot = nullptr;
 }
 
-void MoveCardsOperationSnapshotCreator::throwIfSourcePileSnapshotIsNullptr() const {
+void DefaultMoveCardsOperationSnapshotCreator::throwIfSourcePileSnapshotIsNullptr() const {
     if (not sourcePileSnapshot)
         throw std::runtime_error {"Source pile snapshot is nullptr."};
 }
 
-void MoveCardsOperationSnapshotCreator::throwIfSourcePileSnapshotIsNotNullptr() const {
+void DefaultMoveCardsOperationSnapshotCreator::throwIfSourcePileSnapshotIsNotNullptr() const {
     if (sourcePileSnapshot)
         throw std::runtime_error {"Source pile snapshot is already saved."};
 }
 
-void MoveCardsOperationSnapshotCreator::throwIfSnapshotIsNullptr(
+void DefaultMoveCardsOperationSnapshotCreator::throwIfSnapshotIsNullptr(
     const std::unique_ptr<archivers::Snapshot>& snapshot) const
 {
     if (not snapshot)
         throw std::runtime_error {"Passed snapshot is nullptr."};
 }
 
-MoveCardsOperationSnapshotCreator::Snapshot::Snapshot(
+DefaultMoveCardsOperationSnapshotCreator::Snapshot::Snapshot(
     std::unique_ptr<archivers::Snapshot> sourcePileSnapshot,
     std::unique_ptr<archivers::Snapshot> destinationPileSnapshot):
         sourcePileSnapshot {std::move(sourcePileSnapshot)},
         destinationPileSnapshot {std::move(destinationPileSnapshot)} {
 }
 
-void MoveCardsOperationSnapshotCreator::Snapshot::restore() const {
+void DefaultMoveCardsOperationSnapshotCreator::Snapshot::restore() const {
     sourcePileSnapshot->restore();
     destinationPileSnapshot->restore();
 }
 
-bool MoveCardsOperationSnapshotCreator::Snapshot::isSnapshotOfSameObject(
+bool DefaultMoveCardsOperationSnapshotCreator::Snapshot::isSnapshotOfSameObject(
     const archivers::Snapshot&) const
 {
     return false;

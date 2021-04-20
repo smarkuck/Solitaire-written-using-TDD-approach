@@ -1,4 +1,4 @@
-#include "archivers/HistoryTracker.h"
+#include "archivers/DefaultHistoryTracker.h"
 #include "archivers/SnapshotMock.h"
 #include "gmock/gmock.h"
 #include "mock_ptr.h"
@@ -11,54 +11,54 @@ namespace {
 constexpr unsigned maxHistorySize {2};
 }
 
-class HistoryTrackerTests: public Test {
+class DefaultHistoryTrackerTests: public Test {
 public:
-    HistoryTracker historyTracker {maxHistorySize};
+    DefaultHistoryTracker historyTracker {maxHistorySize};
 };
 
-TEST_F(HistoryTrackerTests, historyIsEmpty) {
+TEST_F(DefaultHistoryTrackerTests, historyIsEmpty) {
     EXPECT_EQ(historyTracker.getHistorySize(), 0);
 }
 
-TEST_F(HistoryTrackerTests, undoShouldThrowIfHistoryEmpty) {
+TEST_F(DefaultHistoryTrackerTests, undoShouldThrowIfHistoryEmpty) {
     EXPECT_THROW(historyTracker.undo(), std::runtime_error);
 }
 
-TEST_F(HistoryTrackerTests, onSaveShouldThrowIfPassedNullptr) {
+TEST_F(DefaultHistoryTrackerTests, onSaveShouldThrowIfPassedNullptr) {
     EXPECT_THROW(historyTracker.save(nullptr), std::runtime_error);
 }
 
-TEST_F(HistoryTrackerTests, onSaveHistorySizeShouldIncrease) {
+TEST_F(DefaultHistoryTrackerTests, onSaveHistorySizeShouldIncrease) {
     mock_ptr<SnapshotMock> snapshotMock;
     historyTracker.save(snapshotMock.make_unique());
     EXPECT_EQ(historyTracker.getHistorySize(), 1);
 }
 
-class HistoryTrackerWithOneSnapshotTests: public HistoryTrackerTests {
+class DefaultHistoryTrackerWithOneSnapshotTests: public DefaultHistoryTrackerTests {
 public:
-    HistoryTrackerWithOneSnapshotTests() {
+    DefaultHistoryTrackerWithOneSnapshotTests() {
         historyTracker.save(snapshotMock.make_unique());
     }
 
     mock_ptr<StrictMock<SnapshotMock>> snapshotMock;
 };
 
-TEST_F(HistoryTrackerWithOneSnapshotTests, onUndoRestoreAndRemoveSnapshot) {
+TEST_F(DefaultHistoryTrackerWithOneSnapshotTests, onUndoRestoreAndRemoveSnapshot) {
     EXPECT_CALL(*snapshotMock, restore());
     historyTracker.undo();
     EXPECT_EQ(historyTracker.getHistorySize(), 0);
 }
 
-class FullHistoryTrackerTests: public HistoryTrackerWithOneSnapshotTests {
+class FullDefaultHistoryTrackerTests: public DefaultHistoryTrackerWithOneSnapshotTests {
 public:
-    FullHistoryTrackerTests() {
+    FullDefaultHistoryTrackerTests() {
         historyTracker.save(snapshotMock2.make_unique());
     }
 
     mock_ptr<SnapshotMock> snapshotMock2;
 };
 
-TEST_F(FullHistoryTrackerTests, onUndoRestoreSnapshotsInReverseOrder) {
+TEST_F(FullDefaultHistoryTrackerTests, onUndoRestoreSnapshotsInReverseOrder) {
     EXPECT_CALL(*snapshotMock2, restore());
     historyTracker.undo();
     EXPECT_EQ(historyTracker.getHistorySize(), 1);
@@ -68,7 +68,7 @@ TEST_F(FullHistoryTrackerTests, onUndoRestoreSnapshotsInReverseOrder) {
     EXPECT_EQ(historyTracker.getHistorySize(), 0);
 }
 
-TEST_F(FullHistoryTrackerTests, removeFirstSnapshotOnSaveWhenHistoryFull) {
+TEST_F(FullDefaultHistoryTrackerTests, removeFirstSnapshotOnSaveWhenHistoryFull) {
     mock_ptr<SnapshotMock> snapshotMock3;
     historyTracker.save(snapshotMock3.make_unique());
 
