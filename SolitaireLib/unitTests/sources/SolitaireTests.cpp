@@ -1,7 +1,10 @@
 #include <algorithm>
 
 #include "mock_ptr.h"
+#include "cards/Card.h"
 #include "Solitaire.h"
+#include "archivers/HistoryTrackerMock.h"
+#include "archivers/MoveCardsOperationSnapshotCreatorMock.h"
 #include "archivers/Snapshot.h"
 #include "cards/DeckGeneratorMock.h"
 #include "cards/DeckGeneratorUtils.h"
@@ -13,6 +16,7 @@
 #include "piles/TableauPileMock.h"
 
 using namespace testing;
+using namespace solitaire::archivers;
 using namespace solitaire::cards;
 using namespace solitaire::piles;
 
@@ -65,11 +69,17 @@ public:
     std::array<std::shared_ptr<TableauPileMock>, 7>
         tableauPileMocks {makeSharedPtrArray<TableauPileMock, 7>()};
 
+    mock_ptr<StrictMock<HistoryTrackerMock>> historyTrackerMock;
+    mock_ptr<StrictMock<MoveCardsOperationSnapshotCreatorMock>>
+        moveCardsOperationSnapshotCreatorMock;
+
     Solitaire solitaire {
         deckGeneratorMock.make_unique(),
         stockPileMock,
         copySharedPtrArray<FoundationPile>(foundationPileMocks),
-        copySharedPtrArray<TableauPile>(tableauPileMocks)
+        copySharedPtrArray<TableauPile>(tableauPileMocks),
+        historyTrackerMock.make_unique(),
+        moveCardsOperationSnapshotCreatorMock.make_unique()
     };
 };
 

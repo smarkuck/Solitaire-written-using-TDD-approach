@@ -9,6 +9,8 @@ class Snapshot;
 
 class MoveCardsOperationSnapshotCreator {
 public:
+    virtual ~MoveCardsOperationSnapshotCreator() = default;
+
     virtual std::optional<std::unique_ptr<archivers::Snapshot>>
     createSnapshotIfCardsMovedToOtherPile(
         std::unique_ptr<archivers::Snapshot> destinationPileSnapshot) = 0;

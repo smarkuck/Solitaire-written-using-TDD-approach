@@ -1,11 +1,15 @@
 #include <string>
 
+#include "cards/Card.h"
 #include "Solitaire.h"
+#include "archivers/HistoryTracker.h"
+#include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "cards/DeckGenerator.h"
 #include "piles/FoundationPile.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
 
+using namespace solitaire::archivers;
 using namespace solitaire::cards;
 using namespace solitaire::piles;
 
@@ -14,11 +18,16 @@ namespace solitaire {
 Solitaire::Solitaire(std::unique_ptr<DeckGenerator> deckGenerator,
                      std::shared_ptr<StockPile> stockPile,
                      FoundationPiles foundationPiles,
-                     TableauPiles tableauPiles):
+                     TableauPiles tableauPiles,
+                     std::unique_ptr<HistoryTracker> historyTracker,
+                     std::unique_ptr<MoveCardsOperationSnapshotCreator>
+                        moveCardsOperationSnapshotCreator):
     deckGenerator {std::move(deckGenerator)},
     stockPile {std::move(stockPile)},
     foundationPiles {std::move(foundationPiles)},
-    tableauPiles {std::move(tableauPiles)} {
+    tableauPiles {std::move(tableauPiles)},
+    historyTracker {std::move(historyTracker)},
+    moveCardsOperationSnapshotCreator {std::move(moveCardsOperationSnapshotCreator)} {
 }
 
 void Solitaire::startNewGame() {

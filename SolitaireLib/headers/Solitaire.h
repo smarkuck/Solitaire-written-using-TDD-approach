@@ -3,12 +3,17 @@
 #include <array>
 #include <memory>
 
-#include "cards/Card.h"
 #include "cards/Cards.h"
 #include "cards/Deck.h"
 #include "piles/PileId.h"
 
 namespace solitaire {
+
+namespace archivers {
+    class HistoryTracker;
+    class MoveCardsOperationSnapshotCreator;
+}
+
 namespace cards {
     class DeckGenerator;
 }
@@ -30,10 +35,11 @@ private:
         std::array<std::shared_ptr<piles::TableauPile>, tableauPilesCount>;
 
 public:
-    Solitaire(std::unique_ptr<cards::DeckGenerator> deckGenerator,
-              std::shared_ptr<piles::StockPile> stockPile,
-              FoundationPiles foundationPiles,
-              TableauPiles tableauPiles);
+    Solitaire(std::unique_ptr<cards::DeckGenerator>,
+              std::shared_ptr<piles::StockPile>,
+              FoundationPiles, TableauPiles,
+              std::unique_ptr<archivers::HistoryTracker>,
+              std::unique_ptr<archivers::MoveCardsOperationSnapshotCreator>);
 
     void startNewGame();
 
@@ -65,6 +71,9 @@ private:
     std::shared_ptr<piles::StockPile> stockPile;
     FoundationPiles foundationPiles;
     TableauPiles tableauPiles;
+    std::unique_ptr<archivers::HistoryTracker> historyTracker;
+    std::unique_ptr<archivers::MoveCardsOperationSnapshotCreator>
+        moveCardsOperationSnapshotCreator;
     cards::Cards cardsInHand;
 };
 
