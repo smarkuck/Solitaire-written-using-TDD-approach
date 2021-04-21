@@ -12,8 +12,7 @@ private:
     class Snapshot;
 
 public:
-    std::optional<std::unique_ptr<archivers::Snapshot>>
-    createSnapshotIfCardsMovedToOtherPile(
+    std::unique_ptr<archivers::Snapshot> createSnapshotIfCardsMovedToOtherPile(
         std::unique_ptr<archivers::Snapshot> destinationPileSnapshot) override;
 
     void saveSourcePileSnapshot(std::unique_ptr<archivers::Snapshot>) override;

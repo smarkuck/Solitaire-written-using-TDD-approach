@@ -70,10 +70,8 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
     EXPECT_CALL(*snapshotMock, isSnapshotOfSameObject(Ref(*snapshotMock2)))
         .WillOnce(Return(true));
 
-    EXPECT_EQ(
-        snapshotCreator.createSnapshotIfCardsMovedToOtherPile(snapshotMock2.make_unique()),
-        std::nullopt
-    );
+    EXPECT_EQ(snapshotCreator.createSnapshotIfCardsMovedToOtherPile(
+                snapshotMock2.make_unique()), nullptr);
 }
 
 TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest, createSnapshot) {
@@ -83,7 +81,7 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest, createSn
 
     EXPECT_CALL(*snapshotMock, restore());
     EXPECT_CALL(*snapshotMock2, restore());
-    snapshot.value()->restore();
+    snapshot->restore();
 }
 
 TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
@@ -93,7 +91,7 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
         snapshotMock2.make_unique()
     );
 
-    EXPECT_FALSE(snapshot.value()->isSnapshotOfSameObject(*snapshot.value()));
+    EXPECT_FALSE(snapshot->isSnapshotOfSameObject(*snapshot));
 }
 
 TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,

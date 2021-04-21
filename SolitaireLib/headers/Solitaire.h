@@ -44,6 +44,7 @@ public:
               std::unique_ptr<archivers::MoveCardsOperationSnapshotCreator>);
 
     void startNewGame();
+    void tryPutCardsBackFromHand();
 
     void tryPullOutCardFromFoundationPile(const piles::PileId);
     void tryAddCardOnFoundationPile(const piles::PileId);
@@ -61,19 +62,26 @@ public:
     const cards::Cards& getCardsInHand() const;
 
 private:
+    using SnapshotPtr = std::unique_ptr<archivers::Snapshot>;
+
     void initializeFoundationPiles();
 
     cards::Deck::const_iterator
     initializeTableauPilesAndReturnFirstNotUsedCard(const cards::Deck&);
 
-    void tryAddPulledOutCardToHand(const std::optional<cards::Card>&,
-                                   std::unique_ptr<archivers::Snapshot>);
-    void tryAddPulledOutCardsToHand(cards::Cards&&,
-                                    std::unique_ptr<archivers::Snapshot>);
+    void tryAddPulledOutCardToHand(const std::optional<cards::Card>&, SnapshotPtr);
+    void tryAddPulledOutCardsToHand(cards::Cards&&, SnapshotPtr);
+    void tryAddCardOnFoundationPileFromHand(std::shared_ptr<piles::FoundationPile>&);
+    void tryAddCardOnTableauPileFromHand(std::shared_ptr<piles::TableauPile>&);
+    void saveHistoryIfCardMovedToOtherPileAndClearHand(
+        const std::optional<cards::Card>&, SnapshotPtr);
+    void saveHistoryIfCardMovedToOtherPile(SnapshotPtr);
 
     bool shouldTryUncoverTableauPileTopCard(
         const std::shared_ptr<piles::TableauPile>&) const;
     bool shouldSelectNextStockPileCard() const;
+    bool isOneCardInHand() const;
+    bool isCardAdded(const std::optional<cards::Card>&) const;
 
     void throwExceptionOnInvalidFoundationPileId(const piles::PileId) const;
     void throwExceptionOnInvalidTableauPileId(const piles::PileId) const;
