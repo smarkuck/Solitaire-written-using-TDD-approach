@@ -35,10 +35,6 @@ bool DefaultTableauPile::shouldAddCards(const Cards& cardsToAdd) const {
     return isFirstCardToAddCorrect(cardsToAdd);
 }
 
-bool DefaultTableauPile::isTopCardCovered() const {
-    return not cards.empty() and cards.size() == placeInOrderOfFirstCoveredCard;
-}
-
 bool DefaultTableauPile::isFirstCardToAddKing(const Cards& cardsToAdd) const {
     return cardsToAdd.front().getValue() == Value::King;
 }
@@ -72,6 +68,10 @@ const Cards& DefaultTableauPile::getCards() const {
 
 unsigned DefaultTableauPile::getPlaceInOrderOfFirstCoveredCard() const {
     return placeInOrderOfFirstCoveredCard;
+}
+
+bool DefaultTableauPile::isTopCardCovered() const {
+    return not cards.empty() and cards.size() == placeInOrderOfFirstCoveredCard;
 }
 
 DefaultTableauPile::Snapshot::Snapshot(

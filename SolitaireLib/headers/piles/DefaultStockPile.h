@@ -13,7 +13,7 @@ public:
 
     std::unique_ptr<archivers::Snapshot> createSnapshot() override;
 
-    void selectNextCard() override;
+    void trySelectNextCard() override;
     std::optional<cards::Card> tryPullOutCard() override;
 
     const cards::Cards& getCards() const override;

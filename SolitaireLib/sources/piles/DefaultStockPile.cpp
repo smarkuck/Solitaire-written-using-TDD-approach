@@ -16,7 +16,7 @@ std::unique_ptr<archivers::Snapshot> DefaultStockPile::createSnapshot() {
     return std::make_unique<Snapshot>(shared_from_this(), cards, selectedCardIndex);
 }
 
-void DefaultStockPile::selectNextCard() {
+void DefaultStockPile::trySelectNextCard() {
     incrementSelectedCardIndex();
     if (selectedCardIndex == cards.size())
         selectedCardIndex.reset();

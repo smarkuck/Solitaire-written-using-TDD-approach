@@ -29,8 +29,8 @@ TEST_F(EmptyDefaultStockPileTest, createPile) {
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(EmptyDefaultStockPileTest, selectNextCard) {
-    pile->selectNextCard();
+TEST_F(EmptyDefaultStockPileTest, trySelectNextCard) {
+    pile->trySelectNextCard();
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
@@ -52,17 +52,17 @@ TEST_F(DefaultStockPileWithCardsTest, initializePileWithCards) {
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(DefaultStockPileWithCardsTest, selectNextCard) {
-    pile->selectNextCard();
+TEST_F(DefaultStockPileWithCardsTest, trySelectNextCard) {
+    pile->trySelectNextCard();
     EXPECT_EQ(pile->getSelectedCardIndex(), 0);
 
-    pile->selectNextCard();
+    pile->trySelectNextCard();
     EXPECT_EQ(pile->getSelectedCardIndex(), 1);
 
-    pile->selectNextCard();
+    pile->trySelectNextCard();
     EXPECT_EQ(pile->getSelectedCardIndex(), 2);
 
-    pile->selectNextCard();
+    pile->trySelectNextCard();
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
@@ -76,7 +76,7 @@ TEST_F(DefaultStockPileWithCardsTest, tryPullOutFirstCard) {
     const auto firstCard = pileCards.front();
     pileCards.erase(pileCards.begin());
 
-    pile->selectNextCard();
+    pile->trySelectNextCard();
 
     EXPECT_EQ(pile->tryPullOutCard(), firstCard);
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
@@ -88,8 +88,8 @@ TEST_F(DefaultStockPileWithCardsTest, tryPullOutSecondCard) {
     const auto secondCard = *secondCardIt;
     pileCards.erase(secondCardIt);
 
-    pile->selectNextCard();
-    pile->selectNextCard();
+    pile->trySelectNextCard();
+    pile->trySelectNextCard();
 
     EXPECT_EQ(pile->tryPullOutCard(), secondCard);
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
@@ -100,9 +100,9 @@ TEST_F(DefaultStockPileWithCardsTest, tryPullOutLastCard) {
     const Card lastCard = pileCards.back();
     pileCards.pop_back();
 
-    pile->selectNextCard();
-    pile->selectNextCard();
-    pile->selectNextCard();
+    pile->trySelectNextCard();
+    pile->trySelectNextCard();
+    pile->trySelectNextCard();
 
     EXPECT_EQ(pile->tryPullOutCard(), lastCard);
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
@@ -125,7 +125,7 @@ TEST_F(DefaultStockPileInitializationTest, initializePileAfterOperations) {
 }
 
 TEST_F(DefaultStockPileInitializationTest, restorePileStateUsingSnapshot) {
-    pile->selectNextCard();
+    pile->trySelectNextCard();
     const auto snapshot = pile->createSnapshot();
     initializePile(*pile, newPileCards);
     snapshot->restore();

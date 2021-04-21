@@ -4,6 +4,7 @@
 #include "Solitaire.h"
 #include "archivers/HistoryTracker.h"
 #include "archivers/MoveCardsOperationSnapshotCreator.h"
+#include "archivers/Snapshot.h"
 #include "cards/DeckGenerator.h"
 #include "piles/FoundationPile.h"
 #include "piles/StockPile.h"
@@ -62,9 +63,9 @@ void Solitaire::tryPullOutCardFromFoundationPile(const PileId id) {
     throwExceptionOnInvalidFoundationPileId(id);
 
     if (cardsInHand.empty()) {
-        const auto pulledOutCard = foundationPiles[id]->tryPullOutCard();
-        if (pulledOutCard)
-            cardsInHand.push_back(*pulledOutCard);
+        auto& pile = foundationPiles[id];
+        auto snapshot = pile->createSnapshot();
+        tryAddPulledOutCardToHand(pile->tryPullOutCard(), std::move(snapshot));
     }
 }
 
@@ -75,31 +76,68 @@ void Solitaire::tryAddCardOnFoundationPile(const piles::PileId id) {
 void Solitaire::tryUncoverTableauPileTopCard(const piles::PileId id) {
     throwExceptionOnInvalidTableauPileId(id);
 
-    if (cardsInHand.empty())
-        tableauPiles[id]->tryUncoverTopCard();
+    auto& pile = tableauPiles[id];
+    if (shouldTryUncoverTableauPileTopCard(pile)) {
+        auto snapshot = pile->createSnapshot();
+        pile->tryUncoverTopCard();
+        historyTracker->save(std::move(snapshot));
+    }
+}
+
+bool Solitaire::shouldTryUncoverTableauPileTopCard(
+    const std::shared_ptr<TableauPile>& pile) const
+{
+    return cardsInHand.empty() and pile->isTopCardCovered();
 }
 
 void Solitaire::tryPullOutCardsFromTableauPile(const PileId id, const unsigned quantity) {
     throwExceptionOnInvalidTableauPileId(id);
 
-    if (cardsInHand.empty())
-        cardsInHand = tableauPiles[id]->tryPullOutCards(quantity);
+    if (cardsInHand.empty()) {
+        auto& pile = tableauPiles[id];
+        auto snapshot = pile->createSnapshot();
+        tryAddPulledOutCardsToHand(pile->tryPullOutCards(quantity), std::move(snapshot));
+    }
+}
+
+void Solitaire::tryAddPulledOutCardsToHand(cards::Cards&& cards,
+                                           std::unique_ptr<archivers::Snapshot> snapshot)
+{
+    if (not cards.empty()) {
+        moveCardsOperationSnapshotCreator->saveSourcePileSnapshot(std::move(snapshot));
+        cardsInHand = std::move(cards);
+    }
 }
 
 void Solitaire::tryAddCardsOnTableauPile(const piles::PileId id) {
     throwExceptionOnInvalidTableauPileId(id);
 }
 
-void Solitaire::selectNextStockPileCard() {
-    if (cardsInHand.empty())
-        stockPile->selectNextCard();
+void Solitaire::trySelectNextStockPileCard() {
+    if (shouldSelectNextStockPileCard()) {
+        auto snapshot = stockPile->createSnapshot();
+        stockPile->trySelectNextCard();
+        historyTracker->save(std::move(snapshot));
+    }
+}
+
+bool Solitaire::shouldSelectNextStockPileCard() const {
+    return cardsInHand.empty() and not stockPile->getCards().empty();
 }
 
 void Solitaire::tryPullOutCardFromStockPile() {
     if (cardsInHand.empty()) {
-        const auto pulledOutCard = stockPile->tryPullOutCard();
-        if (pulledOutCard)
-            cardsInHand.push_back(*pulledOutCard);
+        auto snapshot = stockPile->createSnapshot();
+        tryAddPulledOutCardToHand(stockPile->tryPullOutCard(), std::move(snapshot));
+    }
+}
+
+void Solitaire::tryAddPulledOutCardToHand(const std::optional<Card>& card,
+                                          std::unique_ptr<Snapshot> snapshot)
+{
+    if (card) {
+        moveCardsOperationSnapshotCreator->saveSourcePileSnapshot(std::move(snapshot));
+        cardsInHand.push_back(card.value());
     }
 }
 

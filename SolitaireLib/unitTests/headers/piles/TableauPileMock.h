@@ -15,6 +15,7 @@ public:
     MOCK_METHOD(cards::Cards, tryPullOutCards, (unsigned), (override));
     MOCK_METHOD(const cards::Cards&, getCards, (), (const, override));
     MOCK_METHOD(unsigned, getPlaceInOrderOfFirstCoveredCard, (), (const, override));
+    MOCK_METHOD(bool, isTopCardCovered, (), (const, override));
 };
 
 }

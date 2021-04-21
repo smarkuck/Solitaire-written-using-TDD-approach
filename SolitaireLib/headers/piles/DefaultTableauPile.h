@@ -19,13 +19,13 @@ public:
 
     const cards::Cards& getCards() const override;
     unsigned getPlaceInOrderOfFirstCoveredCard() const override;
+    bool isTopCardCovered() const override;
 
 private:
     class Snapshot;
 
     bool shouldAddCards(const cards::Cards& cardsToAdd) const;
     bool shouldPullOutCards(unsigned quantity) const;
-    bool isTopCardCovered() const;
     bool isFirstCardToAddKing(const cards::Cards& cardsToAdd) const;
     bool isFirstCardToAddCorrect(const cards::Cards& cardsToAdd) const;
 

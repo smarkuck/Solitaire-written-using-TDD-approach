@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <optional>
 
 #include "cards/Cards.h"
 #include "cards/Deck.h"
@@ -12,6 +13,7 @@ namespace solitaire {
 namespace archivers {
     class HistoryTracker;
     class MoveCardsOperationSnapshotCreator;
+    class Snapshot;
 }
 
 namespace cards {
@@ -50,7 +52,7 @@ public:
     void tryPullOutCardsFromTableauPile(const piles::PileId, const unsigned quantity);
     void tryAddCardsOnTableauPile(const piles::PileId);
 
-    void selectNextStockPileCard();
+    void trySelectNextStockPileCard();
     void tryPullOutCardFromStockPile();
 
     const piles::FoundationPile& getFoundationPile(const piles::PileId) const;
@@ -63,6 +65,15 @@ private:
 
     cards::Deck::const_iterator
     initializeTableauPilesAndReturnFirstNotUsedCard(const cards::Deck&);
+
+    void tryAddPulledOutCardToHand(const std::optional<cards::Card>&,
+                                   std::unique_ptr<archivers::Snapshot>);
+    void tryAddPulledOutCardsToHand(cards::Cards&&,
+                                    std::unique_ptr<archivers::Snapshot>);
+
+    bool shouldTryUncoverTableauPileTopCard(
+        const std::shared_ptr<piles::TableauPile>&) const;
+    bool shouldSelectNextStockPileCard() const;
 
     void throwExceptionOnInvalidFoundationPileId(const piles::PileId) const;
     void throwExceptionOnInvalidTableauPileId(const piles::PileId) const;
