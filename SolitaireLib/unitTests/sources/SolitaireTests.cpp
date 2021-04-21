@@ -158,7 +158,7 @@ public:
     void expectSavingSnapshotMock() {
         EXPECT_CALL(
             *moveCardsOperationSnapshotCreatorMock,
-            saveSourcePileSnapshot(Pointer(&*snapshotMock))
+            saveSourcePileSnapshot(Pointer(snapshotMock.get()))
         );
     }
 
@@ -208,7 +208,7 @@ TEST_F(SolitaireEmptyHandTest, tryUncoverTableauPileTopCard) {
     EXPECT_CALL(lastTableauPileMock, createSnapshot())
         .WillOnce(Return(ByMove(snapshotMock.make_unique())));
     EXPECT_CALL(lastTableauPileMock, tryUncoverTopCard());
-    EXPECT_CALL(*historyTrackerMock, save(Pointer(&*snapshotMock)));
+    EXPECT_CALL(*historyTrackerMock, save(Pointer(snapshotMock.get())));
 
     solitaire.tryUncoverTableauPileTopCard(lastTableauPileId);
 }
@@ -255,7 +255,7 @@ TEST_F(SolitaireEmptyHandTest, trySelectNextStockPileCard) {
     EXPECT_CALL(*stockPileMock, createSnapshot())
         .WillOnce(Return(ByMove(snapshotMock.make_unique())));
     EXPECT_CALL(*stockPileMock, trySelectNextCard());
-    EXPECT_CALL(*historyTrackerMock, save(Pointer(&*snapshotMock)));
+    EXPECT_CALL(*historyTrackerMock, save(Pointer(snapshotMock.get())));
 
     solitaire.trySelectNextStockPileCard();
 }
