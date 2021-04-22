@@ -44,6 +44,8 @@ public:
               std::unique_ptr<archivers::MoveCardsOperationSnapshotCreator>);
 
     void startNewGame();
+
+    void tryUndoOperation();
     void tryPutCardsBackFromHand();
 
     void tryPullOutCardFromFoundationPile(const piles::PileId);
@@ -55,6 +57,8 @@ public:
 
     void trySelectNextStockPileCard();
     void tryPullOutCardFromStockPile();
+
+    bool isGameFinished() const;
 
     const piles::FoundationPile& getFoundationPile(const piles::PileId) const;
     const piles::TableauPile& getTableauPile(const piles::PileId) const;
@@ -77,11 +81,14 @@ private:
         const std::optional<cards::Card>&, SnapshotPtr);
     void saveHistoryIfCardMovedToOtherPile(SnapshotPtr);
 
-    bool shouldTryUncoverTableauPileTopCard(
+    bool shouldUndoOperation() const;
+    bool shouldAddCardOnFoundationPile() const;
+    bool isCardAdded(const std::optional<cards::Card>&) const;
+    bool shouldUncoverTableauPileTopCard(
         const std::shared_ptr<piles::TableauPile>&) const;
     bool shouldSelectNextStockPileCard() const;
-    bool isOneCardInHand() const;
-    bool isCardAdded(const std::optional<cards::Card>&) const;
+    bool isGameInProgressAndHandContainsCards() const;
+    bool isGameInProgressAndHandIsEmpty() const;
 
     void throwExceptionOnInvalidFoundationPileId(const piles::PileId) const;
     void throwExceptionOnInvalidTableauPileId(const piles::PileId) const;

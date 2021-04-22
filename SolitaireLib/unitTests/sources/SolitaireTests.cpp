@@ -8,6 +8,7 @@
 #include "archivers/SnapshotMock.h"
 #include "cards/DeckGeneratorMock.h"
 #include "cards/DeckGeneratorUtils.h"
+#include "cards/Value.h"
 #include "gmock/gmock.h"
 #include "piles/FoundationPileMock.h"
 #include "piles/StockPileMock.h"
@@ -157,6 +158,37 @@ class SolitaireEmptyHandTest: public SolitaireTest {
 public:
     using StrictSnapshotMockPtr = mock_ptr<StrictMock<SnapshotMock>>;
 
+    SolitaireEmptyHandTest() {
+        EXPECT_CALL(*foundationPileMocks[0], getTopCardValue()).WillRepeatedly(Return(Value::King));
+        EXPECT_CALL(*foundationPileMocks[1], getTopCardValue()).WillRepeatedly(Return(Value::King));
+        EXPECT_CALL(*foundationPileMocks[2], getTopCardValue()).WillRepeatedly(Return(Value::King));
+        EXPECT_CALL(*foundationPileMocks[3], getTopCardValue()).WillRepeatedly(Return(Value::Queen));
+    }
+
+    void ignoreEmptyHandPossibleOperationsTest() {
+        EXPECT_CALL(*historyTrackerMock, getHistorySize()).Times(0);
+        EXPECT_CALL(*historyTrackerMock, undo()).Times(0);
+        EXPECT_CALL(lastFoundationPileMock, tryPullOutCard()).Times(0);
+        EXPECT_CALL(lastTableauPileMock, isTopCardCovered()).Times(0);
+        EXPECT_CALL(lastTableauPileMock, tryUncoverTopCard()).Times(0);
+        EXPECT_CALL(lastTableauPileMock, tryPullOutCards(_)).Times(0);
+        EXPECT_CALL(*stockPileMock, getCards()).Times(0);
+        EXPECT_CALL(*stockPileMock, trySelectNextCard()).Times(0);
+        EXPECT_CALL(*stockPileMock, tryPullOutCard()).Times(0);
+
+        solitaire.tryUndoOperation();
+        solitaire.tryPullOutCardFromFoundationPile(lastFoundationPileId);
+        solitaire.tryUncoverTableauPileTopCard(lastTableauPileId);
+        solitaire.tryPullOutCardsFromTableauPile(lastTableauPileId, quantityToPullOut);
+        solitaire.trySelectNextStockPileCard();
+        solitaire.tryPullOutCardFromStockPile();
+    }
+
+    void finishGame() {
+        for (auto& pile: foundationPileMocks)
+            EXPECT_CALL(*pile, getTopCardValue()).WillRepeatedly(Return(Value::King));
+    }
+
     template <class Pile>
     void expectTryingAddCardAndClearIt(Pile& pile, std::optional<Card>& card) {
         EXPECT_CALL(pile, tryAddCard(card))
@@ -203,6 +235,18 @@ public:
 
     StrictSnapshotMockPtr snapshotMock;
 };
+
+TEST_F(SolitaireEmptyHandTest, dontUndoOperationWhenHistoryIsEmpty) {
+    EXPECT_CALL(*historyTrackerMock, getHistorySize()).WillOnce(Return(0));
+    EXPECT_CALL(*historyTrackerMock, undo()).Times(0);
+    solitaire.tryUndoOperation();
+}
+
+TEST_F(SolitaireEmptyHandTest, undoOperationWhenHistoryIsNotEmpty) {
+    EXPECT_CALL(*historyTrackerMock, getHistorySize()).WillOnce(Return(1));
+    EXPECT_CALL(*historyTrackerMock, undo());
+    solitaire.tryUndoOperation();
+}
 
 TEST_F(SolitaireEmptyHandTest, ignoreTryOfPuttingCardBack) {
     EXPECT_CALL(*moveCardsOperationSnapshotCreatorMock, restoreSourcePile()).Times(0);
@@ -319,13 +363,34 @@ TEST_F(SolitaireEmptyHandTest, tryPullOutCardFromStockPile) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(oneCard));
 }
 
+TEST_F(SolitaireEmptyHandTest, gameIsNotFinishedWhenAnyOfFoundationPilesDoesNotHaveKingOnTop) {
+    EXPECT_CALL(*foundationPileMocks[0], getTopCardValue()).WillOnce(Return(Value::King));
+    EXPECT_CALL(*foundationPileMocks[1], getTopCardValue()).WillOnce(Return(Value::King));
+    EXPECT_CALL(*foundationPileMocks[2], getTopCardValue()).WillOnce(Return(Value::King));
+    EXPECT_CALL(*foundationPileMocks[3], getTopCardValue()).WillOnce(Return(Value::Queen));
+
+    EXPECT_FALSE(solitaire.isGameFinished());
+}
+
+TEST_F(SolitaireEmptyHandTest, gameIsFinishedWhenAllOfFoundationPilesHaveKingOnTop) {
+    for (auto& pile: foundationPileMocks)
+        EXPECT_CALL(*pile, getTopCardValue()).WillOnce(Return(Value::King));
+
+    EXPECT_TRUE(solitaire.isGameFinished());
+}
+
+TEST_F(SolitaireEmptyHandTest, ignoreSomeOperationsIfGameFinished) {
+    finishGame();
+    ignoreEmptyHandPossibleOperationsTest();
+}
+
 class SolitaireHandWithOneCardTest: public SolitaireEmptyHandTest {
 public:
     SolitaireHandWithOneCardTest() {
         expectSnapshotCreation(*stockPileMock, snapshotMock);
         EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(oneCard.back()));
-
         expectSavingSourcePileSnapshot(snapshotMock);
+
         solitaire.tryPullOutCardFromStockPile();
     }
 
@@ -358,6 +423,9 @@ public:
 };
 
 TEST_F(SolitaireHandWithOneCardTest, onNewGameClearHandAndDistributeCards) {
+    for (auto& pile: foundationPileMocks)
+        EXPECT_CALL(*pile, getTopCardValue()).Times(0);
+
     EXPECT_CALL(*deckGeneratorMock, generate()).WillOnce(Return(deck));
     expectFoundationPilesInitialization();
     expectTableauPilesInitialization();
@@ -367,24 +435,26 @@ TEST_F(SolitaireHandWithOneCardTest, onNewGameClearHandAndDistributeCards) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireHandWithOneCardTest, ignoreSomeOperationsIfHandNotEmpty) {
-    EXPECT_CALL(lastFoundationPileMock, tryPullOutCard()).Times(0);
-    EXPECT_CALL(lastTableauPileMock, tryUncoverTopCard()).Times(0);
-    EXPECT_CALL(lastTableauPileMock, tryPullOutCards(_)).Times(0);
-    EXPECT_CALL(*stockPileMock, trySelectNextCard()).Times(0);
-    EXPECT_CALL(*stockPileMock, tryPullOutCard()).Times(0);
-
-    solitaire.tryPullOutCardFromFoundationPile(lastFoundationPileId);
-    solitaire.tryUncoverTableauPileTopCard(lastTableauPileId);
-    solitaire.tryPullOutCardsFromTableauPile(lastTableauPileId, quantityToPullOut);
-    solitaire.trySelectNextStockPileCard();
-    solitaire.tryPullOutCardFromStockPile();
-}
-
 TEST_F(SolitaireHandWithOneCardTest, tryPutCardsBack) {
     EXPECT_CALL(*moveCardsOperationSnapshotCreatorMock, restoreSourcePile());
     solitaire.tryPutCardsBackFromHand();
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
+}
+
+TEST_F(SolitaireHandWithOneCardTest, ignoreSomeOperationsIfHandNotEmpty) {
+    ignoreEmptyHandPossibleOperationsTest();
+}
+
+TEST_F(SolitaireHandWithOneCardTest, ignoreSomeOperationsIfGameFinished) {
+    finishGame();
+
+    EXPECT_CALL(*moveCardsOperationSnapshotCreatorMock, restoreSourcePile()).Times(0);
+    EXPECT_CALL(lastFoundationPileMock, tryAddCard(_)).Times(0);
+    EXPECT_CALL(lastTableauPileMock, tryAddCards(_)).Times(0);
+
+    solitaire.tryPutCardsBackFromHand();
+    solitaire.tryAddCardOnFoundationPile(lastFoundationPileId);
+    solitaire.tryAddCardsOnTableauPile(lastTableauPileId);
 }
 
 class SolitaireHandWithOneCardAddCardTest: public SolitaireHandWithOneCardTest {
@@ -435,8 +505,8 @@ public:
         expectSnapshotCreation(lastTableauPileMock, snapshotMock);
         EXPECT_CALL(lastTableauPileMock, tryPullOutCards(quantityToPullOut))
             .WillOnce(Return(twoCards));
-
         expectSavingSourcePileSnapshot(snapshotMock);
+
         solitaire.tryPullOutCardsFromTableauPile(lastTableauPileId, quantityToPullOut);
     }
 

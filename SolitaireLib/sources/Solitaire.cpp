@@ -1,6 +1,8 @@
+#include <algorithm>
 #include <string>
 
 #include "cards/Card.h"
+#include "cards/Value.h"
 #include "Solitaire.h"
 #include "archivers/HistoryTracker.h"
 #include "archivers/MoveCardsOperationSnapshotCreator.h"
@@ -59,8 +61,17 @@ Solitaire::initializeTableauPilesAndReturnFirstNotUsedCard(const Deck& deck) {
     return firstNotUsedCard;
 }
 
+void Solitaire::tryUndoOperation() {
+    if (shouldUndoOperation())
+        historyTracker->undo();
+}
+
+bool Solitaire::shouldUndoOperation() const {
+    return isGameInProgressAndHandIsEmpty() and historyTracker->getHistorySize() > 0;
+}
+
 void Solitaire::tryPutCardsBackFromHand() {
-    if (not cardsInHand.empty()) {
+    if (isGameInProgressAndHandContainsCards()) {
         moveCardsOperationSnapshotCreator->restoreSourcePile();
         cardsInHand.clear();
     }
@@ -69,7 +80,7 @@ void Solitaire::tryPutCardsBackFromHand() {
 void Solitaire::tryPullOutCardFromFoundationPile(const PileId id) {
     throwExceptionOnInvalidFoundationPileId(id);
 
-    if (cardsInHand.empty()) {
+    if (isGameInProgressAndHandIsEmpty()) {
         auto& pile = foundationPiles[id];
         auto snapshot = pile->createSnapshot();
         tryAddPulledOutCardToHand(pile->tryPullOutCard(), std::move(snapshot));
@@ -79,8 +90,12 @@ void Solitaire::tryPullOutCardFromFoundationPile(const PileId id) {
 void Solitaire::tryAddCardOnFoundationPile(const piles::PileId id) {
     throwExceptionOnInvalidFoundationPileId(id);
 
-    if (isOneCardInHand())
+    if (shouldAddCardOnFoundationPile())
         tryAddCardOnFoundationPileFromHand(foundationPiles[id]);
+}
+
+bool Solitaire::shouldAddCardOnFoundationPile() const {
+    return not isGameFinished() and cardsInHand.size() == 1;
 }
 
 void Solitaire::tryAddCardOnFoundationPileFromHand(
@@ -90,14 +105,6 @@ void Solitaire::tryAddCardOnFoundationPileFromHand(
     std::optional<Card> cardToAdd {cardsInHand.back()};
     pile->tryAddCard(cardToAdd);
     saveHistoryIfCardMovedToOtherPileAndClearHand(cardToAdd, std::move(snapshot));
-}
-
-bool Solitaire::isOneCardInHand() const {
-    return cardsInHand.size() == 1;
-}
-
-bool Solitaire::isCardAdded(const std::optional<Card>& card) const {
-    return not card;
 }
 
 void Solitaire::saveHistoryIfCardMovedToOtherPileAndClearHand(
@@ -110,27 +117,31 @@ void Solitaire::saveHistoryIfCardMovedToOtherPileAndClearHand(
     }
 }
 
+bool Solitaire::isCardAdded(const std::optional<Card>& card) const {
+    return not card;
+}
+
 void Solitaire::tryUncoverTableauPileTopCard(const piles::PileId id) {
     throwExceptionOnInvalidTableauPileId(id);
 
     auto& pile = tableauPiles[id];
-    if (shouldTryUncoverTableauPileTopCard(pile)) {
+    if (shouldUncoverTableauPileTopCard(pile)) {
         auto snapshot = pile->createSnapshot();
         pile->tryUncoverTopCard();
         historyTracker->save(std::move(snapshot));
     }
 }
 
-bool Solitaire::shouldTryUncoverTableauPileTopCard(
+bool Solitaire::shouldUncoverTableauPileTopCard(
     const std::shared_ptr<TableauPile>& pile) const
 {
-    return cardsInHand.empty() and pile->isTopCardCovered();
+    return isGameInProgressAndHandIsEmpty() and pile->isTopCardCovered();
 }
 
 void Solitaire::tryPullOutCardsFromTableauPile(const PileId id, const unsigned quantity) {
     throwExceptionOnInvalidTableauPileId(id);
 
-    if (cardsInHand.empty()) {
+    if (isGameInProgressAndHandIsEmpty()) {
         auto& pile = tableauPiles[id];
         auto snapshot = pile->createSnapshot();
         tryAddPulledOutCardsToHand(pile->tryPullOutCards(quantity), std::move(snapshot));
@@ -149,8 +160,12 @@ void Solitaire::tryAddPulledOutCardsToHand(cards::Cards&& cards,
 void Solitaire::tryAddCardsOnTableauPile(const piles::PileId id) {
     throwExceptionOnInvalidTableauPileId(id);
 
-    if (not cardsInHand.empty())
+    if (isGameInProgressAndHandContainsCards())
         tryAddCardOnTableauPileFromHand(tableauPiles[id]);
+}
+
+bool Solitaire::isGameInProgressAndHandContainsCards() const {
+    return not isGameFinished() and not cardsInHand.empty();
 }
 
 void Solitaire::tryAddCardOnTableauPileFromHand(
@@ -181,14 +196,18 @@ void Solitaire::trySelectNextStockPileCard() {
 }
 
 bool Solitaire::shouldSelectNextStockPileCard() const {
-    return cardsInHand.empty() and not stockPile->getCards().empty();
+    return isGameInProgressAndHandIsEmpty() and not stockPile->getCards().empty();
 }
 
 void Solitaire::tryPullOutCardFromStockPile() {
-    if (cardsInHand.empty()) {
+    if (isGameInProgressAndHandIsEmpty()) {
         auto snapshot = stockPile->createSnapshot();
         tryAddPulledOutCardToHand(stockPile->tryPullOutCard(), std::move(snapshot));
     }
+}
+
+bool Solitaire::isGameInProgressAndHandIsEmpty() const {
+    return not isGameFinished() and cardsInHand.empty();
 }
 
 void Solitaire::tryAddPulledOutCardToHand(const std::optional<Card>& card,
@@ -198,6 +217,14 @@ void Solitaire::tryAddPulledOutCardToHand(const std::optional<Card>& card,
         moveCardsOperationSnapshotCreator->saveSourcePileSnapshot(std::move(snapshot));
         cardsInHand.push_back(card.value());
     }
+}
+
+bool Solitaire::isGameFinished() const {
+    return std::all_of(foundationPiles.begin(), foundationPiles.end(),
+        [](const auto& pile) {
+            return pile->getTopCardValue() == Value::King;
+        }
+    );
 }
 
 const FoundationPile& Solitaire::getFoundationPile(const PileId id) const {
