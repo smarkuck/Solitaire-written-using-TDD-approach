@@ -11,7 +11,10 @@ DefaultMoveCardsOperationSnapshotCreator::createSnapshotIfCardsMovedToOtherPile(
     throwIfSnapshotIsNullptr(destinationPileSnapshot);
 
     if (sourcePileSnapshot->isSnapshotOfSameObject(*destinationPileSnapshot))
+    {
+        sourcePileSnapshot = nullptr;
         return nullptr;
+    }
 
     return std::make_unique<Snapshot>(
         std::move(sourcePileSnapshot), std::move(destinationPileSnapshot)
