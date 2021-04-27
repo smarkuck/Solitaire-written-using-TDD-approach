@@ -11,7 +11,7 @@ if (MSVC)
 endif ()
 
 add_executable(${PROJECT_NAME} WIN32 sources/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SolitaireLib)
 
 add_subdirectory(externalLibs)
 add_subdirectory(SolitaireLib)
