@@ -1,8 +1,8 @@
 #include <cassert>
 #include <filesystem>
 
-#include "graphics/SDLDeleter.h"
 #include "graphics/Renderer.h"
+#include "graphics/SDLWrapper.h"
 
 namespace solitaire::graphics {
 
@@ -20,7 +20,7 @@ std::string Renderer::findAssetsPath() {
     return {};
 }
 
-Renderer::Renderer(const Solitaire& solitaire, const SDLWrapper<SDLDeleter>& sdl):
+Renderer::Renderer(const Solitaire& solitaire, const SDLWrapper& sdl):
     solitaire {solitaire},
     sdl {sdl}
 {

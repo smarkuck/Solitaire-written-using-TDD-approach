@@ -3,7 +3,7 @@
 #include "archivers/DefaultHistoryTracker.h"
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
-#include "graphics/SDLDeleter.h"
+#include "graphics/DefaultSDLWrapper.h"
 #include "graphics/Renderer.h"
 #include "piles/DefaultFoundationPile.h"
 #include "piles/DefaultStockPile.h"
@@ -29,8 +29,7 @@ int main(int, char **) {
     };
 
     solitaire.startNewGame();
-    graphics::SDLWrapper<graphics::SDLDeleter> sdl {
-        std::make_unique<graphics::SDLDeleter>()};
+    graphics::DefaultSDLWrapper sdl;
     graphics::Renderer {solitaire, sdl}.render();
 
     return 0;

@@ -1,26 +1,18 @@
 #pragma once
 
-#include "SDL.h"
+struct SDL_Window;
+struct SDL_Renderer;
+struct SDL_Texture;
+struct SDL_Surface;
 
 namespace solitaire::graphics {
 
 class SDLDeleter {
 public:
-    void operator() (SDL_Window* window) const {
-        SDL_DestroyWindow(window);
-    }
-
-    void operator() (SDL_Renderer* renderer) const {
-        SDL_DestroyRenderer(renderer);
-    }
-
-    void operator() (SDL_Texture* texture) const {
-        SDL_DestroyTexture(texture);
-    }
-
-    void operator() (SDL_Surface* surface) const {
-        SDL_FreeSurface(surface);
-    }
+    void operator() (SDL_Window* window) const;
+    void operator() (SDL_Renderer* renderer) const;
+    void operator() (SDL_Texture* texture) const;
+    void operator() (SDL_Surface* surface) const;
 };
 
 }

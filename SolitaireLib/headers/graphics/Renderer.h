@@ -3,7 +3,7 @@
 #include <array>
 #include <string>
 
-#include "SDLWrapper.h"
+#include "SDLPtr.h"
 
 struct SDL_Renderer;
 struct SDL_Texture;
@@ -15,11 +15,11 @@ class Solitaire;
 
 namespace graphics {
 
-class SDLDeleter;
+class SDLWrapper;
 
 class Renderer {
 public:
-    Renderer(const Solitaire&, const SDLWrapper<SDLDeleter>&);
+    Renderer(const Solitaire&, const SDLWrapper&);
     ~Renderer();
 
     void render() const;
@@ -33,7 +33,7 @@ private:
     SDLPtr<SDL_Texture> loadTexture(const std::string& path) const;
 
     const Solitaire& solitaire;
-    const SDLWrapper<SDLDeleter>& sdl;
+    const SDLWrapper& sdl;
     SDLPtr<SDL_Window> window;
     SDLPtr<SDL_Renderer> renderer;
     std::array<SDLPtr<SDL_Texture>, cardsQuantity> cards;
