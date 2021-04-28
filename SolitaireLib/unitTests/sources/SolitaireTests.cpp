@@ -215,22 +215,13 @@ public:
         );
     }
 
-    void expectMoveOperationSnapshotIsNotCreated(
+    auto& expectMoveOperationSnapshotCreation(
         const StrictSnapshotMockPtr& passedSnapshot)
     {
-        EXPECT_CALL(
+        return EXPECT_CALL(
             *moveCardsOperationSnapshotCreatorMock,
             createSnapshotIfCardsMovedToOtherPile(Pointer(passedSnapshot.get()))
-        ).WillOnce(ReturnNull());
-    }
-
-    void expectMoveOperationSnapshotIsCreated(const StrictSnapshotMockPtr& passedSnapshot,
-                                              StrictSnapshotMockPtr& createdSnapshot)
-    {
-        EXPECT_CALL(
-            *moveCardsOperationSnapshotCreatorMock,
-            createSnapshotIfCardsMovedToOtherPile(Pointer(passedSnapshot.get()))
-        ).WillOnce(Return(ByMove(createdSnapshot.make_unique())));
+        );
     }
 
     StrictSnapshotMockPtr snapshotMock;
@@ -479,7 +470,7 @@ TEST_F(SolitaireHandWithOneCardAddCardTest, addCardOnFoundationPileWithoutHistor
     InSequence seq;
     expectSnapshotCreation(lastFoundationPileMock, snapshotMock2);
     expectTryingAddCardAndClearIt(lastFoundationPileMock, cardToAdd);
-    expectMoveOperationSnapshotIsNotCreated(snapshotMock2);
+    expectMoveOperationSnapshotCreation(snapshotMock2).WillOnce(ReturnNull());
     EXPECT_CALL(*historyTrackerMock, save(_)).Times(0);
 
     solitaire.tryAddCardOnFoundationPile(lastFoundationPileId);
@@ -492,7 +483,8 @@ TEST_F(SolitaireHandWithOneCardAddCardTest, addCardOnFoundationPileWithHistoryRe
     InSequence seq;
     expectSnapshotCreation(lastFoundationPileMock, snapshotMock2);
     expectTryingAddCardAndClearIt(lastFoundationPileMock, cardToAdd);
-    expectMoveOperationSnapshotIsCreated(snapshotMock2, moveOperationSnapshot);
+    expectMoveOperationSnapshotCreation(snapshotMock2)
+        .WillOnce(Return(ByMove(moveOperationSnapshot.make_unique())));
     EXPECT_CALL(*historyTrackerMock, save(Pointer(moveOperationSnapshot.get())));
 
     solitaire.tryAddCardOnFoundationPile(lastFoundationPileId);
@@ -538,7 +530,7 @@ TEST_F(SolitaireHandWithTwoCardsTest, addCardOnTableauPileWithoutHistoryRecord) 
     InSequence seq;
     expectSnapshotCreation(lastTableauPileMock, snapshotMock2);
     expectTryingAddCardsAndClearThem(lastTableauPileMock, cardsToAdd);
-    expectMoveOperationSnapshotIsNotCreated(snapshotMock2);
+    expectMoveOperationSnapshotCreation(snapshotMock2).WillOnce(ReturnNull());
     EXPECT_CALL(*historyTrackerMock, save(_)).Times(0);
 
     solitaire.tryAddCardsOnTableauPile(lastTableauPileId);
@@ -551,7 +543,8 @@ TEST_F(SolitaireHandWithTwoCardsTest, addCardOnTableauPileWithHistoryRecord) {
     InSequence seq;
     expectSnapshotCreation(lastTableauPileMock, snapshotMock2);
     expectTryingAddCardsAndClearThem(lastTableauPileMock, cardsToAdd);
-    expectMoveOperationSnapshotIsCreated(snapshotMock2, moveOperationSnapshot);
+    expectMoveOperationSnapshotCreation(snapshotMock2)
+        .WillOnce(Return(ByMove(moveOperationSnapshot.make_unique())));
     EXPECT_CALL(*historyTrackerMock, save(Pointer(moveOperationSnapshot.get())));
 
     solitaire.tryAddCardsOnTableauPile(lastTableauPileId);
