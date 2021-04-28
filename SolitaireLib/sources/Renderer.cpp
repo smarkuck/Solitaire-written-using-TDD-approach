@@ -1,13 +1,13 @@
 #include <cassert>
 
+#include "DefaultSDLDeleter.h"
 #include "Renderer.h"
-#include "SDLWrapper.h"
 
 namespace solitaire {
 
 const std::string Renderer::assetsPath {"../../../assets/"};
 
-Renderer::Renderer(const Solitaire& solitaire, const SDLWrapper& sdl):
+Renderer::Renderer(const Solitaire& solitaire, const SDLWrapper<DefaultSDLDeleter>& sdl):
     solitaire {solitaire},
     sdl {sdl}
 {
@@ -31,49 +31,40 @@ Renderer::Renderer(const Solitaire& solitaire, const SDLWrapper& sdl):
     cardBack = loadTexture("cards/back.bmp");
 }
 
-SDL_Texture* Renderer::loadTexture(const std::string& path) const
+SDLPtr<SDL_Texture> Renderer::loadTexture(const std::string& path) const
 {
-    SDL_Surface* surface = sdl.loadBMP(assetsPath + path);
+    auto surface = sdl.loadBMP(assetsPath + path);
     assert(surface != nullptr);
-    assert(sdl.setColorKey(surface, SDL_TRUE, sdl.mapRGB(surface->format, 0, 255, 255)) == 0);
+    assert(sdl.setColorKey(surface, SDL_TRUE, sdl.mapRGB(surface, 0, 255, 255)) == 0);
 
-    SDL_Texture* texture = sdl.createTextureFromSurface(renderer, surface);
+    auto texture = sdl.createTextureFromSurface(renderer, surface);
     assert(texture != nullptr);
-    sdl.freeSurface(surface);
 
     return texture;
 }
 
 Renderer::~Renderer() {
     sdl.delay(2000);
-
-    for (const auto& texture: cards)
-        sdl.destroyTexture(texture);
-    sdl.destroyTexture(cardBack);
-    sdl.destroyTexture(cardPlaceholder);
-    sdl.destroyTexture(background);
-    sdl.destroyRenderer(renderer);
-    sdl.destroyWindow(window);
     sdl.quit();
 }
 
 void Renderer::render() const {
     sdl.setRenderDrawColor(renderer, 0, 0, 0, 0);
     sdl.renderClear(renderer);
-    sdl.renderCopy(renderer, background, nullptr, nullptr);
+    sdl.renderCopy(renderer, background, std::nullopt, std::nullopt);
 
     for (int i = 0; i < 8; i++) {
         SDL_Rect rect {i*75, 0, 75, 104};
-        sdl.renderCopy(renderer, cards[i], nullptr, &rect);
+        sdl.renderCopy(renderer, cards[i], std::nullopt, rect);
     }
 
     for (int i = 0; i < 4; i++) {
         SDL_Rect rect {i*75, 104, 75, 104};
-        sdl.renderCopy(renderer, cardPlaceholder, nullptr, &rect);
+        sdl.renderCopy(renderer, cardPlaceholder, std::nullopt, rect);
     }
 
     SDL_Rect rect {0, 208, 75, 104};
-    sdl.renderCopy(renderer, cardBack, nullptr, &rect);
+    sdl.renderCopy(renderer, cardBack, std::nullopt, rect);
 
     sdl.renderPresent(renderer);
 }

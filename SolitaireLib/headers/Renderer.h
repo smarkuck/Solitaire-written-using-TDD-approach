@@ -3,36 +3,38 @@
 #include <array>
 #include <string>
 
+#include "SDLWrapper.h"
+
 struct SDL_Renderer;
 struct SDL_Texture;
 struct SDL_Window;
 
 namespace solitaire {
 
-class SDLWrapper;
+class DefaultSDLDeleter;
 class Solitaire;
 
 class Renderer {
 public:
-    Renderer(const Solitaire&, const SDLWrapper&);
+    Renderer(const Solitaire&, const SDLWrapper<DefaultSDLDeleter>&);
     ~Renderer();
 
     void render() const;
 
 private:
-    SDL_Texture* loadTexture(const std::string& path) const;
+    SDLPtr<SDL_Texture> loadTexture(const std::string& path) const;
 
     static constexpr unsigned cardsQuantity {52};
     static const std::string assetsPath;
 
     const Solitaire& solitaire;
-    const SDLWrapper& sdl;
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    std::array<SDL_Texture*, cardsQuantity> cards;
-    SDL_Texture* cardBack;
-    SDL_Texture* cardPlaceholder;
-    SDL_Texture* background;
+    const SDLWrapper<DefaultSDLDeleter>& sdl;
+    SDLPtr<SDL_Window> window;
+    SDLPtr<SDL_Renderer> renderer;
+    std::array<SDLPtr<SDL_Texture>, cardsQuantity> cards;
+    SDLPtr<SDL_Texture> cardBack;
+    SDLPtr<SDL_Texture> cardPlaceholder;
+    SDLPtr<SDL_Texture> background;
 };
 
 }

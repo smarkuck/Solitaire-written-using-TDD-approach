@@ -1,7 +1,7 @@
-#include "Renderer.h"
-#include "SDLWrapper.h"
+#include "DefaultSDLDeleter.h"
 #include "cards/Card.h"
 #include "Solitaire.h"
+#include "Renderer.h"
 #include "archivers/DefaultHistoryTracker.h"
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
@@ -29,7 +29,7 @@ int main(int, char **) {
     };
 
     solitaire.startNewGame();
-    SDLWrapper sdl;
+    SDLWrapper<DefaultSDLDeleter> sdl {std::make_unique<DefaultSDLDeleter>()};
     Renderer {solitaire, sdl}.render();
 
     return 0;
