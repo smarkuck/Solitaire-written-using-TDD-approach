@@ -19,7 +19,8 @@ SDL_Renderer* const rendererPtr {reinterpret_cast<SDL_Renderer*>(2)};
 
 class GraphicsSystemTests: public Test {
 public:
-    std::shared_ptr<SDLDeleterMock> SDLPtrDeleterMock {std::make_shared<SDLDeleterMock>()};
+    std::shared_ptr<StrictMock<SDLDeleterMock>> SDLPtrDeleterMock {
+        std::make_shared<StrictMock<SDLDeleterMock>>()};
 
     mock_ptr<StrictMock<SDLWrapperMock>> SDLMock;
     GraphicsSystem system {SDLMock.make_unique()};
@@ -46,6 +47,36 @@ public:
     SDLPtr<SDL_Renderer> makeSDLRenderer(SDL_Renderer* ptr) {
         return SDLPtr<SDL_Renderer> {ptr, SDLDeleter{SDLPtrDeleterMock}};
     }
+
+    void throwIfSDLCreateRendererFailedDuringWindowCreationTest() {
+        EXPECT_CALL(*SDLMock, init(SDL_INIT_VIDEO)).WillOnce(Return(0));
+        expectSDLCreateWindow(title, windowWidth, windowHeight)
+            .WillOnce(Return(ByMove(makeSDLWindow(windowPtr))));
+        expectSDLCreateRenderer(windowPtr).WillOnce(ReturnNull());
+        EXPECT_CALL(*SDLPtrDeleterMock, windowDeleter(windowPtr));
+        EXPECT_CALL(*SDLMock, quit());
+        EXPECT_THROW(system.createWindow(title, windowWidth, windowHeight), std::runtime_error);
+    }
+
+    void expectCreateWindow() {
+        EXPECT_CALL(*SDLMock, init(SDL_INIT_VIDEO)).WillOnce(Return(0));
+        expectSDLCreateWindow(title, windowWidth, windowHeight)
+            .WillOnce(Return(ByMove(makeSDLWindow(windowPtr))));
+        expectSDLCreateRenderer(windowPtr)
+            .WillOnce(Return(ByMove(makeSDLRenderer(rendererPtr))));
+        system.createWindow(title, windowWidth, windowHeight);
+    }
+
+    void expectFullQuitSystem() {
+        EXPECT_CALL(*SDLPtrDeleterMock, rendererDeleter(rendererPtr));
+        EXPECT_CALL(*SDLPtrDeleterMock, windowDeleter(windowPtr));
+        EXPECT_CALL(*SDLMock, quit());
+    }
+
+    void createWindowSuccessfullyTest() {
+        expectCreateWindow();
+        expectFullQuitSystem();
+    }
 };
 
 TEST_F(GraphicsSystemTests, doNothingWithSDLWhenWindowNotCreated) {
@@ -61,32 +92,31 @@ TEST_F(GraphicsSystemTests, throwIfSDLCreateWindowFailedDuringWindowCreation) {
     InSequence seq;
     EXPECT_CALL(*SDLMock, init(SDL_INIT_VIDEO)).WillOnce(Return(0));
     expectSDLCreateWindow(title, windowWidth, windowHeight).WillOnce(ReturnNull());
-    EXPECT_THROW(system.createWindow(title, windowWidth, windowHeight), std::runtime_error);
     EXPECT_CALL(*SDLMock, quit());
+    EXPECT_THROW(system.createWindow(title, windowWidth, windowHeight), std::runtime_error);
 }
 
 TEST_F(GraphicsSystemTests, throwIfSDLCreateRendererFailedDuringWindowCreation) {
     InSequence seq;
-    EXPECT_CALL(*SDLMock, init(SDL_INIT_VIDEO)).WillOnce(Return(0));
-    expectSDLCreateWindow(title, windowWidth, windowHeight)
-        .WillOnce(Return(ByMove(makeSDLWindow(windowPtr))));
-    expectSDLCreateRenderer(windowPtr).WillOnce(ReturnNull());
-    EXPECT_THROW(system.createWindow(title, windowWidth, windowHeight), std::runtime_error);
-    EXPECT_CALL(*SDLPtrDeleterMock, windowDeleter(windowPtr));
-    EXPECT_CALL(*SDLMock, quit());
+    throwIfSDLCreateRendererFailedDuringWindowCreationTest();
 }
 
 TEST_F(GraphicsSystemTests, createWindowSuccessfully) {
     InSequence seq;
-    EXPECT_CALL(*SDLMock, init(SDL_INIT_VIDEO)).WillOnce(Return(0));
-    expectSDLCreateWindow(title, windowWidth, windowHeight)
-        .WillOnce(Return(ByMove(makeSDLWindow(windowPtr))));
-    expectSDLCreateRenderer(windowPtr)
-        .WillOnce(Return(ByMove(makeSDLRenderer(rendererPtr))));
-    system.createWindow(title, windowWidth, windowHeight);
-    EXPECT_CALL(*SDLPtrDeleterMock, rendererDeleter(rendererPtr));
-    EXPECT_CALL(*SDLPtrDeleterMock, windowDeleter(windowPtr));
-    EXPECT_CALL(*SDLMock, quit());
+    createWindowSuccessfullyTest();
+}
+
+TEST_F(GraphicsSystemTests, createWindowSuccessfullyOnSecondTry) {
+    InSequence seq;
+    throwIfSDLCreateRendererFailedDuringWindowCreationTest();
+    createWindowSuccessfullyTest();
+}
+
+TEST_F(GraphicsSystemTests, throwOnCreateWindowAfterSuccessfulCreation) {
+    InSequence seq;
+    expectCreateWindow();
+    EXPECT_THROW(system.createWindow(title, windowWidth, windowHeight), std::runtime_error);
+    expectFullQuitSystem();
 }
 
 }
