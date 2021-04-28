@@ -5,7 +5,7 @@
 
 namespace solitaire {
 
-const std::string Renderer::assetsPath {"../../assets/"};
+const std::string Renderer::assetsPath {"../../../assets/"};
 
 Renderer::Renderer(const Solitaire& solitaire, const SDLWrapper& sdl):
     solitaire {solitaire},

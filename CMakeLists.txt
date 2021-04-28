@@ -10,8 +10,6 @@ if (MSVC)
     add_compile_options(/permissive-)
 endif ()
 
-add_executable(${PROJECT_NAME} WIN32 sources/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE SolitaireLib)
-
 add_subdirectory(externalLibs)
+add_subdirectory(SolitaireExe)
 add_subdirectory(SolitaireLib)
