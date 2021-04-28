@@ -8,6 +8,7 @@ target_sources(SolitaireLib PRIVATE
     sources/cards/Card.cpp
     sources/cards/ShuffledDeckGenerator.cpp
     sources/graphics/DefaultSDLWrapper.cpp
+    sources/graphics/GraphicsSystem.cpp
     sources/graphics/Renderer.cpp
     sources/graphics/SDLDeleter.cpp
     sources/piles/DefaultFoundationPile.cpp

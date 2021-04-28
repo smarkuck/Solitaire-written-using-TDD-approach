@@ -10,6 +10,8 @@ namespace solitaire::graphics {
 
 class SDLWrapper {
 public:
+    virtual ~SDLWrapper() = default;
+
     virtual int init(Uint32 flags) const = 0;
 
     virtual void quit() const = 0;
