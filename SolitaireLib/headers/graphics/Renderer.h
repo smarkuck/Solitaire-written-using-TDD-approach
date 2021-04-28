@@ -15,11 +15,11 @@ class Solitaire;
 
 namespace graphics {
 
-class DefaultSDLDeleter;
+class SDLDeleter;
 
 class Renderer {
 public:
-    Renderer(const Solitaire&, const SDLWrapper<DefaultSDLDeleter>&);
+    Renderer(const Solitaire&, const SDLWrapper<SDLDeleter>&);
     ~Renderer();
 
     void render() const;
@@ -33,7 +33,7 @@ private:
     SDLPtr<SDL_Texture> loadTexture(const std::string& path) const;
 
     const Solitaire& solitaire;
-    const SDLWrapper<DefaultSDLDeleter>& sdl;
+    const SDLWrapper<SDLDeleter>& sdl;
     SDLPtr<SDL_Window> window;
     SDLPtr<SDL_Renderer> renderer;
     std::array<SDLPtr<SDL_Texture>, cardsQuantity> cards;
