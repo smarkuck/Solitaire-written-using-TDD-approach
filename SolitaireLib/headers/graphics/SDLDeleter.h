@@ -5,7 +5,7 @@ struct SDL_Renderer;
 struct SDL_Texture;
 struct SDL_Surface;
 
-namespace solitaire {
+namespace solitaire::graphics {
 
 class SDLDeleter {
 public:

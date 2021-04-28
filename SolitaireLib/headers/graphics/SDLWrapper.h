@@ -6,7 +6,7 @@
 #include "SDL.h"
 #include "SDLPtr.h"
 
-namespace solitaire {
+namespace solitaire::graphics {
 
 template <class Deleter>
 class SDLWrapper {

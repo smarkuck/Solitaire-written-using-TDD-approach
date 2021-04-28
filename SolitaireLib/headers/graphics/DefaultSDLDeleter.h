@@ -3,7 +3,7 @@
 #include "SDL.h"
 #include "SDLDeleter.h"
 
-namespace solitaire {
+namespace solitaire::graphics {
 
 class DefaultSDLDeleter: public SDLDeleter {
 public:

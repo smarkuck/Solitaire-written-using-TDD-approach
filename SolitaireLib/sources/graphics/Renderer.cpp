@@ -1,9 +1,9 @@
 #include <cassert>
 
-#include "DefaultSDLDeleter.h"
-#include "Renderer.h"
+#include "graphics/DefaultSDLDeleter.h"
+#include "graphics/Renderer.h"
 
-namespace solitaire {
+namespace solitaire::graphics {
 
 const std::string Renderer::assetsPath {"../../../assets/"};
 

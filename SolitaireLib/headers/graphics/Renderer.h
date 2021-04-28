@@ -11,8 +11,11 @@ struct SDL_Window;
 
 namespace solitaire {
 
-class DefaultSDLDeleter;
 class Solitaire;
+
+namespace graphics {
+
+class DefaultSDLDeleter;
 
 class Renderer {
 public:
@@ -37,4 +40,5 @@ private:
     SDLPtr<SDL_Texture> background;
 };
 
+}
 }

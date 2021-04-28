@@ -1,10 +1,10 @@
-#include "DefaultSDLDeleter.h"
 #include "cards/Card.h"
 #include "Solitaire.h"
-#include "Renderer.h"
 #include "archivers/DefaultHistoryTracker.h"
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
+#include "graphics/DefaultSDLDeleter.h"
+#include "graphics/Renderer.h"
 #include "piles/DefaultFoundationPile.h"
 #include "piles/DefaultStockPile.h"
 #include "piles/DefaultTableauPile.h"
@@ -29,8 +29,9 @@ int main(int, char **) {
     };
 
     solitaire.startNewGame();
-    SDLWrapper<DefaultSDLDeleter> sdl {std::make_unique<DefaultSDLDeleter>()};
-    Renderer {solitaire, sdl}.render();
+    graphics::SDLWrapper<graphics::DefaultSDLDeleter> sdl {
+        std::make_unique<graphics::DefaultSDLDeleter>()};
+    graphics::Renderer {solitaire, sdl}.render();
 
     return 0;
 }
