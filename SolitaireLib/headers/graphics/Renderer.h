@@ -25,10 +25,12 @@ public:
     void render() const;
 
 private:
-    SDLPtr<SDL_Texture> loadTexture(const std::string& path) const;
+    static std::string findAssetsPath();
 
     static constexpr unsigned cardsQuantity {52};
     static const std::string assetsPath;
+
+    SDLPtr<SDL_Texture> loadTexture(const std::string& path) const;
 
     const Solitaire& solitaire;
     const SDLWrapper<DefaultSDLDeleter>& sdl;

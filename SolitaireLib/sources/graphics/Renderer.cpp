@@ -1,11 +1,24 @@
 #include <cassert>
+#include <filesystem>
 
 #include "graphics/DefaultSDLDeleter.h"
 #include "graphics/Renderer.h"
 
 namespace solitaire::graphics {
 
-const std::string Renderer::assetsPath {"../../../assets/"};
+const std::string Renderer::assetsPath {findAssetsPath()};
+
+std::string Renderer::findAssetsPath() {
+    std::string path = "assets/";
+    const std::string moveUp = "../";
+
+    for (unsigned i = 0; i < 4; i++, path = moveUp + path)
+        if (std::filesystem::exists(path))
+            return path;
+
+    assert(false and "cannot find assets path");
+    return {};
+}
 
 Renderer::Renderer(const Solitaire& solitaire, const SDLWrapper<DefaultSDLDeleter>& sdl):
     solitaire {solitaire},
