@@ -33,7 +33,7 @@ int main(int, char **) {
 
     graphics::GraphicsSystem system {std::make_unique<graphics::DefaultSDLWrapper>()};
     graphics::Renderer renderer {solitaire, system};
-    for (unsigned i = 0; i < 100; ++i)
+    for (unsigned i = 0; i < 150; ++i)
         renderer.render();
 
     return 0;
