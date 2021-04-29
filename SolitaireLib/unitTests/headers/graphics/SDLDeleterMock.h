@@ -2,10 +2,10 @@
 
 #include "gmock/gmock.h"
 
-struct SDL_Window;
 struct SDL_Renderer;
-struct SDL_Texture;
 struct SDL_Surface;
+struct SDL_Texture;
+struct SDL_Window;
 
 namespace solitaire::graphics {
 

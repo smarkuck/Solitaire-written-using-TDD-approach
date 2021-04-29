@@ -3,6 +3,7 @@
 #include "graphics/GraphicsSystem.h"
 #include "graphics/SDLDeleterMock.h"
 #include "graphics/SDLWrapperMock.h"
+#include "graphics/TextureArea.h"
 #include "graphics/TextureId.h"
 
 using namespace testing;
@@ -15,8 +16,6 @@ const std::string texturePath {"texture.bmp"};
 
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {840};
-constexpr unsigned textureWidth {50};
-constexpr unsigned textureHeight {30};
 constexpr Uint32 mapRGBResult {10};
 constexpr uint8_t alpha {70};
 constexpr int success {0};
@@ -25,11 +24,33 @@ constexpr int failure {-1};
 const TextureId textureId0 {0};
 const TextureId textureId1 {1};
 
+constexpr TexturePosition texturePosition {13, 17};
+constexpr TextureArea textureArea {TexturePosition {10, 15}, TextureSize {20, 30}};
+
+constexpr SDL_Rect srcRect {
+    textureArea.position.x, textureArea.position.y,
+    textureArea.size.width, textureArea.size.height
+};
+
+constexpr SDL_Rect dstRect {
+    texturePosition.x, texturePosition.y,
+    textureArea.size.width, textureArea.size.height
+};
+
 SDL_Window* const windowPtr {reinterpret_cast<SDL_Window*>(1)};
 SDL_Renderer* const rendererPtr {reinterpret_cast<SDL_Renderer*>(2)};
 SDL_Texture* const texturePtr {reinterpret_cast<SDL_Texture*>(3)};
 SDL_Texture* const texturePtr2 {reinterpret_cast<SDL_Texture*>(4)};
 SDL_Surface* const surfacePtr {reinterpret_cast<SDL_Surface*>(5)};
+
+MATCHER_P(IsOptionalEq, rect, "") {
+    if (not arg)
+        return false;
+
+    auto& value = arg.value();
+    return value.x == rect.x and value.y == rect.y and
+           value.w == rect.w and value.h == rect.h;
+}
 }
 
 class GraphicsSystemTests: public Test {
@@ -157,16 +178,22 @@ TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
 TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
        throwOnLoadTextureIfWindowNotCreated)
 {
-    EXPECT_THROW(
-        system.loadTexture(texturePath, textureWidth, textureHeight),
-        std::runtime_error
-    );
+    EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
 }
 
 TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
        throwOnSetTextureAlphaIfWindowNotCreated)
 {
     EXPECT_THROW(system.setTextureAlpha(textureId0, alpha), std::runtime_error);
+}
+
+TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
+       throwOnRenderTextureIfWindowNotCreated)
+{
+    EXPECT_THROW(
+        system.renderTexture(textureId0, texturePosition, textureArea),
+        std::runtime_error
+    );
 }
 
 class GraphicsSystemWithCreatedWindowTests: public GraphicsSystemTests {
@@ -194,7 +221,7 @@ public:
             createTextureFromSurface(Pointer(rendererPtr), Pointer(surfacePtr))
         ).WillOnce(Return(ByMove(makeSDLTexture(texturePtr))));
         EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
-        EXPECT_EQ(system.loadTexture(texturePath, textureWidth, textureHeight), textureId);
+        EXPECT_EQ(system.loadTexture(texturePath), textureId);
     }
 };
 
@@ -203,12 +230,7 @@ TEST_F(GraphicsSystemWithCreatedWindowTests,
 {
     InSequence seq;
     EXPECT_CALL(*SDLMock, loadBMP(texturePath)).WillOnce(ReturnNull());
-
-    EXPECT_THROW(
-        system.loadTexture(texturePath, textureWidth, textureHeight),
-        std::runtime_error
-    );
-
+    EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
     expectQuitSystem();
 }
 
@@ -223,12 +245,7 @@ TEST_F(GraphicsSystemWithCreatedWindowTests,
     EXPECT_CALL(*SDLMock, setColorKey(Pointer(surfacePtr), SDL_TRUE, mapRGBResult))
         .WillOnce(Return(failure));
     EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
-
-    EXPECT_THROW(
-        system.loadTexture(texturePath, textureWidth, textureHeight),
-        std::runtime_error
-    );
-
+    EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
     expectQuitSystem();
 }
 
@@ -246,12 +263,7 @@ TEST_F(GraphicsSystemWithCreatedWindowTests,
         createTextureFromSurface(Pointer(rendererPtr), Pointer(surfacePtr))
     ).WillOnce(ReturnNull());
     EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
-
-    EXPECT_THROW(
-        system.loadTexture(texturePath, textureWidth, textureHeight),
-        std::runtime_error
-    );
-
+    EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
     expectQuitSystem();
 }
 
@@ -304,6 +316,49 @@ TEST_F(GraphicsSystemWithLoadedTexture, setTextureAlphaSuccessfully)
     EXPECT_CALL(*SDLMock, setTextureAlphaMod(Pointer(texturePtr), alpha))
         .WillOnce(Return(success));
     system.setTextureAlpha(textureId0, alpha);
+    expectQuitSystemWithLoadedTexture();
+}
+
+TEST_F(GraphicsSystemWithLoadedTexture,
+       throwIfUsedWrongTextureIdDuringTextureRendering)
+{
+    InSequence seq;
+
+    EXPECT_THROW(
+        system.renderTexture(textureId1, texturePosition, textureArea),
+        std::runtime_error
+    );
+
+    expectQuitSystemWithLoadedTexture();
+}
+
+TEST_F(GraphicsSystemWithLoadedTexture, throwIfSDLRenderCopyFailedDuringTextureRendering)
+{
+    InSequence seq;
+
+    EXPECT_CALL(*SDLMock,
+        renderCopy(Pointer(rendererPtr), Pointer(texturePtr),
+                   IsOptionalEq(srcRect), IsOptionalEq(dstRect))
+    ).WillOnce(Return(failure));
+
+    EXPECT_THROW(
+        system.renderTexture(textureId0, texturePosition, textureArea),
+        std::runtime_error
+    );
+
+    expectQuitSystemWithLoadedTexture();
+}
+
+TEST_F(GraphicsSystemWithLoadedTexture, renderTextureSuccessfully)
+{
+    InSequence seq;
+
+    EXPECT_CALL(*SDLMock,
+        renderCopy(Pointer(rendererPtr), Pointer(texturePtr),
+                   IsOptionalEq(srcRect), IsOptionalEq(dstRect))
+    ).WillOnce(Return(success));
+
+    system.renderTexture(textureId0, texturePosition, textureArea);
     expectQuitSystemWithLoadedTexture();
 }
 
