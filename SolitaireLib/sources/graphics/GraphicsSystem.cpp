@@ -2,6 +2,7 @@
 
 #include "graphics/GraphicsSystem.h"
 #include "graphics/SDLWrapper.h"
+#include "graphics/TextureId.h"
 
 namespace solitaire::graphics {
 
@@ -61,6 +62,7 @@ void GraphicsSystem::quitAndThrow(const std::string& error) {
 }
 
 void GraphicsSystem::quit() {
+    textures.clear();
     renderer.reset();
     window.reset();
 
@@ -69,6 +71,37 @@ void GraphicsSystem::quit() {
         isSDLInitialized = false;
         SDL->quit();
     }
+}
+
+TextureId GraphicsSystem::loadTexture(const std::string& path) {
+    if (not isWindowCreated)
+        throw std::runtime_error {"Cannot load texture when window not created"};
+
+    textures.emplace_back(createSDLTextureOrThrow(createSDLSurfaceOrThrow(path)));
+    return TextureId {static_cast<unsigned>(textures.size() - 1)};
+}
+
+SDLPtr<SDL_Surface>
+GraphicsSystem::createSDLSurfaceOrThrow(const std::string& path) const {
+    auto surface = SDL->loadBMP(path);
+
+    if (not surface)
+        throw std::runtime_error {"Cannot find texture " + path};
+
+    if (SDL->setColorKey(surface, SDL_TRUE, SDL->mapRGB(surface, 0, 255, 255)))
+        throw std::runtime_error {"Cannot set transparent color for " + path};
+
+    return surface;
+}
+
+SDLPtr<SDL_Texture> GraphicsSystem::createSDLTextureOrThrow(
+    const SDLPtr<SDL_Surface>& surface) const
+{
+    auto texture = SDL->createTextureFromSurface(renderer, surface);
+
+    if (not texture)
+        throw std::runtime_error {"Cannot create texture from surface"};
+    return texture;
 }
 
 }

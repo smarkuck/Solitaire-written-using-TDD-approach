@@ -9,6 +9,7 @@
 #include "archivers/Snapshot.h"
 #include "cards/DeckGenerator.h"
 #include "piles/FoundationPile.h"
+#include "piles/PileId.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
 

@@ -6,7 +6,6 @@
 
 #include "cards/Cards.h"
 #include "cards/Deck.h"
-#include "piles/PileId.h"
 
 namespace solitaire {
 
@@ -22,6 +21,7 @@ namespace cards {
 
 namespace piles {
     class FoundationPile;
+    struct PileId;
     class StockPile;
     class TableauPile;
 }

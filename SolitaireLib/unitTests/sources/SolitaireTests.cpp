@@ -11,6 +11,7 @@
 #include "cards/Value.h"
 #include "gmock/gmock.h"
 #include "piles/FoundationPileMock.h"
+#include "piles/PileId.h"
 #include "piles/StockPileMock.h"
 #include "piles/TableauPileMock.h"
 
