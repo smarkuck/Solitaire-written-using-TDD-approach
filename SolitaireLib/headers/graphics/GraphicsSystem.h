@@ -23,6 +23,7 @@ public:
 
     void createWindow(const std::string& title, unsigned width, unsigned height);
     TextureId loadTexture(const std::string& path);
+    void setTextureAlpha(const TextureId, uint8_t alpha);
 
 private:
     void initializeSDLOrQuitAndThrowError();

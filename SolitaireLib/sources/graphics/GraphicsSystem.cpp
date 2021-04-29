@@ -46,8 +46,9 @@ SDLPtr<SDL_Window> GraphicsSystem::createSDLWindowOrQuitAndThrowError(
     return window;
 }
 
-SDLPtr<SDL_Renderer>
-GraphicsSystem::createSDLWindowRendererOrQuitAndThrowError(const SDLPtr<SDL_Window>& window) {
+SDLPtr<SDL_Renderer> GraphicsSystem::createSDLWindowRendererOrQuitAndThrowError(
+    const SDLPtr<SDL_Window>& window)
+{
     auto renderer = SDL->createRenderer(
         window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -102,6 +103,18 @@ SDLPtr<SDL_Texture> GraphicsSystem::createSDLTextureOrThrow(
     if (not texture)
         throw std::runtime_error {"Cannot create texture from surface"};
     return texture;
+}
+
+void GraphicsSystem::setTextureAlpha(TextureId textureId, uint8_t alpha) {
+    if (not isWindowCreated)
+        throw std::runtime_error {"Cannot set texture alpha when window not created"};
+
+    if (textureId.t >= textures.size())
+        throw std::runtime_error {"Unknown texture id: " + textureId};
+
+    if (SDL->setTextureAlphaMod(textures[textureId], 70))
+        throw std::runtime_error {
+            "Cannot change alpha for texture with id: " + textureId};
 }
 
 }
