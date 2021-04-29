@@ -154,4 +154,14 @@ void GraphicsSystem::throwOnInvalidTextureOperation(const TextureId id) const {
         throw std::runtime_error {"Unknown texture id: " + id};
 }
 
+void GraphicsSystem::renderFrame() {
+    if (not isWindowCreated)
+        throw std::runtime_error {"Cannot render frame when window not created"};
+
+    SDL->renderPresent(renderer);
+
+    if (SDL->renderClear(renderer))
+        throw std::runtime_error {"Cannot clear frame"};
+}
+
 }

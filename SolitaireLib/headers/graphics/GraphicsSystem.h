@@ -32,6 +32,7 @@ public:
     void setTextureAlpha(const TextureId, const uint8_t alpha);
     void renderTexture(const TextureId, const TexturePosition&, const TextureArea&);
     void renderTextureOnFullscreen(const TextureId);
+    void renderFrame();
 
 private:
     void initializeSDLOrQuitAndThrowError();
