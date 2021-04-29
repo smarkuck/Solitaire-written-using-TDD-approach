@@ -1,8 +1,10 @@
 #include <cassert>
 #include <filesystem>
 
+#include "graphics/GraphicsSystem.h"
 #include "graphics/Renderer.h"
-#include "graphics/SDLWrapper.h"
+#include "graphics/TextureArea.h"
+#include "graphics/TextureId.h"
 
 namespace solitaire::graphics {
 
@@ -12,7 +14,7 @@ std::string Renderer::findAssetsPath() {
     std::string path = "assets/";
     const std::string moveUp = "../";
 
-    for (unsigned i = 0; i < 4; i++, path = moveUp + path)
+    for (unsigned i = 0; i < 4; ++i, path = moveUp + path)
         if (std::filesystem::exists(path))
             return path;
 
@@ -20,66 +22,46 @@ std::string Renderer::findAssetsPath() {
     return {};
 }
 
-Renderer::Renderer(const Solitaire& solitaire, const SDLWrapper& sdl):
+Renderer::Renderer(const Solitaire& solitaire, GraphicsSystem& system):
     solitaire {solitaire},
-    sdl {sdl}
+    system {system}
 {
-    sdl.init(SDL_INIT_VIDEO);
+    system.createWindow("Solitaire", 640, 480);
+    system.loadTexture(assetsPath + "background.bmp");
+    system.loadTexture(assetsPath + "cards/placeholder.bmp");
+    system.setTextureAlpha(TextureId{1}, 70);
+    system.loadTexture(assetsPath + "cards/back.bmp");
 
-    window = sdl.createWindow("Solitaire",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        640, 480, SDL_WINDOW_SHOWN
-    );
-    assert(window != nullptr);
-
-    renderer = sdl.createRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    assert(renderer != nullptr);
-
-    background = loadTexture("background.bmp");
-    cardPlaceholder = loadTexture("cards/placeholder.bmp");
-    assert(sdl.setTextureAlphaMod(cardPlaceholder, 70) == 0);
-
-    for (unsigned i = 0; i < cardsQuantity; i++)
-        cards[i] = loadTexture("cards/" + std::to_string(i) + ".bmp");
-    cardBack = loadTexture("cards/back.bmp");
-}
-
-SDLPtr<SDL_Texture> Renderer::loadTexture(const std::string& path) const
-{
-    auto surface = sdl.loadBMP(assetsPath + path);
-    assert(surface != nullptr);
-    assert(sdl.setColorKey(surface, SDL_TRUE, sdl.mapRGB(surface, 0, 255, 255)) == 0);
-
-    auto texture = sdl.createTextureFromSurface(renderer, surface);
-    assert(texture != nullptr);
-
-    return texture;
-}
-
-Renderer::~Renderer() {
-    sdl.delay(2000);
-    sdl.quit();
+    for (unsigned i = 0; i < 8; ++i)
+        system.loadTexture(assetsPath + "cards/" + std::to_string(i) + ".bmp");
 }
 
 void Renderer::render() const {
-    sdl.setRenderDrawColor(renderer, 0, 0, 0, 0);
-    sdl.renderClear(renderer);
-    sdl.renderCopy(renderer, background, std::nullopt, std::nullopt);
+    system.renderTextureOnFullscreen(TextureId{0});
 
-    for (int i = 0; i < 8; i++) {
-        SDL_Rect rect {i*75, 0, 75, 104};
-        sdl.renderCopy(renderer, cards[i], std::nullopt, rect);
+    const TextureArea area {
+        TexturePosition {0, 0},
+        TextureSize {75, 104}
+    };
+
+    TexturePosition position {0, 0};
+
+    for (unsigned i = 0; i < 8; ++i) {
+        position.x = i*75;
+        system.renderTexture(TextureId{i+3}, position, area);
     }
 
-    for (int i = 0; i < 4; i++) {
-        SDL_Rect rect {i*75, 104, 75, 104};
-        sdl.renderCopy(renderer, cardPlaceholder, std::nullopt, rect);
+    position.y = 104;
+    for (unsigned i = 0; i < 4; ++i) {
+        position.x = i*75;
+        system.renderTexture(TextureId{1}, position, area);
     }
 
-    SDL_Rect rect {0, 208, 75, 104};
-    sdl.renderCopy(renderer, cardBack, std::nullopt, rect);
+    position.x = 0;
+    position.y = 208;
+    system.renderTexture(TextureId{2}, position, area);
 
-    sdl.renderPresent(renderer);
+    system.renderFrame();
 }
 
 }
