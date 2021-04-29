@@ -74,11 +74,17 @@ void GraphicsSystem::quit() {
     }
 }
 
-TextureId GraphicsSystem::loadTexture(const std::string& path) {
+TextureId GraphicsSystem::loadTexture(
+    const std::string& path, unsigned width, unsigned height)
+{
     if (not isWindowCreated)
         throw std::runtime_error {"Cannot load texture when window not created"};
 
-    textures.emplace_back(createSDLTextureOrThrow(createSDLSurfaceOrThrow(path)));
+    textures.push_back(TextureData {
+        createSDLTextureOrThrow(createSDLSurfaceOrThrow(path)),
+        width, height
+    });
+
     return TextureId {static_cast<unsigned>(textures.size() - 1)};
 }
 
@@ -112,7 +118,7 @@ void GraphicsSystem::setTextureAlpha(TextureId textureId, uint8_t alpha) {
     if (textureId.t >= textures.size())
         throw std::runtime_error {"Unknown texture id: " + textureId};
 
-    if (SDL->setTextureAlphaMod(textures[textureId], 70))
+    if (SDL->setTextureAlphaMod(textures[textureId].texture, 70))
         throw std::runtime_error {
             "Cannot change alpha for texture with id: " + textureId};
 }

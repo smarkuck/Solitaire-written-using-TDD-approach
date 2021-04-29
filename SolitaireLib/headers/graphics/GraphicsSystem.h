@@ -22,10 +22,15 @@ public:
     ~GraphicsSystem();
 
     void createWindow(const std::string& title, unsigned width, unsigned height);
-    TextureId loadTexture(const std::string& path);
+    TextureId loadTexture(const std::string& path, unsigned width, unsigned height);
     void setTextureAlpha(const TextureId, uint8_t alpha);
 
 private:
+    struct TextureData {
+        SDLPtr<SDL_Texture> texture;
+        unsigned width, height;
+    };
+
     void initializeSDLOrQuitAndThrowError();
 
     SDLPtr<SDL_Window> createSDLWindowOrQuitAndThrowError(
@@ -43,7 +48,7 @@ private:
     std::unique_ptr<SDLWrapper> SDL;
     SDLPtr<SDL_Window> window;
     SDLPtr<SDL_Renderer> renderer;
-    std::vector<SDLPtr<SDL_Texture>> textures;
+    std::vector<TextureData> textures;
 
     bool isSDLInitialized {false};
     bool isWindowCreated {false};

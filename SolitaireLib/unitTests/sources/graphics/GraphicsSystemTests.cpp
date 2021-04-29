@@ -15,6 +15,8 @@ const std::string texturePath {"texture.bmp"};
 
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {840};
+constexpr unsigned textureWidth {50};
+constexpr unsigned textureHeight {30};
 constexpr Uint32 mapRGBResult {10};
 constexpr uint8_t alpha {70};
 constexpr int success {0};
@@ -155,7 +157,10 @@ TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
 TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
        throwOnLoadTextureIfWindowNotCreated)
 {
-    EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
+    EXPECT_THROW(
+        system.loadTexture(texturePath, textureWidth, textureHeight),
+        std::runtime_error
+    );
 }
 
 TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
@@ -189,7 +194,7 @@ public:
             createTextureFromSurface(Pointer(rendererPtr), Pointer(surfacePtr))
         ).WillOnce(Return(ByMove(makeSDLTexture(texturePtr))));
         EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
-        EXPECT_EQ(system.loadTexture(texturePath), textureId);
+        EXPECT_EQ(system.loadTexture(texturePath, textureWidth, textureHeight), textureId);
     }
 };
 
@@ -198,7 +203,12 @@ TEST_F(GraphicsSystemWithCreatedWindowTests,
 {
     InSequence seq;
     EXPECT_CALL(*SDLMock, loadBMP(texturePath)).WillOnce(ReturnNull());
-    EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
+
+    EXPECT_THROW(
+        system.loadTexture(texturePath, textureWidth, textureHeight),
+        std::runtime_error
+    );
+
     expectQuitSystem();
 }
 
@@ -213,7 +223,12 @@ TEST_F(GraphicsSystemWithCreatedWindowTests,
     EXPECT_CALL(*SDLMock, setColorKey(Pointer(surfacePtr), SDL_TRUE, mapRGBResult))
         .WillOnce(Return(failure));
     EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
-    EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
+
+    EXPECT_THROW(
+        system.loadTexture(texturePath, textureWidth, textureHeight),
+        std::runtime_error
+    );
+
     expectQuitSystem();
 }
 
@@ -231,7 +246,12 @@ TEST_F(GraphicsSystemWithCreatedWindowTests,
         createTextureFromSurface(Pointer(rendererPtr), Pointer(surfacePtr))
     ).WillOnce(ReturnNull());
     EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
-    EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
+
+    EXPECT_THROW(
+        system.loadTexture(texturePath, textureWidth, textureHeight),
+        std::runtime_error
+    );
+
     expectQuitSystem();
 }
 
