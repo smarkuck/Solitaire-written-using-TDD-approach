@@ -196,6 +196,12 @@ TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
     );
 }
 
+TEST_F(GraphicsSystemAfterWindowCreationFailedTests,
+       throwOnRenderTextureOnFullscreenIfWindowNotCreated)
+{
+    EXPECT_THROW(system.renderTextureOnFullscreen(textureId0), std::runtime_error);
+}
+
 class GraphicsSystemWithCreatedWindowTests: public GraphicsSystemTests {
 public:
     GraphicsSystemWithCreatedWindowTests() {
@@ -359,6 +365,41 @@ TEST_F(GraphicsSystemWithLoadedTexture, renderTextureSuccessfully)
     ).WillOnce(Return(success));
 
     system.renderTexture(textureId0, texturePosition, textureArea);
+    expectQuitSystemWithLoadedTexture();
+}
+
+TEST_F(GraphicsSystemWithLoadedTexture,
+       throwIfUsedWrongTextureIdDuringTextureRenderingOnFullscreen)
+{
+    InSequence seq;
+    EXPECT_THROW(system.renderTextureOnFullscreen(textureId1), std::runtime_error);
+    expectQuitSystemWithLoadedTexture();
+}
+
+TEST_F(GraphicsSystemWithLoadedTexture,
+       throwIfSDLRenderCopyFailedDuringTextureRenderingOnFullscreen)
+{
+    InSequence seq;
+
+    EXPECT_CALL(*SDLMock,
+        renderCopy(Pointer(rendererPtr), Pointer(texturePtr),
+                   Eq(std::nullopt), Eq(std::nullopt))
+    ).WillOnce(Return(failure));
+
+    EXPECT_THROW(system.renderTextureOnFullscreen(textureId0), std::runtime_error);
+    expectQuitSystemWithLoadedTexture();
+}
+
+TEST_F(GraphicsSystemWithLoadedTexture, renderTextureOnFullscreenSuccessfully)
+{
+    InSequence seq;
+
+    EXPECT_CALL(*SDLMock,
+        renderCopy(Pointer(rendererPtr), Pointer(texturePtr),
+                   Eq(std::nullopt), Eq(std::nullopt))
+    ).WillOnce(Return(success));
+
+    system.renderTextureOnFullscreen(textureId0);
     expectQuitSystemWithLoadedTexture();
 }
 

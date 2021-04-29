@@ -124,14 +124,6 @@ void GraphicsSystem::renderTexture(
         throw std::runtime_error {"Cannot render texture with id: " + id};
 }
 
-void GraphicsSystem::throwOnInvalidTextureOperation(const TextureId id) const {
-    if (not isWindowCreated)
-        throw std::runtime_error {"Cannot operate on textures when window not created"};
-
-    if (id.t >= textures.size())
-        throw std::runtime_error {"Unknown texture id: " + id};
-}
-
 SDL_Rect GraphicsSystem::createSrcRect(const TextureArea& area) const {
     return SDL_Rect {
         static_cast<int>(area.position.x), static_cast<int>(area.position.y),
@@ -146,6 +138,20 @@ SDL_Rect GraphicsSystem::createDstRect(
         static_cast<int>(position.x), static_cast<int>(position.y),
         static_cast<int>(area.size.width), static_cast<int>(area.size.height)
     };
+}
+
+void GraphicsSystem::renderTextureOnFullscreen(const TextureId id) {
+    throwOnInvalidTextureOperation(id);
+     if (SDL->renderCopy(renderer, textures[id], std::nullopt, std::nullopt))
+        throw std::runtime_error {"Cannot render texture with id: " + id};
+}
+
+void GraphicsSystem::throwOnInvalidTextureOperation(const TextureId id) const {
+    if (not isWindowCreated)
+        throw std::runtime_error {"Cannot operate on textures when window not created"};
+
+    if (id.t >= textures.size())
+        throw std::runtime_error {"Unknown texture id: " + id};
 }
 
 }
