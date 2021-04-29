@@ -22,19 +22,20 @@ std::string Renderer::findAssetsPath() {
     return {};
 }
 
-Renderer::Renderer(const Solitaire& solitaire, GraphicsSystem& system):
+Renderer::Renderer(const Solitaire& solitaire,
+                   std::unique_ptr<GraphicsSystem> graphicsSystem):
     solitaire {solitaire},
-    system {system}
+    graphicsSystem {std::move(graphicsSystem)}
 {
-    system.createWindow("Solitaire", 640, 480);
-    system.loadTexture(assetsPath + "background.bmp");
-    system.loadTexture(assetsPath + "cards.bmp");
-    system.loadTexture(assetsPath + "card_placeholder.bmp");
-    system.setTextureAlpha(TextureId{2}, 70);
+    this->graphicsSystem->createWindow("Solitaire", 640, 480);
+    this->graphicsSystem->loadTexture(assetsPath + "background.bmp");
+    this->graphicsSystem->loadTexture(assetsPath + "cards.bmp");
+    this->graphicsSystem->loadTexture(assetsPath + "card_placeholder.bmp");
+    this->graphicsSystem->setTextureAlpha(TextureId{2}, 70);
 }
 
 void Renderer::render() const {
-    system.renderTextureOnFullscreen(TextureId{0});
+    graphicsSystem->renderTextureOnFullscreen(TextureId{0});
 
     TextureArea area {
         TexturePosition {0, 0},
@@ -46,7 +47,7 @@ void Renderer::render() const {
     for (unsigned i = 0; i < 8; ++i) {
         position.x = i*80;
         area.position.x = i*75;
-        system.renderTexture(TextureId{1}, position, area);
+        graphicsSystem->renderTexture(TextureId{1}, position, area);
     }
 
     position.y = 109;
@@ -54,16 +55,16 @@ void Renderer::render() const {
     area.position.y = 416;
     for (unsigned i = 0; i < 4; ++i) {
         position.x = i*80;
-        system.renderTexture(TextureId{1}, position, area);
+        graphicsSystem->renderTexture(TextureId{1}, position, area);
     }
 
     position.x = 0;
     position.y = 218;
     area.position.x = 0;
     area.position.y = 0;
-    system.renderTexture(TextureId{2}, position, area);
+    graphicsSystem->renderTexture(TextureId{2}, position, area);
 
-    system.renderFrame();
+    graphicsSystem->renderFrame();
 }
 
 }

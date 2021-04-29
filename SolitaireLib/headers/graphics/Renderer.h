@@ -1,19 +1,19 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 namespace solitaire {
 
-class GraphicsSystem;
 class Solitaire;
 
 namespace graphics {
 
-class SDLWrapper;
+class GraphicsSystem;
 
 class Renderer {
 public:
-    Renderer(const Solitaire&, GraphicsSystem&);
+    Renderer(const Solitaire&, std::unique_ptr<GraphicsSystem>);
 
     void render() const;
 
@@ -23,7 +23,7 @@ private:
     static const std::string assetsPath;
 
     const Solitaire& solitaire;
-    GraphicsSystem& system;
+    std::unique_ptr<GraphicsSystem> graphicsSystem;
 };
 
 }

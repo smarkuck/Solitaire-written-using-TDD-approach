@@ -1,22 +1,22 @@
 #include <stdexcept>
 
-#include "graphics/GraphicsSystem.h"
+#include "graphics/SDLGraphicsSystem.h"
 #include "graphics/SDLWrapper.h"
 #include "graphics/TextureId.h"
 #include "graphics/TextureArea.h"
 
 namespace solitaire::graphics {
 
-GraphicsSystem::GraphicsSystem(std::unique_ptr<SDLWrapper> SDL):
+SDLGraphicsSystem::SDLGraphicsSystem(std::unique_ptr<SDLWrapper> SDL):
     SDL {std::move(SDL)} {
 }
 
-GraphicsSystem::~GraphicsSystem() {
+SDLGraphicsSystem::~SDLGraphicsSystem() {
     quit();
 }
 
-void GraphicsSystem::createWindow(const std::string& title,
-                                  const unsigned width, const unsigned height)
+void SDLGraphicsSystem::createWindow(const std::string& title,
+                                     const unsigned width, const unsigned height)
 {
     if (isWindowCreated)
         throw std::runtime_error {"Window already created"};
@@ -27,14 +27,14 @@ void GraphicsSystem::createWindow(const std::string& title,
     isWindowCreated = true;
 }
 
-void GraphicsSystem::initializeSDLOrQuitAndThrowError() {
+void SDLGraphicsSystem::initializeSDLOrQuitAndThrowError() {
     if (SDL->init(SDL_INIT_VIDEO))
         quitAndThrow("Cannot initialize graphics system");
 
     isSDLInitialized = true;
 }
 
-SDLPtr<SDL_Window> GraphicsSystem::createSDLWindowOrQuitAndThrowError(
+SDLPtr<SDL_Window> SDLGraphicsSystem::createSDLWindowOrQuitAndThrowError(
     const std::string& title, const unsigned width, const unsigned height)
 {
     auto window = SDL->createWindow(
@@ -47,7 +47,7 @@ SDLPtr<SDL_Window> GraphicsSystem::createSDLWindowOrQuitAndThrowError(
     return window;
 }
 
-SDLPtr<SDL_Renderer> GraphicsSystem::createSDLWindowRendererOrQuitAndThrowError(
+SDLPtr<SDL_Renderer> SDLGraphicsSystem::createSDLWindowRendererOrQuitAndThrowError(
     const SDLPtr<SDL_Window>& window)
 {
     auto renderer = SDL->createRenderer(
@@ -58,12 +58,12 @@ SDLPtr<SDL_Renderer> GraphicsSystem::createSDLWindowRendererOrQuitAndThrowError(
     return renderer;
 }
 
-void GraphicsSystem::quitAndThrow(const std::string& error) {
+void SDLGraphicsSystem::quitAndThrow(const std::string& error) {
     quit();
     throw std::runtime_error {error};
 }
 
-void GraphicsSystem::quit() {
+void SDLGraphicsSystem::quit() {
     textures.clear();
     renderer.reset();
     window.reset();
@@ -75,7 +75,7 @@ void GraphicsSystem::quit() {
     }
 }
 
-TextureId GraphicsSystem::loadTexture(const std::string& path) {
+TextureId SDLGraphicsSystem::loadTexture(const std::string& path) {
     if (not isWindowCreated)
         throw std::runtime_error {"Cannot load texture when window not created"};
 
@@ -85,7 +85,7 @@ TextureId GraphicsSystem::loadTexture(const std::string& path) {
 }
 
 SDLPtr<SDL_Surface>
-GraphicsSystem::createSDLSurfaceOrThrow(const std::string& path) const {
+SDLGraphicsSystem::createSDLSurfaceOrThrow(const std::string& path) const {
     auto surface = SDL->loadBMP(path);
 
     if (not surface)
@@ -97,7 +97,7 @@ GraphicsSystem::createSDLSurfaceOrThrow(const std::string& path) const {
     return surface;
 }
 
-SDLPtr<SDL_Texture> GraphicsSystem::createSDLTextureOrThrow(
+SDLPtr<SDL_Texture> SDLGraphicsSystem::createSDLTextureOrThrow(
     const SDLPtr<SDL_Surface>& surface) const
 {
     auto texture = SDL->createTextureFromSurface(renderer, surface);
@@ -107,13 +107,13 @@ SDLPtr<SDL_Texture> GraphicsSystem::createSDLTextureOrThrow(
     return texture;
 }
 
-void GraphicsSystem::setTextureAlpha(const TextureId id, const uint8_t alpha) {
+void SDLGraphicsSystem::setTextureAlpha(const TextureId id, const uint8_t alpha) {
     throwOnInvalidTextureOperation(id);
     if (SDL->setTextureAlphaMod(textures[id], 70))
         throw std::runtime_error {"Cannot change alpha for texture with id: " + id};
 }
 
-void GraphicsSystem::renderTexture(
+void SDLGraphicsSystem::renderTexture(
     const TextureId id, const TexturePosition& position, const TextureArea& area)
 {
     throwOnInvalidTextureOperation(id);
@@ -124,14 +124,14 @@ void GraphicsSystem::renderTexture(
         throw std::runtime_error {"Cannot render texture with id: " + id};
 }
 
-SDL_Rect GraphicsSystem::createSrcRect(const TextureArea& area) const {
+SDL_Rect SDLGraphicsSystem::createSrcRect(const TextureArea& area) const {
     return SDL_Rect {
         static_cast<int>(area.position.x), static_cast<int>(area.position.y),
         static_cast<int>(area.size.width), static_cast<int>(area.size.height)
     };
 }
 
-SDL_Rect GraphicsSystem::createDstRect(
+SDL_Rect SDLGraphicsSystem::createDstRect(
     const TexturePosition& position, const TextureArea& area) const
 {
     return SDL_Rect {
@@ -140,13 +140,13 @@ SDL_Rect GraphicsSystem::createDstRect(
     };
 }
 
-void GraphicsSystem::renderTextureOnFullscreen(const TextureId id) {
+void SDLGraphicsSystem::renderTextureOnFullscreen(const TextureId id) {
     throwOnInvalidTextureOperation(id);
      if (SDL->renderCopy(renderer, textures[id], std::nullopt, std::nullopt))
         throw std::runtime_error {"Cannot render texture with id: " + id};
 }
 
-void GraphicsSystem::throwOnInvalidTextureOperation(const TextureId id) const {
+void SDLGraphicsSystem::throwOnInvalidTextureOperation(const TextureId id) const {
     if (not isWindowCreated)
         throw std::runtime_error {"Cannot operate on textures when window not created"};
 
@@ -154,7 +154,7 @@ void GraphicsSystem::throwOnInvalidTextureOperation(const TextureId id) const {
         throw std::runtime_error {"Unknown texture id: " + id};
 }
 
-void GraphicsSystem::renderFrame() {
+void SDLGraphicsSystem::renderFrame() {
     if (not isWindowCreated)
         throw std::runtime_error {"Cannot render frame when window not created"};
 

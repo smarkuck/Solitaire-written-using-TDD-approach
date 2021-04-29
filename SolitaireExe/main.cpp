@@ -4,8 +4,8 @@
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
 #include "graphics/DefaultSDLWrapper.h"
-#include "graphics/GraphicsSystem.h"
 #include "graphics/Renderer.h"
+#include "graphics/SDLGraphicsSystem.h"
 #include "piles/DefaultFoundationPile.h"
 #include "piles/DefaultStockPile.h"
 #include "piles/DefaultTableauPile.h"
@@ -31,8 +31,12 @@ int main(int, char **) {
 
     solitaire.startNewGame();
 
-    graphics::GraphicsSystem system {std::make_unique<graphics::DefaultSDLWrapper>()};
-    graphics::Renderer renderer {solitaire, system};
+    graphics::Renderer renderer {
+        solitaire, std::make_unique<graphics::SDLGraphicsSystem>(
+            std::make_unique<graphics::DefaultSDLWrapper>()
+        )
+    };
+
     for (unsigned i = 0; i < 150; ++i)
         renderer.render();
 
