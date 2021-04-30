@@ -249,7 +249,7 @@ void DefaultSolitaire::throwExceptionOnInvalidFoundationPileId(
     const piles::PileId id) const
 {
     if (id.t >= foundationPilesCount)
-        throw std::runtime_error{
+        throw std::runtime_error {
             "Cannot access foundation pile with id: " + std::to_string(id)
         };
 }
@@ -258,7 +258,7 @@ void DefaultSolitaire::throwExceptionOnInvalidTableauPileId(
     const piles::PileId id) const
 {
     if (id.t >= tableauPilesCount)
-        throw std::runtime_error{
+        throw std::runtime_error {
             "Cannot access tableau pile with id: " + std::to_string(id)
         };
 }

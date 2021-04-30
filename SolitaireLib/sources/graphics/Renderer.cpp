@@ -1,70 +1,80 @@
-#include <cassert>
-#include <filesystem>
+#include <array>
 
+#include "Solitaire.h"
+#include "cards/Card.h"
 #include "graphics/GraphicsSystem.h"
 #include "graphics/Renderer.h"
 #include "graphics/TextureArea.h"
 #include "graphics/TextureId.h"
+#include "piles/FoundationPile.h"
+#include "piles/PileId.h"
+
+using namespace solitaire::cards;
+using namespace solitaire::piles;
 
 namespace solitaire::graphics {
 
-const std::string Renderer::assetsPath {findAssetsPath()};
+namespace {
+const std::string windowTitle {"Solitaire"};
 
-std::string Renderer::findAssetsPath() {
-    std::string path = "assets/";
-    const std::string moveUp = "../";
+constexpr unsigned windowWidth {640};
+constexpr unsigned windowHeight {480};
+constexpr unsigned foundationPilePositionY {30};
 
-    for (unsigned i = 0; i < 4; ++i, path = moveUp + path)
-        if (std::filesystem::exists(path))
-            return path;
+constexpr TextureSize cardSize {75, 104};
+constexpr TextureArea cardPlaceholderTextureArea {TexturePosition {0, 0}, cardSize};
 
-    assert(false and "cannot find assets path");
-    return {};
+const std::array<TexturePosition, 4> foundationPilesPositions {
+    TexturePosition {283, foundationPilePositionY},
+    TexturePosition {372, foundationPilePositionY},
+    TexturePosition {461, foundationPilePositionY},
+    TexturePosition {550, foundationPilePositionY},
+};
+
 }
 
 Renderer::Renderer(const Solitaire& solitaire,
-                   std::unique_ptr<GraphicsSystem> graphicsSystem):
+                   std::unique_ptr<GraphicsSystem> graphicsSystem,
+                   const std::string& assetsPath):
     solitaire {solitaire},
-    graphicsSystem {std::move(graphicsSystem)}
+    graphicsSystem {std::move(graphicsSystem)},
+    assetsPath {assetsPath}
 {
-    this->graphicsSystem->createWindow("Solitaire", 640, 480);
-    this->graphicsSystem->loadTexture(assetsPath + "background.bmp");
-    this->graphicsSystem->loadTexture(assetsPath + "cards.bmp");
-    this->graphicsSystem->loadTexture(assetsPath + "card_placeholder.bmp");
-    this->graphicsSystem->setTextureAlpha(TextureId{2}, 70);
+    this->graphicsSystem->createWindow(windowTitle, windowWidth, windowHeight);
+    backgroundId = loadTexture("background.bmp");
+    cardsId = loadTexture("cards.bmp");
+    cardPlaceholderId = loadTexture("card_placeholder.bmp");
+    this->graphicsSystem->setTextureAlpha(cardPlaceholderId, 70);
+}
+
+TextureId Renderer::loadTexture(const std::string& path) const {
+    return graphicsSystem->loadTexture(assetsPath + path);
 }
 
 void Renderer::render() const {
-    graphicsSystem->renderTextureOnFullscreen(TextureId{0});
+    graphicsSystem->renderTextureOnFullscreen(backgroundId);
 
-    TextureArea area {
-        TexturePosition {0, 0},
-        TextureSize {75, 104}
-    };
-
-    TexturePosition position {0, 0};
-
-    for (unsigned i = 0; i < 8; ++i) {
-        position.x = i*80;
-        area.position.x = i*75;
-        graphicsSystem->renderTexture(TextureId{1}, position, area);
-    }
-
-    position.y = 109;
-    area.position.x = 0;
-    area.position.y = 416;
-    for (unsigned i = 0; i < 4; ++i) {
-        position.x = i*80;
-        graphicsSystem->renderTexture(TextureId{1}, position, area);
-    }
-
-    position.x = 0;
-    position.y = 218;
-    area.position.x = 0;
-    area.position.y = 0;
-    graphicsSystem->renderTexture(TextureId{2}, position, area);
+    for (PileId id {0}; id < 4; ++id)
+        renderFoundationPile(id);
 
     graphicsSystem->renderFrame();
+}
+
+void Renderer::renderFoundationPile(const PileId id) const {
+    const auto& pileCards = solitaire.getFoundationPile(id).getCards();
+
+    if (pileCards.empty())
+        graphicsSystem->renderTexture(
+            cardPlaceholderId, foundationPilesPositions[id], cardPlaceholderTextureArea);
+    else
+        graphicsSystem->renderTexture(
+            cardsId, foundationPilesPositions[id], getCardTextureArea(pileCards.back()));
+}
+
+TextureArea Renderer::getCardTextureArea(const Card& card) const {
+    unsigned x = static_cast<unsigned>(card.getValue()) * 75;
+    unsigned y = static_cast<unsigned>(card.getSuit()) * 104;
+    return TextureArea {x, y, 75, 104};
 }
 
 }

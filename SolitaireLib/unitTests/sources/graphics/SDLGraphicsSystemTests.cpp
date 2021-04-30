@@ -77,11 +77,11 @@ public:
     }
 
     SDLPtr<SDL_Window> makeSDLWindow(SDL_Window* ptr) {
-        return SDLPtr<SDL_Window> {ptr, SDLDeleter{SDLPtrDeleterMock}};
+        return SDLPtr<SDL_Window> {ptr, SDLDeleter {SDLPtrDeleterMock}};
     }
 
     SDLPtr<SDL_Renderer> makeSDLRenderer(SDL_Renderer* ptr) {
-        return SDLPtr<SDL_Renderer> {ptr, SDLDeleter{SDLPtrDeleterMock}};
+        return SDLPtr<SDL_Renderer> {ptr, SDLDeleter {SDLPtrDeleterMock}};
     }
 
     void expectThrowIfSDLCreateRendererFailedDuringWindowCreation() {
@@ -219,11 +219,11 @@ public:
     }
 
     SDLPtr<SDL_Texture> makeSDLTexture(SDL_Texture* ptr) {
-        return SDLPtr<SDL_Texture> {ptr, SDLDeleter{SDLPtrDeleterMock}};
+        return SDLPtr<SDL_Texture> {ptr, SDLDeleter {SDLPtrDeleterMock}};
     }
 
     SDLPtr<SDL_Surface> makeSDLSurface(SDL_Surface* ptr) {
-        return SDLPtr<SDL_Surface> {ptr, SDLDeleter{SDLPtrDeleterMock}};
+        return SDLPtr<SDL_Surface> {ptr, SDLDeleter {SDLPtrDeleterMock}};
     }
 
     void expectCreateTexture(SDL_Texture* texturePtr, TextureId textureId) {

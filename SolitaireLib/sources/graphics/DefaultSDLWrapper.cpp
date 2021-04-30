@@ -15,25 +15,25 @@ SDLPtr<SDL_Window> DefaultSDLWrapper::createWindow(
     const std::string& title, int x, int y, int w, int h, Uint32 flags) const
 {
     return SDLPtr<SDL_Window> {
-        SDL_CreateWindow(title.c_str(), x, y, w, h, flags), SDLDeleter{}};
+        SDL_CreateWindow(title.c_str(), x, y, w, h, flags), SDLDeleter {}};
 }
 
 SDLPtr<SDL_Renderer> DefaultSDLWrapper::createRenderer(const SDLPtr<SDL_Window>& window,
                                                        int index, Uint32 flags) const
 {
     return SDLPtr<SDL_Renderer> {
-        SDL_CreateRenderer(window.get(), index, flags), SDLDeleter{}};
+        SDL_CreateRenderer(window.get(), index, flags), SDLDeleter {}};
 }
 
 SDLPtr<SDL_Texture> DefaultSDLWrapper::createTextureFromSurface(
     const SDLPtr<SDL_Renderer>& renderer, const SDLPtr<SDL_Surface>& surface) const
 {
     return SDLPtr<SDL_Texture> {
-        SDL_CreateTextureFromSurface(renderer.get(), surface.get()), SDLDeleter{}};
+        SDL_CreateTextureFromSurface(renderer.get(), surface.get()), SDLDeleter {}};
 }
 
 SDLPtr<SDL_Surface> DefaultSDLWrapper::loadBMP(const std::string& file) const {
-    return SDLPtr<SDL_Surface> {SDL_LoadBMP(file.c_str()), SDLDeleter{}};
+    return SDLPtr<SDL_Surface> {SDL_LoadBMP(file.c_str()), SDLDeleter {}};
 }
 
 int DefaultSDLWrapper::setTextureAlphaMod(

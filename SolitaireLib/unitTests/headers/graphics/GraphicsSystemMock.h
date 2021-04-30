@@ -1,0 +1,22 @@
+#pragma once
+
+#include "gmock/gmock.h"
+#include "graphics/GraphicsSystem.h"
+#include "graphics/TextureId.h"
+
+namespace solitaire::graphics {
+
+class GraphicsSystemMock: public GraphicsSystem {
+public:
+    MOCK_METHOD(void, createWindow, (const std::string&,
+                const unsigned, const unsigned), (override));
+
+    MOCK_METHOD(TextureId, loadTexture, (const std::string&), (override));
+    MOCK_METHOD(void, setTextureAlpha, (const TextureId, const uint8_t), (override));
+    MOCK_METHOD(void, renderTexture, (const TextureId, const TexturePosition&,
+                const TextureArea&), (override));
+    MOCK_METHOD(void, renderTextureOnFullscreen, (const TextureId), (override));
+    MOCK_METHOD(void, renderFrame, (), (override));
+};
+
+}

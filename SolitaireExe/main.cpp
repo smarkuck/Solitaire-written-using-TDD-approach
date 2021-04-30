@@ -1,7 +1,12 @@
+#include <cassert>
+#include <filesystem>
+
 #include "DefaultSolitaire.h"
 #include "archivers/DefaultHistoryTracker.h"
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
+#include "cards/Value.h"
+#include "cards/Suit.h"
 #include "graphics/DefaultSDLWrapper.h"
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
@@ -11,10 +16,43 @@
 
 using namespace solitaire;
 
+std::string findAssetsPath() {
+    std::string path = "assets/";
+    const std::string moveUp = "../";
+
+    for (unsigned i = 0; i < 4; ++i, path = moveUp + path)
+        if (std::filesystem::exists(path))
+            return path;
+
+    assert(false and "cannot find assets path");
+    return {};
+}
+
+class FoundationPileStub: public piles::FoundationPile {
+public:
+    void initialize() override {}
+    void tryAddCard(std::optional<cards::Card>& cardToAdd) override {}
+    std::optional<cards::Card> tryPullOutCard() override { return std::nullopt; }
+
+    const cards::Cards& getCards() const override {
+        return cards;
+    }
+
+    std::optional<cards::Value> getTopCardValue() const override { return std::nullopt; }
+    std::unique_ptr<archivers::Snapshot> createSnapshot() override { return nullptr; }
+
+private:
+    cards::Cards cards {
+        cards::Card {cards::Value::Ace, cards::Suit::Heart},
+        cards::Card {cards::Value::Seven, cards::Suit::Diamond}
+    };
+};
+
+
 int main(int, char**) {
     DefaultSolitaire::FoundationPiles foundationPiles;
     for (auto& pile: foundationPiles)
-        pile = std::make_shared<piles::DefaultFoundationPile>();
+        pile = std::make_shared<FoundationPileStub>();
 
     DefaultSolitaire::TableauPiles tableauPiles;
     for (auto& pile: tableauPiles)
@@ -31,9 +69,11 @@ int main(int, char**) {
     solitaire.startNewGame();
 
     graphics::Renderer renderer {
-        solitaire, std::make_unique<graphics::SDLGraphicsSystem>(
+        solitaire,
+        std::make_unique<graphics::SDLGraphicsSystem>(
             std::make_unique<graphics::DefaultSDLWrapper>()
-        )
+        ),
+        findAssetsPath()
     };
 
     for (unsigned i = 0; i < 150; ++i)
