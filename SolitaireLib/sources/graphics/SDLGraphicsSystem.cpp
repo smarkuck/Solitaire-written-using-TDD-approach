@@ -15,8 +15,8 @@ SDLGraphicsSystem::~SDLGraphicsSystem() {
     quit();
 }
 
-void SDLGraphicsSystem::createWindow(const std::string& title,
-                                     const unsigned width, const unsigned height)
+void SDLGraphicsSystem::createWindow(
+    const std::string& title, const unsigned width, const unsigned height)
 {
     if (isWindowCreated)
         throw std::runtime_error {"Window already created"};
@@ -107,14 +107,14 @@ SDLPtr<SDL_Texture> SDLGraphicsSystem::createSDLTextureOrThrow(
     return texture;
 }
 
-void SDLGraphicsSystem::setTextureAlpha(const TextureId id, const uint8_t alpha) {
+void SDLGraphicsSystem::setTextureAlpha(const TextureId id, const uint8_t alpha) const {
     throwOnInvalidTextureOperation(id);
     if (SDL->setTextureAlphaMod(textures[id], 70))
         throw std::runtime_error {"Cannot change alpha for texture with id: " + id};
 }
 
 void SDLGraphicsSystem::renderTexture(
-    const TextureId id, const TexturePosition& position, const TextureArea& area)
+    const TextureId id, const TexturePosition& position, const TextureArea& area) const
 {
     throwOnInvalidTextureOperation(id);
     const auto srcRect = createSrcRect(area);
@@ -140,7 +140,7 @@ SDL_Rect SDLGraphicsSystem::createDstRect(
     };
 }
 
-void SDLGraphicsSystem::renderTextureOnFullscreen(const TextureId id) {
+void SDLGraphicsSystem::renderTextureOnFullscreen(const TextureId id) const {
     throwOnInvalidTextureOperation(id);
      if (SDL->renderCopy(renderer, textures[id], std::nullopt, std::nullopt))
         throw std::runtime_error {"Cannot render texture with id: " + id};
@@ -154,7 +154,7 @@ void SDLGraphicsSystem::throwOnInvalidTextureOperation(const TextureId id) const
         throw std::runtime_error {"Unknown texture id: " + id};
 }
 
-void SDLGraphicsSystem::renderFrame() {
+void SDLGraphicsSystem::renderFrame() const {
     if (not isWindowCreated)
         throw std::runtime_error {"Cannot render frame when window not created"};
 

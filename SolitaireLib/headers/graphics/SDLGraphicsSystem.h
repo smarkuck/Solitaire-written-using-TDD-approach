@@ -21,16 +21,16 @@ public:
     SDLGraphicsSystem(std::unique_ptr<SDLWrapper>);
     ~SDLGraphicsSystem();
 
-    void createWindow(const std::string& title,
-                      const unsigned width, const unsigned height) override;
+    void createWindow(const std::string& title, const unsigned width,
+                      const unsigned height) override;
 
     TextureId loadTexture(const std::string& path) override;
 
-    void setTextureAlpha(const TextureId, const uint8_t alpha) override;
+    void setTextureAlpha(const TextureId, const uint8_t alpha) const override;
     void renderTexture(const TextureId, const TexturePosition&,
-                       const TextureArea&) override;
-    void renderTextureOnFullscreen(const TextureId) override;
-    void renderFrame() override;
+                       const TextureArea&) const override;
+    void renderTextureOnFullscreen(const TextureId) const override;
+    void renderFrame() const override;
 
 private:
     void initializeSDLOrQuitAndThrowError();
@@ -38,8 +38,8 @@ private:
     SDLPtr<SDL_Window> createSDLWindowOrQuitAndThrowError(
         const std::string& title, const unsigned width, const unsigned height);
 
-    SDLPtr<SDL_Renderer>
-    createSDLWindowRendererOrQuitAndThrowError(const SDLPtr<SDL_Window>&);
+    SDLPtr<SDL_Renderer> createSDLWindowRendererOrQuitAndThrowError(
+        const SDLPtr<SDL_Window>&);
 
     void quitAndThrow(const std::string& error);
     void quit();
