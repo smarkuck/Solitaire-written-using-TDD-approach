@@ -1,23 +1,8 @@
 #pragma once
 
-#include <array>
-#include <memory>
-#include <optional>
-
 #include "cards/Cards.h"
-#include "cards/Deck.h"
 
 namespace solitaire {
-
-namespace archivers {
-    class HistoryTracker;
-    class MoveCardsOperationSnapshotCreator;
-    class Snapshot;
-}
-
-namespace cards {
-    class DeckGenerator;
-}
 
 namespace piles {
     class FoundationPile;
@@ -27,80 +12,31 @@ namespace piles {
 }
 
 class Solitaire {
-private:
-    static constexpr unsigned foundationPilesCount {4};
-    static constexpr unsigned tableauPilesCount {7};
-
-    using FoundationPiles =
-        std::array<std::shared_ptr<piles::FoundationPile>, foundationPilesCount>;
-    using TableauPiles =
-        std::array<std::shared_ptr<piles::TableauPile>, tableauPilesCount>;
-
 public:
-    Solitaire(std::unique_ptr<cards::DeckGenerator>,
-              std::shared_ptr<piles::StockPile>,
-              FoundationPiles, TableauPiles,
-              std::unique_ptr<archivers::HistoryTracker>,
-              std::unique_ptr<archivers::MoveCardsOperationSnapshotCreator>);
+    virtual ~Solitaire() = default;
 
-    void startNewGame();
+    virtual void startNewGame() = 0;
 
-    void tryUndoOperation();
-    void tryPutCardsBackFromHand();
+    virtual void tryUndoOperation() = 0;
+    virtual void tryPutCardsBackFromHand() = 0;
 
-    void tryPullOutCardFromFoundationPile(const piles::PileId);
-    void tryAddCardOnFoundationPile(const piles::PileId);
+    virtual void tryPullOutCardFromFoundationPile(const piles::PileId) = 0;
+    virtual void tryAddCardOnFoundationPile(const piles::PileId) = 0;
 
-    void tryUncoverTableauPileTopCard(const piles::PileId);
-    void tryPullOutCardsFromTableauPile(const piles::PileId, const unsigned quantity);
-    void tryAddCardsOnTableauPile(const piles::PileId);
+    virtual void tryUncoverTableauPileTopCard(const piles::PileId) = 0;
+    virtual void tryPullOutCardsFromTableauPile(
+        const piles::PileId, const unsigned quantity) = 0;
+    virtual void tryAddCardsOnTableauPile(const piles::PileId) = 0;
 
-    void trySelectNextStockPileCard();
-    void tryPullOutCardFromStockPile();
+    virtual void trySelectNextStockPileCard() = 0;
+    virtual void tryPullOutCardFromStockPile() = 0;
 
-    bool isGameFinished() const;
+    virtual bool isGameFinished() const = 0;
 
-    const piles::FoundationPile& getFoundationPile(const piles::PileId) const;
-    const piles::TableauPile& getTableauPile(const piles::PileId) const;
-    const piles::StockPile& getStockPile() const;
-    const cards::Cards& getCardsInHand() const;
-
-private:
-    using SnapshotPtr = std::unique_ptr<archivers::Snapshot>;
-
-    void initializeFoundationPiles();
-
-    cards::Deck::const_iterator
-    initializeTableauPilesAndReturnFirstNotUsedCard(const cards::Deck&);
-
-    void tryAddPulledOutCardToHand(const std::optional<cards::Card>&, SnapshotPtr);
-    void tryAddPulledOutCardsToHand(cards::Cards&&, SnapshotPtr);
-    void tryAddCardOnFoundationPileFromHand(std::shared_ptr<piles::FoundationPile>&);
-    void tryAddCardOnTableauPileFromHand(std::shared_ptr<piles::TableauPile>&);
-    void saveHistoryIfCardMovedToOtherPileAndClearHand(
-        const std::optional<cards::Card>&, SnapshotPtr);
-    void saveHistoryIfCardMovedToOtherPile(SnapshotPtr);
-
-    bool shouldUndoOperation() const;
-    bool shouldAddCardOnFoundationPile() const;
-    bool isCardAdded(const std::optional<cards::Card>&) const;
-    bool shouldUncoverTableauPileTopCard(
-        const std::shared_ptr<piles::TableauPile>&) const;
-    bool shouldSelectNextStockPileCard() const;
-    bool isGameInProgressAndHandContainsCards() const;
-    bool isGameInProgressAndHandIsEmpty() const;
-
-    void throwExceptionOnInvalidFoundationPileId(const piles::PileId) const;
-    void throwExceptionOnInvalidTableauPileId(const piles::PileId) const;
-
-    std::unique_ptr<cards::DeckGenerator> deckGenerator;
-    std::shared_ptr<piles::StockPile> stockPile;
-    FoundationPiles foundationPiles;
-    TableauPiles tableauPiles;
-    std::unique_ptr<archivers::HistoryTracker> historyTracker;
-    std::unique_ptr<archivers::MoveCardsOperationSnapshotCreator>
-        moveCardsOperationSnapshotCreator;
-    cards::Cards cardsInHand;
+    virtual const piles::FoundationPile& getFoundationPile(const piles::PileId) const = 0;
+    virtual const piles::TableauPile& getTableauPile(const piles::PileId) const = 0;
+    virtual const piles::StockPile& getStockPile() const = 0;
+    virtual const cards::Cards& getCardsInHand() const = 0;
 };
 
 }

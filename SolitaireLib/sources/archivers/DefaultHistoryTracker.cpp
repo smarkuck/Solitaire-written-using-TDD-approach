@@ -5,7 +5,7 @@
 
 namespace solitaire::archivers {
 
-DefaultHistoryTracker::DefaultHistoryTracker(unsigned historyMaxSize):
+DefaultHistoryTracker::DefaultHistoryTracker(const unsigned historyMaxSize):
     historyMaxSize {historyMaxSize} {
 }
 

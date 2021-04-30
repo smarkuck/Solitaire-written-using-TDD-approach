@@ -9,7 +9,7 @@ class Snapshot;
 
 class DefaultHistoryTracker: public HistoryTracker {
 public:
-    DefaultHistoryTracker(unsigned historyMaxSize = 10);
+    DefaultHistoryTracker(const unsigned historyMaxSize = 10);
 
     void save(std::unique_ptr<Snapshot>) override;
     void undo() override;

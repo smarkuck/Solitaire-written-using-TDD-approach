@@ -7,7 +7,7 @@ namespace solitaire::cards {
 Card::Card(): Card(Value::Ace, Suit::Heart) {
 }
 
-Card::Card(Value value, Suit suit):
+Card::Card(const Value value, const Suit suit):
     value(value), suit(suit) {
 }
 

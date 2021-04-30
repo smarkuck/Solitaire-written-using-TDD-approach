@@ -2,7 +2,7 @@ add_executable(SolitaireLibUnitTests)
 target_include_directories(SolitaireLibUnitTests PRIVATE headers)
 
 target_sources(SolitaireLibUnitTests PRIVATE
-    sources/SolitaireTests.cpp
+    sources/DefaultSolitaireTests.cpp
     sources/archivers/DefaultHistoryTrackerTests.cpp
     sources/archivers/DefaultMoveCardsOperationSnapshotCreatorTests.cpp
     sources/cards/CardTests.cpp

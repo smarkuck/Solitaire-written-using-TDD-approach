@@ -10,7 +10,7 @@ enum class Suit;
 class Card {
 public:
     Card();
-    Card(Value value, Suit suit);
+    Card(const Value value, const Suit suit);
 
     Value getValue() const;
     Suit getSuit() const;

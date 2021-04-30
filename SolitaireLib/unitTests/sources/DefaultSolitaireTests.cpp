@@ -1,8 +1,7 @@
 #include <algorithm>
 
+#include "DefaultSolitaire.h"
 #include "mock_ptr.h"
-#include "cards/Card.h"
-#include "Solitaire.h"
 #include "archivers/HistoryTrackerMock.h"
 #include "archivers/MoveCardsOperationSnapshotCreatorMock.h"
 #include "archivers/SnapshotMock.h"
@@ -23,12 +22,15 @@ using namespace solitaire::piles;
 namespace solitaire {
 
 namespace {
-const PileId invalidFoundationPileId {4};
-const PileId lastFoundationPileId {3};
-const PileId invalidTableauPileId {7};
-const PileId lastTableauPileId {6};
+constexpr unsigned foundationPilesCount {4};
+constexpr unsigned tableauPilesCount {7};
 
-const unsigned quantityToPullOut {2};
+const PileId invalidFoundationPileId {foundationPilesCount};
+const PileId lastFoundationPileId {foundationPilesCount - 1};
+const PileId invalidTableauPileId {tableauPilesCount};
+const PileId lastTableauPileId {tableauPilesCount - 1};
+
+constexpr unsigned quantityToPullOut {2};
 
 const auto deck {createSortedDeck()};
 const Cards noCards;
@@ -40,7 +42,7 @@ MATCHER_P2(RangeEq, begin, end, "") {
 }
 }
 
-class SolitaireTest: public Test {
+class DefaultSolitaireTest: public Test {
 public:
     template <class T, std::size_t N>
     using SharedPtrArray = std::array<std::shared_ptr<T>, N>;
@@ -65,11 +67,13 @@ public:
     mock_ptr<DeckGeneratorMock> deckGeneratorMock;
     std::shared_ptr<StockPileMock> stockPileMock {std::make_shared<StockPileMock>()};
 
-    std::array<std::shared_ptr<FoundationPileMock>, 4>
-        foundationPileMocks {makeSharedPtrArray<FoundationPileMock, 4>()};
+    std::array<std::shared_ptr<FoundationPileMock>, foundationPilesCount>
+        foundationPileMocks {
+            makeSharedPtrArray<FoundationPileMock, foundationPilesCount>()};
 
-    std::array<std::shared_ptr<TableauPileMock>, 7>
-        tableauPileMocks {makeSharedPtrArray<TableauPileMock, 7>()};
+    std::array<std::shared_ptr<TableauPileMock>, tableauPilesCount>
+        tableauPileMocks {
+            makeSharedPtrArray<TableauPileMock, tableauPilesCount>()};
 
     mock_ptr<StrictMock<HistoryTrackerMock>> historyTrackerMock;
     mock_ptr<StrictMock<MoveCardsOperationSnapshotCreatorMock>>
@@ -80,7 +84,7 @@ public:
     TableauPileMock& lastTableauPileMock {
         *tableauPileMocks[lastTableauPileId]};
 
-    Solitaire solitaire {
+    DefaultSolitaire solitaire {
         deckGeneratorMock.make_unique(),
         stockPileMock,
         copySharedPtrArray<FoundationPile>(foundationPileMocks),
@@ -90,76 +94,78 @@ public:
     };
 };
 
-TEST_F(SolitaireTest, afterInitializationHandIsEmpty) {
+TEST_F(DefaultSolitaireTest, afterInitializationHandIsEmpty) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireTest, tryPullOutCardFromFoundationPileWithIdGreaterThanThree) {
+TEST_F(DefaultSolitaireTest,
+       tryPullOutCardFromFoundationPileWithIdGreaterThanThree)
+{
     EXPECT_THROW(
         solitaire.tryPullOutCardFromFoundationPile(invalidFoundationPileId),
         std::runtime_error
     );
 }
 
-TEST_F(SolitaireTest, tryAddCardOnFoundationPileWithIdGreaterThanThree) {
+TEST_F(DefaultSolitaireTest, tryAddCardOnFoundationPileWithIdGreaterThanThree) {
     EXPECT_THROW(
         solitaire.tryAddCardOnFoundationPile(invalidFoundationPileId),
         std::runtime_error
     );
 }
 
-TEST_F(SolitaireTest, getFoundationPileWithIdGreaterThanThree) {
+TEST_F(DefaultSolitaireTest, getFoundationPileWithIdGreaterThanThree) {
     EXPECT_THROW(
         solitaire.getFoundationPile(invalidFoundationPileId),
         std::runtime_error
     );
 }
 
-TEST_F(SolitaireTest, getFoundationPile) {
+TEST_F(DefaultSolitaireTest, getFoundationPile) {
     EXPECT_EQ(
         &solitaire.getFoundationPile(lastFoundationPileId),
         &lastFoundationPileMock
     );
 }
 
-TEST_F(SolitaireTest, tryUncoverTableauPileTopCardWithIdGreaterThanSix) {
+TEST_F(DefaultSolitaireTest, tryUncoverTableauPileTopCardWithIdGreaterThanSix) {
     EXPECT_THROW(
         solitaire.tryUncoverTableauPileTopCard(invalidTableauPileId),
         std::runtime_error
     );
 }
 
-TEST_F(SolitaireTest, tryPullOutCardsFromTableauPileWithIdGreaterThanSix) {
+TEST_F(DefaultSolitaireTest, tryPullOutCardsFromTableauPileWithIdGreaterThanSix) {
     EXPECT_THROW(
         solitaire.tryPullOutCardsFromTableauPile(invalidTableauPileId, quantityToPullOut),
         std::runtime_error
     );
 }
 
-TEST_F(SolitaireTest, tryAddCardsOnTableauPileWithIdGreaterThanSix) {
+TEST_F(DefaultSolitaireTest, tryAddCardsOnTableauPileWithIdGreaterThanSix) {
     EXPECT_THROW(
         solitaire.tryAddCardsOnTableauPile(invalidTableauPileId),
         std::runtime_error
     );
 }
 
-TEST_F(SolitaireTest, getTableauPileWithIdGreaterThanSix) {
+TEST_F(DefaultSolitaireTest, getTableauPileWithIdGreaterThanSix) {
     EXPECT_THROW(solitaire.getTableauPile(invalidTableauPileId), std::runtime_error);
 }
 
-TEST_F(SolitaireTest, getTableauPile) {
+TEST_F(DefaultSolitaireTest, getTableauPile) {
     EXPECT_EQ(&solitaire.getTableauPile(lastTableauPileId), &lastTableauPileMock);
 }
 
-TEST_F(SolitaireTest, getStockPile) {
+TEST_F(DefaultSolitaireTest, getStockPile) {
     EXPECT_EQ(&solitaire.getStockPile(), stockPileMock.get());
 }
 
-class SolitaireEmptyHandTest: public SolitaireTest {
+class DefaultSolitaireEmptyHandTest: public DefaultSolitaireTest {
 public:
     using StrictSnapshotMockPtr = mock_ptr<StrictMock<SnapshotMock>>;
 
-    SolitaireEmptyHandTest() {
+    DefaultSolitaireEmptyHandTest() {
         EXPECT_CALL(*foundationPileMocks[0], getTopCardValue()).WillRepeatedly(Return(Value::King));
         EXPECT_CALL(*foundationPileMocks[1], getTopCardValue()).WillRepeatedly(Return(Value::King));
         EXPECT_CALL(*foundationPileMocks[2], getTopCardValue()).WillRepeatedly(Return(Value::King));
@@ -228,25 +234,25 @@ public:
     StrictSnapshotMockPtr snapshotMock;
 };
 
-TEST_F(SolitaireEmptyHandTest, dontUndoOperationWhenHistoryIsEmpty) {
+TEST_F(DefaultSolitaireEmptyHandTest, dontUndoOperationWhenHistoryIsEmpty) {
     EXPECT_CALL(*historyTrackerMock, getHistorySize()).WillOnce(Return(0));
     EXPECT_CALL(*historyTrackerMock, undo()).Times(0);
     solitaire.tryUndoOperation();
 }
 
-TEST_F(SolitaireEmptyHandTest, undoOperationWhenHistoryIsNotEmpty) {
+TEST_F(DefaultSolitaireEmptyHandTest, undoOperationWhenHistoryIsNotEmpty) {
     EXPECT_CALL(*historyTrackerMock, getHistorySize()).WillOnce(Return(1));
     EXPECT_CALL(*historyTrackerMock, undo());
     solitaire.tryUndoOperation();
 }
 
-TEST_F(SolitaireEmptyHandTest, ignoreTryOfPuttingCardBack) {
+TEST_F(DefaultSolitaireEmptyHandTest, ignoreTryOfPuttingCardBack) {
     EXPECT_CALL(*moveCardsOperationSnapshotCreatorMock, restoreSourcePile()).Times(0);
     solitaire.tryPutCardsBackFromHand();
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromFoundationPile) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryPullOutNoCardsFromFoundationPile) {
     EXPECT_CALL(lastFoundationPileMock, createSnapshot());
     EXPECT_CALL(lastFoundationPileMock, tryPullOutCard())
         .WillOnce(Return(std::nullopt));
@@ -255,7 +261,7 @@ TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromFoundationPile) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireEmptyHandTest, tryPullOutCardFromFoundationPile) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryPullOutCardFromFoundationPile) {
     InSequence seq;
     expectSnapshotCreation(lastFoundationPileMock, snapshotMock);
     EXPECT_CALL(lastFoundationPileMock, tryPullOutCard())
@@ -266,7 +272,7 @@ TEST_F(SolitaireEmptyHandTest, tryPullOutCardFromFoundationPile) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(oneCard));
 }
 
-TEST_F(SolitaireEmptyHandTest, tryAddCardOnFoundationPile) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryAddCardOnFoundationPile) {
     EXPECT_CALL(lastFoundationPileMock, createSnapshot()).Times(0);
     EXPECT_CALL(lastFoundationPileMock, tryAddCard(_)).Times(0);
 
@@ -274,7 +280,8 @@ TEST_F(SolitaireEmptyHandTest, tryAddCardOnFoundationPile) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireEmptyHandTest, dontUncoverTableauPileTopCardWhenTopCardUncovered) {
+TEST_F(DefaultSolitaireEmptyHandTest,
+       dontUncoverTableauPileTopCardWhenTopCardUncovered) {
     EXPECT_CALL(lastTableauPileMock, isTopCardCovered()).WillOnce(Return(false));
     EXPECT_CALL(lastTableauPileMock, createSnapshot()).Times(0);
     EXPECT_CALL(lastTableauPileMock, tryUncoverTopCard()).Times(0);
@@ -282,7 +289,7 @@ TEST_F(SolitaireEmptyHandTest, dontUncoverTableauPileTopCardWhenTopCardUncovered
     solitaire.tryUncoverTableauPileTopCard(lastTableauPileId);
 }
 
-TEST_F(SolitaireEmptyHandTest, tryUncoverTableauPileTopCard) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryUncoverTableauPileTopCard) {
     InSequence seq;
     EXPECT_CALL(lastTableauPileMock, isTopCardCovered()).WillOnce(Return(true));
     expectSnapshotCreation(lastTableauPileMock, snapshotMock);
@@ -292,7 +299,7 @@ TEST_F(SolitaireEmptyHandTest, tryUncoverTableauPileTopCard) {
     solitaire.tryUncoverTableauPileTopCard(lastTableauPileId);
 }
 
-TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromTableauPile) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryPullOutNoCardsFromTableauPile) {
     EXPECT_CALL(lastTableauPileMock, createSnapshot());
     EXPECT_CALL(lastTableauPileMock, tryPullOutCards(quantityToPullOut))
         .WillOnce(Return(noCards));
@@ -301,7 +308,7 @@ TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromTableauPile) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireEmptyHandTest, tryPullOutCardsFromTableauPile) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryPullOutCardsFromTableauPile) {
     InSequence seq;
     expectSnapshotCreation(lastTableauPileMock, snapshotMock);
     EXPECT_CALL(lastTableauPileMock, tryPullOutCards(quantityToPullOut))
@@ -312,7 +319,7 @@ TEST_F(SolitaireEmptyHandTest, tryPullOutCardsFromTableauPile) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(twoCards));
 }
 
-TEST_F(SolitaireEmptyHandTest, tryAddCardsOnTableauPile) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryAddCardsOnTableauPile) {
     EXPECT_CALL(lastTableauPileMock, createSnapshot()).Times(0);
     EXPECT_CALL(lastTableauPileMock, tryAddCards(_)).Times(0);
 
@@ -320,14 +327,14 @@ TEST_F(SolitaireEmptyHandTest, tryAddCardsOnTableauPile) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireEmptyHandTest, dontSelectNextStockPileCardWhenNoCards) {
+TEST_F(DefaultSolitaireEmptyHandTest, dontSelectNextStockPileCardWhenNoCards) {
     EXPECT_CALL(*stockPileMock, getCards()).WillOnce(ReturnRef(noCards));
     EXPECT_CALL(*stockPileMock, createSnapshot()).Times(0);
     EXPECT_CALL(*stockPileMock, trySelectNextCard()).Times(0);
     solitaire.trySelectNextStockPileCard();
 }
 
-TEST_F(SolitaireEmptyHandTest, trySelectNextStockPileCard) {
+TEST_F(DefaultSolitaireEmptyHandTest, trySelectNextStockPileCard) {
     InSequence seq;
     EXPECT_CALL(*stockPileMock, getCards()).WillOnce(ReturnRef(oneCard));
     expectSnapshotCreation(*stockPileMock, snapshotMock);
@@ -337,7 +344,7 @@ TEST_F(SolitaireEmptyHandTest, trySelectNextStockPileCard) {
     solitaire.trySelectNextStockPileCard();
 }
 
-TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromStockPile) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryPullOutNoCardsFromStockPile) {
     EXPECT_CALL(*stockPileMock, createSnapshot());
     EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(std::nullopt));
 
@@ -345,7 +352,7 @@ TEST_F(SolitaireEmptyHandTest, tryPullOutNoCardsFromStockPile) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireEmptyHandTest, tryPullOutCardFromStockPile) {
+TEST_F(DefaultSolitaireEmptyHandTest, tryPullOutCardFromStockPile) {
     InSequence seq;
     expectSnapshotCreation(*stockPileMock, snapshotMock);
     EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(oneCard.back()));
@@ -355,7 +362,9 @@ TEST_F(SolitaireEmptyHandTest, tryPullOutCardFromStockPile) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(oneCard));
 }
 
-TEST_F(SolitaireEmptyHandTest, gameIsNotFinishedWhenAnyOfFoundationPilesDoesNotHaveKingOnTop) {
+TEST_F(DefaultSolitaireEmptyHandTest,
+       gameIsNotFinishedWhenAnyOfFoundationPilesDoesNotHaveKingOnTop)
+{
     EXPECT_CALL(*foundationPileMocks[0], getTopCardValue()).WillOnce(Return(Value::King));
     EXPECT_CALL(*foundationPileMocks[1], getTopCardValue()).WillOnce(Return(Value::King));
     EXPECT_CALL(*foundationPileMocks[2], getTopCardValue()).WillOnce(Return(Value::King));
@@ -364,21 +373,23 @@ TEST_F(SolitaireEmptyHandTest, gameIsNotFinishedWhenAnyOfFoundationPilesDoesNotH
     EXPECT_FALSE(solitaire.isGameFinished());
 }
 
-TEST_F(SolitaireEmptyHandTest, gameIsFinishedWhenAllOfFoundationPilesHaveKingOnTop) {
+TEST_F(DefaultSolitaireEmptyHandTest,
+       gameIsFinishedWhenAllOfFoundationPilesHaveKingOnTop)
+{
     for (auto& pile: foundationPileMocks)
         EXPECT_CALL(*pile, getTopCardValue()).WillOnce(Return(Value::King));
 
     EXPECT_TRUE(solitaire.isGameFinished());
 }
 
-TEST_F(SolitaireEmptyHandTest, ignoreSomeOperationsIfGameFinished) {
+TEST_F(DefaultSolitaireEmptyHandTest, ignoreSomeOperationsIfGameFinished) {
     finishGame();
     ignoreEmptyHandPossibleOperationsTest();
 }
 
-class SolitaireHandWithOneCardTest: public SolitaireEmptyHandTest {
+class DefaultSolitaireHandWithOneCardTest: public DefaultSolitaireEmptyHandTest {
 public:
-    SolitaireHandWithOneCardTest() {
+    DefaultSolitaireHandWithOneCardTest() {
         expectSnapshotCreation(*stockPileMock, snapshotMock);
         EXPECT_CALL(*stockPileMock, tryPullOutCard()).WillOnce(Return(oneCard.back()));
         expectSavingSourcePileSnapshot(snapshotMock);
@@ -414,7 +425,7 @@ public:
     }
 };
 
-TEST_F(SolitaireHandWithOneCardTest, onNewGameClearHandAndDistributeCards) {
+TEST_F(DefaultSolitaireHandWithOneCardTest, onNewGameClearHandAndDistributeCards) {
     for (auto& pile: foundationPileMocks)
         EXPECT_CALL(*pile, getTopCardValue()).Times(0);
 
@@ -427,17 +438,19 @@ TEST_F(SolitaireHandWithOneCardTest, onNewGameClearHandAndDistributeCards) {
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireHandWithOneCardTest, tryPutCardsBack) {
+TEST_F(DefaultSolitaireHandWithOneCardTest, tryPutCardsBack) {
     EXPECT_CALL(*moveCardsOperationSnapshotCreatorMock, restoreSourcePile());
     solitaire.tryPutCardsBackFromHand();
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireHandWithOneCardTest, ignoreSomeOperationsIfHandNotEmpty) {
+TEST_F(DefaultSolitaireHandWithOneCardTest,
+       ignoreSomeOperationsIfHandNotEmpty)
+{
     ignoreEmptyHandPossibleOperationsTest();
 }
 
-TEST_F(SolitaireHandWithOneCardTest, ignoreSomeOperationsIfGameFinished) {
+TEST_F(DefaultSolitaireHandWithOneCardTest, ignoreSomeOperationsIfGameFinished) {
     finishGame();
 
     EXPECT_CALL(*moveCardsOperationSnapshotCreatorMock, restoreSourcePile()).Times(0);
@@ -449,13 +462,17 @@ TEST_F(SolitaireHandWithOneCardTest, ignoreSomeOperationsIfGameFinished) {
     solitaire.tryAddCardsOnTableauPile(lastTableauPileId);
 }
 
-class SolitaireHandWithOneCardAddCardTest: public SolitaireHandWithOneCardTest {
+class DefaultSolitaireHandWithOneCardAddCardTest:
+    public DefaultSolitaireHandWithOneCardTest
+{
 public:
     StrictSnapshotMockPtr snapshotMock2;
     StrictSnapshotMockPtr moveOperationSnapshot;
 };
 
-TEST_F(SolitaireHandWithOneCardAddCardTest, tryAddCardOnFoundationPileWithFail) {
+TEST_F(DefaultSolitaireHandWithOneCardAddCardTest,
+       tryAddCardOnFoundationPileWithFail)
+{
     std::optional<Card> cardToAdd {oneCard.back()};
 
     EXPECT_CALL(lastFoundationPileMock, createSnapshot());
@@ -465,7 +482,9 @@ TEST_F(SolitaireHandWithOneCardAddCardTest, tryAddCardOnFoundationPileWithFail) 
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(oneCard));
 }
 
-TEST_F(SolitaireHandWithOneCardAddCardTest, addCardOnFoundationPileWithoutHistoryRecord) {
+TEST_F(DefaultSolitaireHandWithOneCardAddCardTest,
+       addCardOnFoundationPileWithoutHistoryRecord)
+{
     std::optional<Card> cardToAdd {oneCard.back()};
 
     InSequence seq;
@@ -478,7 +497,9 @@ TEST_F(SolitaireHandWithOneCardAddCardTest, addCardOnFoundationPileWithoutHistor
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireHandWithOneCardAddCardTest, addCardOnFoundationPileWithHistoryRecord) {
+TEST_F(DefaultSolitaireHandWithOneCardAddCardTest,
+       addCardOnFoundationPileWithHistoryRecord)
+{
     std::optional<Card> cardToAdd {oneCard.back()};
 
     InSequence seq;
@@ -492,9 +513,9 @@ TEST_F(SolitaireHandWithOneCardAddCardTest, addCardOnFoundationPileWithHistoryRe
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-class SolitaireHandWithTwoCardsTest: public SolitaireEmptyHandTest {
+class DefaultSolitaireHandWithTwoCardsTest: public DefaultSolitaireEmptyHandTest {
 public:
-    SolitaireHandWithTwoCardsTest() {
+    DefaultSolitaireHandWithTwoCardsTest() {
         expectSnapshotCreation(lastTableauPileMock, snapshotMock);
         EXPECT_CALL(lastTableauPileMock, tryPullOutCards(quantityToPullOut))
             .WillOnce(Return(twoCards));
@@ -507,7 +528,9 @@ public:
     StrictSnapshotMockPtr moveOperationSnapshot;
 };
 
-TEST_F(SolitaireHandWithTwoCardsTest, ignoreTryOfAddingCardOnFoundationPile) {
+TEST_F(DefaultSolitaireHandWithTwoCardsTest,
+       ignoreTryOfAddingCardOnFoundationPile)
+{
     EXPECT_CALL(lastFoundationPileMock, createSnapshot()).Times(0);
     EXPECT_CALL(lastFoundationPileMock, tryAddCard(_)).Times(0);
 
@@ -515,7 +538,7 @@ TEST_F(SolitaireHandWithTwoCardsTest, ignoreTryOfAddingCardOnFoundationPile) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(twoCards));
 }
 
-TEST_F(SolitaireHandWithTwoCardsTest, tryAddCardOnTableauPileWithFail) {
+TEST_F(DefaultSolitaireHandWithTwoCardsTest, tryAddCardOnTableauPileWithFail) {
     auto cardsToAdd {twoCards};
 
     EXPECT_CALL(lastTableauPileMock, createSnapshot());
@@ -525,7 +548,9 @@ TEST_F(SolitaireHandWithTwoCardsTest, tryAddCardOnTableauPileWithFail) {
     EXPECT_THAT(solitaire.getCardsInHand(), ContainerEq(twoCards));
 }
 
-TEST_F(SolitaireHandWithTwoCardsTest, addCardOnTableauPileWithoutHistoryRecord) {
+TEST_F(DefaultSolitaireHandWithTwoCardsTest,
+       addCardOnTableauPileWithoutHistoryRecord)
+{
     auto cardsToAdd {twoCards};
 
     InSequence seq;
@@ -538,7 +563,7 @@ TEST_F(SolitaireHandWithTwoCardsTest, addCardOnTableauPileWithoutHistoryRecord) 
     EXPECT_TRUE(solitaire.getCardsInHand().empty());
 }
 
-TEST_F(SolitaireHandWithTwoCardsTest, addCardOnTableauPileWithHistoryRecord) {
+TEST_F(DefaultSolitaireHandWithTwoCardsTest, addCardOnTableauPileWithHistoryRecord) {
     auto cardsToAdd {twoCards};
 
     InSequence seq;

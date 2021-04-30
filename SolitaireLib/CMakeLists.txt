@@ -2,7 +2,7 @@ add_library(SolitaireLib STATIC)
 target_include_directories(SolitaireLib PUBLIC headers)
 
 target_sources(SolitaireLib PRIVATE
-    sources/Solitaire.cpp
+    sources/DefaultSolitaire.cpp
     sources/archivers/DefaultHistoryTracker.cpp
     sources/archivers/DefaultMoveCardsOperationSnapshotCreator.cpp
     sources/cards/Card.cpp

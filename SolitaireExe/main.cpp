@@ -1,5 +1,4 @@
-#include "cards/Card.h"
-#include "Solitaire.h"
+#include "DefaultSolitaire.h"
 #include "archivers/DefaultHistoryTracker.h"
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
@@ -12,16 +11,16 @@
 
 using namespace solitaire;
 
-int main(int, char **) {
-    std::array<std::shared_ptr<piles::FoundationPile>, 4> foundationPiles;
+int main(int, char**) {
+    DefaultSolitaire::FoundationPiles foundationPiles;
     for (auto& pile: foundationPiles)
         pile = std::make_shared<piles::DefaultFoundationPile>();
 
-    std::array<std::shared_ptr<piles::TableauPile>, 7> tableauPiles;
+    DefaultSolitaire::TableauPiles tableauPiles;
     for (auto& pile: tableauPiles)
         pile = std::make_shared<piles::DefaultTableauPile>();
 
-    Solitaire solitaire {
+    DefaultSolitaire solitaire {
         std::make_unique<cards::ShuffledDeckGenerator>(),
         std::make_shared<piles::DefaultStockPile>(),
         foundationPiles, tableauPiles,
