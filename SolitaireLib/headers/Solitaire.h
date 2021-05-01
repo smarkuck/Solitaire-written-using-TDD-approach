@@ -1,5 +1,8 @@
 #pragma once
 
+#include <array>
+#include <memory>
+
 #include "cards/Cards.h"
 
 namespace solitaire {
@@ -13,6 +16,14 @@ namespace piles {
 
 class Solitaire {
 public:
+    static constexpr unsigned foundationPilesCount {4};
+    static constexpr unsigned tableauPilesCount {7};
+
+    using FoundationPiles =
+        std::array<std::shared_ptr<piles::FoundationPile>, foundationPilesCount>;
+    using TableauPiles =
+        std::array<std::shared_ptr<piles::TableauPile>, tableauPilesCount>;
+
     virtual ~Solitaire() = default;
 
     virtual void startNewGame() = 0;

@@ -10,9 +10,9 @@
 #include "graphics/DefaultSDLWrapper.h"
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
-#include "piles/DefaultFoundationPile.h"
 #include "piles/DefaultStockPile.h"
 #include "piles/DefaultTableauPile.h"
+#include "piles/FoundationPile.h"
 
 using namespace solitaire;
 
@@ -50,11 +50,11 @@ private:
 
 
 int main(int, char**) {
-    DefaultSolitaire::FoundationPiles foundationPiles;
+    Solitaire::FoundationPiles foundationPiles;
     for (auto& pile: foundationPiles)
         pile = std::make_shared<FoundationPileStub>();
 
-    DefaultSolitaire::TableauPiles tableauPiles;
+    Solitaire::TableauPiles tableauPiles;
     for (auto& pile: tableauPiles)
         pile = std::make_shared<piles::DefaultTableauPile>();
 

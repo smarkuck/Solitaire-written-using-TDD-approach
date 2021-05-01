@@ -1,7 +1,5 @@
 #pragma once
 
-#include <array>
-#include <memory>
 #include <optional>
 
 #include "Solitaire.h"
@@ -22,14 +20,6 @@ namespace cards {
 
 class DefaultSolitaire: public Solitaire {
 public:
-    static constexpr unsigned foundationPilesCount {4};
-    static constexpr unsigned tableauPilesCount {7};
-
-    using FoundationPiles =
-        std::array<std::shared_ptr<piles::FoundationPile>, foundationPilesCount>;
-    using TableauPiles =
-        std::array<std::shared_ptr<piles::TableauPile>, tableauPilesCount>;
-
     DefaultSolitaire(std::unique_ptr<cards::DeckGenerator>,
                      std::shared_ptr<piles::StockPile>,
                      FoundationPiles, TableauPiles,

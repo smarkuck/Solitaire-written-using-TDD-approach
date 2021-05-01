@@ -26,6 +26,7 @@ const std::string windowTitle {"Solitaire"};
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {480};
 constexpr unsigned cardPlaceholderAlpha {70};
+constexpr unsigned foundationPilesCount {4};
 
 const TextureId backgroundTextureId {0};
 const TextureId cardsTextureId {1};
@@ -36,7 +37,7 @@ constexpr TextureSize cardSize {75, 104};
 constexpr TextureArea cardPlaceholderTextureArea {
     TexturePosition {0, 0}, cardSize};
 
-const std::array<TexturePosition, 4> foundationPilesPositions {
+const std::array<TexturePosition, foundationPilesCount> foundationPilesPositions {
     TexturePosition {283, 30},
     TexturePosition {372, 30},
     TexturePosition {461, 30},
@@ -59,7 +60,7 @@ const Cards cardsWithLastKingClub {
 
 class RendererTests: public Test {
 public:
-    std::array<FoundationPileMock, 4> foundationPileMocks;
+    std::array<FoundationPileMock, foundationPilesCount> foundationPileMocks;
     SolitaireMock solitaireMock;
     mock_ptr<GraphicsSystemMock> graphicsSystemMock;
     std::unique_ptr<Renderer> renderer;
@@ -99,9 +100,9 @@ public:
     }
 
     TextureArea getCardTextureArea(const Card& card) {
-        unsigned x = static_cast<unsigned>(card.getValue()) * 75;
-        unsigned y = static_cast<unsigned>(card.getSuit()) * 104;
-        return TextureArea {x, y, 75, 104};
+        unsigned x = static_cast<unsigned>(card.getValue()) * cardSize.width;
+        unsigned y = static_cast<unsigned>(card.getSuit()) * cardSize.height;
+        return TextureArea {x, y, cardSize};
     }
 };
 

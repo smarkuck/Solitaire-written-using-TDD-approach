@@ -5,7 +5,6 @@
 #include "graphics/GraphicsSystem.h"
 #include "graphics/Renderer.h"
 #include "graphics/TextureArea.h"
-#include "graphics/TextureId.h"
 #include "piles/FoundationPile.h"
 #include "piles/PileId.h"
 
@@ -20,17 +19,17 @@ const std::string windowTitle {"Solitaire"};
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {480};
 constexpr unsigned foundationPilePositionY {30};
+constexpr unsigned cardPlaceholderAlpha {70};
 
 constexpr TextureSize cardSize {75, 104};
 constexpr TextureArea cardPlaceholderTextureArea {TexturePosition {0, 0}, cardSize};
 
-const std::array<TexturePosition, 4> foundationPilesPositions {
+const std::array<TexturePosition, Solitaire::foundationPilesCount> foundationPilesPositions {
     TexturePosition {283, foundationPilePositionY},
     TexturePosition {372, foundationPilePositionY},
     TexturePosition {461, foundationPilePositionY},
     TexturePosition {550, foundationPilePositionY},
 };
-
 }
 
 Renderer::Renderer(const Solitaire& solitaire,
@@ -44,7 +43,7 @@ Renderer::Renderer(const Solitaire& solitaire,
     backgroundId = loadTexture("background.bmp");
     cardsId = loadTexture("cards.bmp");
     cardPlaceholderId = loadTexture("card_placeholder.bmp");
-    this->graphicsSystem->setTextureAlpha(cardPlaceholderId, 70);
+    this->graphicsSystem->setTextureAlpha(cardPlaceholderId, cardPlaceholderAlpha);
 }
 
 TextureId Renderer::loadTexture(const std::string& path) const {
@@ -54,7 +53,7 @@ TextureId Renderer::loadTexture(const std::string& path) const {
 void Renderer::render() const {
     graphicsSystem->renderTextureOnFullscreen(backgroundId);
 
-    for (PileId id {0}; id < 4; ++id)
+    for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
         renderFoundationPile(id);
 
     graphicsSystem->renderFrame();
@@ -72,9 +71,9 @@ void Renderer::renderFoundationPile(const PileId id) const {
 }
 
 TextureArea Renderer::getCardTextureArea(const Card& card) const {
-    unsigned x = static_cast<unsigned>(card.getValue()) * 75;
-    unsigned y = static_cast<unsigned>(card.getSuit()) * 104;
-    return TextureArea {x, y, 75, 104};
+    unsigned x = static_cast<unsigned>(card.getValue()) * cardSize.width;
+    unsigned y = static_cast<unsigned>(card.getSuit()) * cardSize.height;
+    return TextureArea {x, y, cardSize};
 }
 
 }
