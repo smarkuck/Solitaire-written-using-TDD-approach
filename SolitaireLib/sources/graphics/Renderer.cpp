@@ -2,6 +2,8 @@
 
 #include "Solitaire.h"
 #include "cards/Card.h"
+#include "cards/Suit.h"
+#include "cards/Value.h"
 #include "graphics/GraphicsSystem.h"
 #include "graphics/Renderer.h"
 #include "graphics/TextureArea.h"
@@ -71,8 +73,8 @@ void Renderer::renderFoundationPile(const PileId id) const {
 }
 
 TextureArea Renderer::getCardTextureArea(const Card& card) const {
-    unsigned x = static_cast<unsigned>(card.getValue()) * cardSize.width;
-    unsigned y = static_cast<unsigned>(card.getSuit()) * cardSize.height;
+    unsigned x = to_int(card.getValue()) * cardSize.width;
+    unsigned y = to_int(card.getSuit()) * cardSize.height;
     return TextureArea {x, y, cardSize};
 }
 

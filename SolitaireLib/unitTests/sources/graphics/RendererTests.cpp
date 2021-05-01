@@ -100,8 +100,8 @@ public:
     }
 
     TextureArea getCardTextureArea(const Card& card) {
-        unsigned x = static_cast<unsigned>(card.getValue()) * cardSize.width;
-        unsigned y = static_cast<unsigned>(card.getSuit()) * cardSize.height;
+        unsigned x = to_int(card.getValue()) * cardSize.width;
+        unsigned y = to_int(card.getSuit()) * cardSize.height;
         return TextureArea {x, y, cardSize};
     }
 };
