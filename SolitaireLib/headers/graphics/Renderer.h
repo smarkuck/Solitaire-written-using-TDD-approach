@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "graphics/TextureId.h"
@@ -23,17 +24,37 @@ public:
     void render() const;
 
 private:
+    using SelectedCardIndex = std::optional<unsigned>;
+
     TextureId loadTexture(const std::string& path) const;
 
     void renderFoundationPile(const piles::PileId) const;
     void renderTableauPile(const piles::PileId) const;
-    void renderEmptyTableauPile(const piles::PileId) const;
     void renderTableauPileWithCards(TexturePosition pilePosition, const cards::Cards&,
                                     const unsigned topCoveredCardPosition) const;
+    void renderStockPile() const;
+    void renderStockPileWithCards(const cards::Cards&,
+                                  const SelectedCardIndex&) const;
+    void renderStockPileCoveredCards(const cards::Cards&,
+                                     const SelectedCardIndex&) const;
+    void renderStockPileUncoveredCards(const cards::Cards&,
+                                       const SelectedCardIndex&) const;
+    void renderCard(const TexturePosition&, const cards::Card&) const;
+    void renderCardBack(const TexturePosition&) const;
+    void renderCardPlaceholder(const TexturePosition&) const;
+
+    unsigned getCoveredCardsCount(const cards::Cards&,
+        const SelectedCardIndex& selectedCardIndex) const;
+    unsigned getUncoveredCardsCount(
+        const SelectedCardIndex& selectedCardIndex) const;
+    unsigned getCardsToRenderCount(const unsigned cardsCount) const;
 
     TexturePosition getFoundationPilePosition(const piles::PileId) const;
     TexturePosition getTableauPilePosition(const piles::PileId) const;
     TextureArea getCardTextureArea(const cards::Card&) const;
+
+    void throwOnInvalidSelectedCardIndex(const cards::Cards&,
+                                         const SelectedCardIndex&) const;
 
     const Solitaire& solitaire;
     std::unique_ptr<GraphicsSystem> graphicsSystem;

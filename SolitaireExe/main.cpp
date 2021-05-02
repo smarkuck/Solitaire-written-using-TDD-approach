@@ -10,8 +10,8 @@
 #include "graphics/DefaultSDLWrapper.h"
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
-#include "piles/DefaultStockPile.h"
 #include "piles/FoundationPile.h"
+#include "piles/StockPile.h"
 #include "piles/TableauPile.h"
 
 using namespace solitaire;
@@ -70,6 +70,42 @@ private:
     };
 };
 
+
+class StockPileStub: public piles::StockPile {
+public:
+    void initialize(const cards::Deck::const_iterator& begin,
+                    const cards::Deck::const_iterator& end) override {};
+
+    void trySelectNextCard() override {};
+
+    std::optional<cards::Card> tryPullOutCard() override {
+        return cards::Card {cards::Value::Ace, cards::Suit::Heart};
+    };
+
+    const cards::Cards& getCards() const override { return cards; };
+    std::optional<unsigned> getSelectedCardIndex() const override { return 7; };
+    std::unique_ptr<archivers::Snapshot> createSnapshot() override { return nullptr; }
+
+private:
+    cards::Cards cards {
+        cards::Card {cards::Value::Ace, cards::Suit::Heart},
+        cards::Card {cards::Value::Seven, cards::Suit::Spade},
+        cards::Card {cards::Value::King, cards::Suit::Club},
+        cards::Card {cards::Value::Ace, cards::Suit::Heart},
+        cards::Card {cards::Value::Seven, cards::Suit::Spade},
+        cards::Card {cards::Value::King, cards::Suit::Club},
+
+        cards::Card {cards::Value::Ace, cards::Suit::Heart},
+        cards::Card {cards::Value::Seven, cards::Suit::Spade},
+        cards::Card {cards::Value::King, cards::Suit::Club},
+        cards::Card {cards::Value::Ace, cards::Suit::Heart},
+        cards::Card {cards::Value::Seven, cards::Suit::Spade},
+        cards::Card {cards::Value::King, cards::Suit::Club},
+
+        cards::Card {cards::Value::King, cards::Suit::Club},
+    };
+};
+
 int main(int, char**) {
     Solitaire::FoundationPiles foundationPiles;
     for (auto& pile: foundationPiles)
@@ -81,7 +117,7 @@ int main(int, char**) {
 
     DefaultSolitaire solitaire {
         std::make_unique<cards::ShuffledDeckGenerator>(),
-        std::make_shared<piles::DefaultStockPile>(),
+        std::make_shared<StockPileStub>(),
         foundationPiles, tableauPiles,
         std::make_unique<archivers::DefaultHistoryTracker>(),
         std::make_unique<archivers::DefaultMoveCardsOperationSnapshotCreator>()
