@@ -18,7 +18,7 @@ public:
     virtual cards::Cards tryPullOutCards(unsigned quantity) = 0;
 
     virtual const cards::Cards& getCards() const = 0;
-    virtual unsigned getPlaceInOrderOfFirstCoveredCard() const = 0;
+    virtual unsigned getTopCoveredCardPosition() const = 0;
     virtual bool isTopCardCovered() const = 0;
 };
 

@@ -18,7 +18,7 @@ public:
     cards::Cards tryPullOutCards(unsigned quantity) override;
 
     const cards::Cards& getCards() const override;
-    unsigned getPlaceInOrderOfFirstCoveredCard() const override;
+    unsigned getTopCoveredCardPosition() const override;
     bool isTopCardCovered() const override;
 
 private:
@@ -30,13 +30,13 @@ private:
     bool isFirstCardToAddCorrect(const cards::Cards& cardsToAdd) const;
 
     cards::Cards cards;
-    unsigned placeInOrderOfFirstCoveredCard {0};
+    unsigned topCoveredCardPosition {0};
 };
 
 class DefaultTableauPile::Snapshot: public archivers::Snapshot {
 public:
     Snapshot(std::shared_ptr<DefaultTableauPile>, cards::Cards,
-             unsigned placeInOrderOfFirstCoveredCard);
+             unsigned topCoveredCardPosition);
 
     void restore() const override;
     bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
@@ -44,7 +44,7 @@ public:
 private:
     const std::shared_ptr<DefaultTableauPile> tableauPile;
     const cards::Cards pileCards;
-    const unsigned placeInOrderOfFirstCoveredCard;
+    const unsigned topCoveredCardPosition;
 };
 
 }

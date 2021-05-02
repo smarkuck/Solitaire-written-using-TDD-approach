@@ -26,7 +26,7 @@ public:
 
 TEST_F(EmptyDefaultTableauPileTest, createPile) {
     EXPECT_TRUE(pile->getCards().empty());
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 0);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 0);
 }
 
 TEST_F(EmptyDefaultTableauPileTest, initializePileWithOneCard) {
@@ -36,7 +36,7 @@ TEST_F(EmptyDefaultTableauPileTest, initializePileWithOneCard) {
 
     initializePile(*pile, cards);
     EXPECT_THAT(pile->getCards(), ContainerEq(cards));
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 0);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 0);
 }
 
 TEST_F(EmptyDefaultTableauPileTest, initializePileWithTwoCards) {
@@ -47,7 +47,7 @@ TEST_F(EmptyDefaultTableauPileTest, initializePileWithTwoCards) {
 
     initializePile(*pile, cards);
     EXPECT_THAT(pile->getCards(), ContainerEq(cards));
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 1);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 1);
 }
 
 TEST_F(EmptyDefaultTableauPileTest, initializePileWithSevenCards) {
@@ -63,7 +63,7 @@ TEST_F(EmptyDefaultTableauPileTest, initializePileWithSevenCards) {
 
     initializePile(*pile, cards);
     EXPECT_THAT(pile->getCards(), ContainerEq(cards));
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 6);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 6);
 }
 
 TEST_F(EmptyDefaultTableauPileTest, tryAddNoCards) {
@@ -103,10 +103,10 @@ TEST_F(EmptyDefaultTableauPileTest, tryAddCardsWhenKingIsFirst) {
 }
 
 TEST_F(EmptyDefaultTableauPileTest, tryUncoverTopCard) {
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 0);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 0);
 
     pile->tryUncoverTopCard();
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 0);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 0);
 }
 
 class InitializedDefaultTableauPileTest: public EmptyDefaultTableauPileTest {
@@ -197,13 +197,13 @@ TEST_F(DefaultTableauPileWithCoveredTopCardTest, tryAddCardsOnCoveredTopCard) {
 }
 
 TEST_F(DefaultTableauPileWithCoveredTopCardTest, tryUncoverTopCard) {
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 2);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 2);
 
     pile->tryUncoverTopCard();
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 1);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 1);
 
     pile->tryUncoverTopCard();
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 1);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 1);
 }
 
 class DefaultTableauPileWithUncoveredTopTwoCardsTest:
@@ -262,7 +262,7 @@ public:
 TEST_F(DefaultTableauPileInitializationTest, initializePileAfterOperations) {
     initializePile(*pile, newPileCards);
     EXPECT_THAT(pile->getCards(), ContainerEq(newPileCards));
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 1);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 1);
 }
 
 TEST_F(DefaultTableauPileInitializationTest, restorePileStateUsingSnapshot) {
@@ -271,7 +271,7 @@ TEST_F(DefaultTableauPileInitializationTest, restorePileStateUsingSnapshot) {
     snapshot->restore();
 
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
-    EXPECT_EQ(pile->getPlaceInOrderOfFirstCoveredCard(), 2);
+    EXPECT_EQ(pile->getTopCoveredCardPosition(), 2);
 }
 
 TEST_F(DefaultTableauPileInitializationTest, isSnapshotOfSameObject) {

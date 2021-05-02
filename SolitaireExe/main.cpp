@@ -11,8 +11,8 @@
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
 #include "piles/DefaultStockPile.h"
-#include "piles/DefaultTableauPile.h"
 #include "piles/FoundationPile.h"
+#include "piles/TableauPile.h"
 
 using namespace solitaire;
 
@@ -48,6 +48,27 @@ private:
     };
 };
 
+class TableauPileStub: public piles::TableauPile {
+public:
+    void initialize(const cards::Deck::const_iterator& begin,
+                    const cards::Deck::const_iterator& end) override {};
+
+    void tryUncoverTopCard() override {};
+    void tryAddCards(cards::Cards& cardsToAdd) override {};
+    cards::Cards tryPullOutCards(unsigned quantity) override { return {}; };
+
+    const cards::Cards& getCards() const override { return cards; };
+    unsigned getTopCoveredCardPosition() const override { return 1; };
+    bool isTopCardCovered() const override { return true; };
+    std::unique_ptr<archivers::Snapshot> createSnapshot() override { return nullptr; }
+
+private:
+    cards::Cards cards {
+        cards::Card {cards::Value::Ace, cards::Suit::Heart},
+        cards::Card {cards::Value::Seven, cards::Suit::Spade},
+        cards::Card {cards::Value::King, cards::Suit::Club},
+    };
+};
 
 int main(int, char**) {
     Solitaire::FoundationPiles foundationPiles;
@@ -56,7 +77,7 @@ int main(int, char**) {
 
     Solitaire::TableauPiles tableauPiles;
     for (auto& pile: tableauPiles)
-        pile = std::make_shared<piles::DefaultTableauPile>();
+        pile = std::make_shared<TableauPileStub>();
 
     DefaultSolitaire solitaire {
         std::make_unique<cards::ShuffledDeckGenerator>(),
@@ -76,7 +97,7 @@ int main(int, char**) {
         findAssetsPath()
     };
 
-    for (unsigned i = 0; i < 150; ++i)
+    for (unsigned i = 0; i < 500; ++i)
         renderer.render();
 
     return 0;
