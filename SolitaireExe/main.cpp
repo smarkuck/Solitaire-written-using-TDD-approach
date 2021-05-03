@@ -11,6 +11,7 @@
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
 #include "piles/FoundationPile.h"
+#include "piles/PileId.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
 
@@ -48,6 +49,12 @@ private:
     };
 };
 
+class SnapshotStub: public archivers::Snapshot {
+public:
+    void restore() const override {}
+    bool isSnapshotOfSameObject(const Snapshot&) const override { return false; }
+};
+
 class TableauPileStub: public piles::TableauPile {
 public:
     void initialize(const cards::Deck::const_iterator& begin,
@@ -55,12 +62,15 @@ public:
 
     void tryUncoverTopCard() override {};
     void tryAddCards(cards::Cards& cardsToAdd) override {};
-    cards::Cards tryPullOutCards(unsigned quantity) override { return {}; };
+    cards::Cards tryPullOutCards(unsigned quantity) override { return cards; };
 
     const cards::Cards& getCards() const override { return cards; };
     unsigned getTopCoveredCardPosition() const override { return 1; };
     bool isTopCardCovered() const override { return true; };
-    std::unique_ptr<archivers::Snapshot> createSnapshot() override { return nullptr; }
+
+    std::unique_ptr<archivers::Snapshot> createSnapshot() override {
+        return std::make_unique<SnapshotStub>();
+    }
 
 private:
     cards::Cards cards {
@@ -124,6 +134,7 @@ int main(int, char**) {
     };
 
     solitaire.startNewGame();
+    solitaire.tryPullOutCardsFromTableauPile(piles::PileId {0}, 3);
 
     graphics::Renderer renderer {
         solitaire,

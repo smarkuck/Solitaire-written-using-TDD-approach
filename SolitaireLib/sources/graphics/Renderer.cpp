@@ -66,6 +66,7 @@ void Renderer::render() const {
         renderTableauPile(id);
 
     renderStockPile();
+    renderCardsInHand();
     graphicsSystem->renderFrame();
 }
 
@@ -149,8 +150,8 @@ void Renderer::throwOnInvalidSelectedCardIndex(
 void Renderer::renderStockPileCoveredCards(
     const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
 {
-    const auto cardsToRender = getCardsToRenderCount(
-        getCoveredCardsCount(pileCards, selectedCardIndex));
+    const auto cardsToRender = getStockPileCardsToRenderCount(
+        getStockPileCoveredCardsCount(pileCards, selectedCardIndex));
 
     if (cardsToRender == 0)
         renderCardPlaceholder(stockPilePosition);
@@ -165,8 +166,8 @@ void Renderer::renderStockPileCoveredCards(
 void Renderer::renderStockPileUncoveredCards(
     const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
 {
-    const unsigned cardsToRender = getCardsToRenderCount(
-        getUncoveredCardsCount(selectedCardIndex));
+    const unsigned cardsToRender = getStockPileCardsToRenderCount(
+        getStockPileUncoveredCardsCount(selectedCardIndex));
 
     auto cardPosition = stockPilePosition;
     cardPosition.x += pilesSpacing;
@@ -176,7 +177,7 @@ void Renderer::renderStockPileUncoveredCards(
     }
 }
 
-unsigned Renderer::getCoveredCardsCount(const Cards& pileCards,
+unsigned Renderer::getStockPileCoveredCardsCount(const Cards& pileCards,
     const SelectedCardIndex& selectedCardIndex) const
 {
     if (selectedCardIndex)
@@ -184,14 +185,22 @@ unsigned Renderer::getCoveredCardsCount(const Cards& pileCards,
     return pileCards.size();
 }
 
-unsigned Renderer::getUncoveredCardsCount(
+unsigned Renderer::getStockPileUncoveredCardsCount(
     const SelectedCardIndex& selectedCardIndex) const
 {
     return selectedCardIndex ? selectedCardIndex.value() + 1 : 0;
 }
 
-unsigned Renderer::getCardsToRenderCount(const unsigned cardsCount) const {
+unsigned Renderer::getStockPileCardsToRenderCount(const unsigned cardsCount) const {
     return (cardsCount + 5) / 6;
+}
+
+void Renderer::renderCardsInHand() const {
+    auto cardPosition = TexturePosition {0, 0};
+    for (const auto& card: solitaire.getCardsInHand()) {
+        renderCard(cardPosition, card);
+        cardPosition.y += uncoveredTableauPileCardsSpacing;
+    }
 }
 
 void Renderer::renderCard(const TexturePosition& position, const Card& card) const {

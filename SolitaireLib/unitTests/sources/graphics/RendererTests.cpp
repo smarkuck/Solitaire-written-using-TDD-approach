@@ -243,6 +243,7 @@ TEST_F(CreatedRendererTests, renderSolitaireWithEmptyStockPile) {
     InSequence seq;
     expectGetStockPileData(noCards, std::nullopt);
     expectRenderCardPlaceholder(stockPilePosition);
+    EXPECT_CALL(solitaireMock, getCardsInHand()).WillOnce(ReturnRef(noCards));
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
     renderer->render();
 }
@@ -271,6 +272,7 @@ TEST_P(StockPileRendererTests, renderStockPileWithCoveredCards) {
     InSequence seq;
     expectGetStockPileData(pileCards, std::nullopt);
     expectRenderStockPileCoveredCards(stockPileRenderData.cardsToRender);
+    EXPECT_CALL(solitaireMock, getCardsInHand()).WillOnce(ReturnRef(noCards));
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
 
     renderer->render();
@@ -286,6 +288,7 @@ TEST_P(StockPileRendererTests, renderStockPileWithUncoveredCards) {
     expectGetStockPileData(pileCards, selectedCardIndex);
     expectRenderCardPlaceholder(stockPilePosition);
     expectRenderStockPileUncoveredCards(stockPileRenderData.cardsToRender);
+    EXPECT_CALL(solitaireMock, getCardsInHand()).WillOnce(ReturnRef(noCards));
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
 
     renderer->render();
@@ -323,6 +326,7 @@ TEST_P(StockPileWithCoveredAndUncoveredCardsRendererTests, renderStockPile) {
     expectGetStockPileData(pileCards, stockPileRenderData.selectedCardIndex);
     expectRenderStockPileCoveredCards(stockPileRenderData.coveredCardsToRender);
     expectRenderStockPileUncoveredCards(stockPileRenderData.uncoveredCardsToRender);
+    EXPECT_CALL(solitaireMock, getCardsInHand()).WillOnce(ReturnRef(noCards));
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
 
     renderer->render();
@@ -337,5 +341,28 @@ INSTANTIATE_TEST_SUITE_P(BorderPoints,
                                 StockPileWithSelectedCardRenderData {15, 2, 2, 1},
                                 StockPileWithSelectedCardRenderData {15, 5, 2, 1},
                                 StockPileWithSelectedCardRenderData {15, 6, 2, 2}));
+
+class CardsInHandRendererTests: public CreatedRendererTests {
+public:
+    CardsInHandRendererTests() {
+        InSequence seq;
+        expectGetStockPileData(noCards, std::nullopt);
+        expectRenderCardPlaceholder(stockPilePosition);
+    }
+};
+
+TEST_F(CardsInHandRendererTests, renderCardsInHand) {
+    EXPECT_CALL(solitaireMock, getCardsInHand())
+        .WillOnce(ReturnRef(threeCardsWithLastKingClub));
+
+    auto cardPosition = TexturePosition {0, 0};
+    for (unsigned i = 0; i < threeCardsWithLastKingClub.size(); ++i) {
+        expectRenderCard(cardPosition, threeCardsWithLastKingClub[i]);
+        cardPosition.y += uncoveredTableauPileCardsSpacing;
+    }
+
+    EXPECT_CALL(*graphicsSystemMock, renderFrame());
+    renderer->render();
+}
 
 }

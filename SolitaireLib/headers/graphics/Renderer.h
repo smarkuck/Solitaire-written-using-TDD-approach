@@ -39,15 +39,16 @@ private:
                                      const SelectedCardIndex&) const;
     void renderStockPileUncoveredCards(const cards::Cards&,
                                        const SelectedCardIndex&) const;
+    void renderCardsInHand() const;
     void renderCard(const TexturePosition&, const cards::Card&) const;
     void renderCardBack(const TexturePosition&) const;
     void renderCardPlaceholder(const TexturePosition&) const;
 
-    unsigned getCoveredCardsCount(const cards::Cards&,
+    unsigned getStockPileCoveredCardsCount(const cards::Cards&,
         const SelectedCardIndex& selectedCardIndex) const;
-    unsigned getUncoveredCardsCount(
+    unsigned getStockPileUncoveredCardsCount(
         const SelectedCardIndex& selectedCardIndex) const;
-    unsigned getCardsToRenderCount(const unsigned cardsCount) const;
+    unsigned getStockPileCardsToRenderCount(const unsigned cardsCount) const;
 
     TexturePosition getFoundationPilePosition(const piles::PileId) const;
     TexturePosition getTableauPilePosition(const piles::PileId) const;
