@@ -11,6 +11,10 @@ void DefaultWrapper::quit() const {
     SDL_Quit();
 }
 
+int DefaultWrapper::pollEvent(SDL_Event& event) const {
+    return SDL_PollEvent(&event);
+}
+
 UniquePtr<SDL_Window> DefaultWrapper::createWindow(
     const std::string& title, int x, int y, int w, int h, Uint32 flags) const
 {

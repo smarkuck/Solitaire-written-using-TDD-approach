@@ -16,6 +16,8 @@ public:
 
     virtual void quit() const = 0;
 
+    virtual int pollEvent(SDL_Event&) const = 0;
+
     virtual UniquePtr<SDL_Window> createWindow(
         const std::string& title, int x, int y, int w, int h, Uint32 flags) const = 0;
 

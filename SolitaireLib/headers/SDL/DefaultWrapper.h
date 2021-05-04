@@ -10,6 +10,8 @@ public:
 
     void quit() const override;
 
+    int pollEvent(SDL_Event&) const override;
+
     UniquePtr<SDL_Window> createWindow(const std::string& title, int x, int y, int w, int h,
                                        Uint32 flags) const override;
 
