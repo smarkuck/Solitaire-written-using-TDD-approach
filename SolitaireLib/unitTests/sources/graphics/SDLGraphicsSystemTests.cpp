@@ -1,12 +1,13 @@
 #include "mock_ptr.h"
 #include "gmock/gmock.h"
-#include "graphics/SDLDeleterMock.h"
 #include "graphics/SDLGraphicsSystem.h"
-#include "graphics/SDLWrapperMock.h"
 #include "graphics/TextureArea.h"
 #include "graphics/TextureId.h"
+#include "SDL/PtrDeleterMock.h"
+#include "SDL/WrapperMock.h"
 
 using namespace testing;
+using namespace solitaire::SDL;
 
 namespace solitaire::graphics {
 
@@ -55,10 +56,10 @@ MATCHER_P(IsOptionalEq, rect, "") {
 
 class SDLGraphicsSystemTests: public Test {
 public:
-    std::shared_ptr<StrictMock<SDLDeleterMock>> SDLPtrDeleterMock {
-        std::make_shared<StrictMock<SDLDeleterMock>>()};
+    std::shared_ptr<StrictMock<PtrDeleterMock>> uniquePtrDeleterMock {
+        std::make_shared<StrictMock<PtrDeleterMock>>()};
 
-    mock_ptr<StrictMock<SDLWrapperMock>> SDLMock;
+    mock_ptr<StrictMock<WrapperMock>> SDLMock;
     SDLGraphicsSystem system {SDLMock.make_unique()};
 
     auto& expectSDLCreateWindow(
@@ -76,12 +77,12 @@ public:
         );
     }
 
-    SDLPtr<SDL_Window> makeSDLWindow(SDL_Window* ptr) {
-        return SDLPtr<SDL_Window> {ptr, SDLDeleter {SDLPtrDeleterMock}};
+    UniquePtr<SDL_Window> makeSDLWindow(SDL_Window* ptr) {
+        return UniquePtr<SDL_Window> {ptr, PtrDeleter {uniquePtrDeleterMock}};
     }
 
-    SDLPtr<SDL_Renderer> makeSDLRenderer(SDL_Renderer* ptr) {
-        return SDLPtr<SDL_Renderer> {ptr, SDLDeleter {SDLPtrDeleterMock}};
+    UniquePtr<SDL_Renderer> makeSDLRenderer(SDL_Renderer* ptr) {
+        return UniquePtr<SDL_Renderer> {ptr, PtrDeleter {uniquePtrDeleterMock}};
     }
 
     void expectThrowIfSDLCreateRendererFailedDuringWindowCreation() {
@@ -89,7 +90,7 @@ public:
         expectSDLCreateWindow(title, windowWidth, windowHeight)
             .WillOnce(Return(ByMove(makeSDLWindow(windowPtr))));
         expectSDLCreateRenderer(windowPtr).WillOnce(ReturnNull());
-        EXPECT_CALL(*SDLPtrDeleterMock, windowDeleter(windowPtr));
+        EXPECT_CALL(*uniquePtrDeleterMock, windowDeleter(windowPtr));
         EXPECT_CALL(*SDLMock, quit());
 
         EXPECT_THROW(
@@ -108,8 +109,8 @@ public:
     }
 
     void expectQuitSystem() {
-        EXPECT_CALL(*SDLPtrDeleterMock, rendererDeleter(rendererPtr));
-        EXPECT_CALL(*SDLPtrDeleterMock, windowDeleter(windowPtr));
+        EXPECT_CALL(*uniquePtrDeleterMock, rendererDeleter(rendererPtr));
+        EXPECT_CALL(*uniquePtrDeleterMock, windowDeleter(windowPtr));
         EXPECT_CALL(*SDLMock, quit());
     }
 };
@@ -218,12 +219,12 @@ public:
         expectCreateWindow();
     }
 
-    SDLPtr<SDL_Texture> makeSDLTexture(SDL_Texture* ptr) {
-        return SDLPtr<SDL_Texture> {ptr, SDLDeleter {SDLPtrDeleterMock}};
+    UniquePtr<SDL_Texture> makeSDLTexture(SDL_Texture* ptr) {
+        return UniquePtr<SDL_Texture> {ptr, PtrDeleter {uniquePtrDeleterMock}};
     }
 
-    SDLPtr<SDL_Surface> makeSDLSurface(SDL_Surface* ptr) {
-        return SDLPtr<SDL_Surface> {ptr, SDLDeleter {SDLPtrDeleterMock}};
+    UniquePtr<SDL_Surface> makeSDLSurface(SDL_Surface* ptr) {
+        return UniquePtr<SDL_Surface> {ptr, PtrDeleter {uniquePtrDeleterMock}};
     }
 
     void expectCreateTexture(SDL_Texture* texturePtr, TextureId textureId) {
@@ -236,7 +237,7 @@ public:
         EXPECT_CALL(*SDLMock,
             createTextureFromSurface(Pointer(rendererPtr), Pointer(surfacePtr))
         ).WillOnce(Return(ByMove(makeSDLTexture(texturePtr))));
-        EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
+        EXPECT_CALL(*uniquePtrDeleterMock, surfaceDeleter(surfacePtr));
         EXPECT_EQ(system.loadTexture(texturePath), textureId);
     }
 };
@@ -260,7 +261,7 @@ TEST_F(SDLGraphicsSystemWithCreatedWindowTests,
         .WillOnce(Return(mapRGBResult));
     EXPECT_CALL(*SDLMock, setColorKey(Pointer(surfacePtr), SDL_TRUE, mapRGBResult))
         .WillOnce(Return(failure));
-    EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
+    EXPECT_CALL(*uniquePtrDeleterMock, surfaceDeleter(surfacePtr));
     EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
     expectQuitSystem();
 }
@@ -278,7 +279,7 @@ TEST_F(SDLGraphicsSystemWithCreatedWindowTests,
     EXPECT_CALL(*SDLMock,
         createTextureFromSurface(Pointer(rendererPtr), Pointer(surfacePtr))
     ).WillOnce(ReturnNull());
-    EXPECT_CALL(*SDLPtrDeleterMock, surfaceDeleter(surfacePtr));
+    EXPECT_CALL(*uniquePtrDeleterMock, surfaceDeleter(surfacePtr));
     EXPECT_THROW(system.loadTexture(texturePath), std::runtime_error);
     expectQuitSystem();
 }
@@ -286,7 +287,7 @@ TEST_F(SDLGraphicsSystemWithCreatedWindowTests,
 TEST_F(SDLGraphicsSystemWithCreatedWindowTests, loadTextureSuccessfully) {
     InSequence seq;
     expectCreateTexture(texture0Ptr, textureId0);
-    EXPECT_CALL(*SDLPtrDeleterMock, textureDeleter(texture0Ptr));
+    EXPECT_CALL(*uniquePtrDeleterMock, textureDeleter(texture0Ptr));
     expectQuitSystem();
 }
 
@@ -299,7 +300,7 @@ public:
     }
 
     void expectQuitSystemWithLoadedTexture() {
-        EXPECT_CALL(*SDLPtrDeleterMock, textureDeleter(texture0Ptr));
+        EXPECT_CALL(*uniquePtrDeleterMock, textureDeleter(texture0Ptr));
         expectQuitSystem();
     }
 };
@@ -307,8 +308,8 @@ public:
 TEST_F(SDLGraphicsSystemWithLoadedTexture, loadSecondTexture) {
     InSequence seq;
     expectCreateTexture(texture1Ptr, textureId1);
-    EXPECT_CALL(*SDLPtrDeleterMock, textureDeleter(texture0Ptr));
-    EXPECT_CALL(*SDLPtrDeleterMock, textureDeleter(texture1Ptr));
+    EXPECT_CALL(*uniquePtrDeleterMock, textureDeleter(texture0Ptr));
+    EXPECT_CALL(*uniquePtrDeleterMock, textureDeleter(texture1Ptr));
     expectQuitSystem();
 }
 

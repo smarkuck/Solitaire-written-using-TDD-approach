@@ -1,13 +1,15 @@
 #include <stdexcept>
 
 #include "graphics/SDLGraphicsSystem.h"
-#include "graphics/SDLWrapper.h"
 #include "graphics/TextureId.h"
 #include "graphics/TextureArea.h"
+#include "SDL/Wrapper.h"
+
+using namespace solitaire::SDL;
 
 namespace solitaire::graphics {
 
-SDLGraphicsSystem::SDLGraphicsSystem(std::unique_ptr<SDLWrapper> SDL):
+SDLGraphicsSystem::SDLGraphicsSystem(std::unique_ptr<Wrapper> SDL):
     SDL {std::move(SDL)} {
 }
 
@@ -34,7 +36,7 @@ void SDLGraphicsSystem::initializeSDLOrQuitAndThrowError() {
     isSDLInitialized = true;
 }
 
-SDLPtr<SDL_Window> SDLGraphicsSystem::createSDLWindowOrQuitAndThrowError(
+UniquePtr<SDL_Window> SDLGraphicsSystem::createSDLWindowOrQuitAndThrowError(
     const std::string& title, const unsigned width, const unsigned height)
 {
     auto window = SDL->createWindow(
@@ -47,8 +49,8 @@ SDLPtr<SDL_Window> SDLGraphicsSystem::createSDLWindowOrQuitAndThrowError(
     return window;
 }
 
-SDLPtr<SDL_Renderer> SDLGraphicsSystem::createSDLWindowRendererOrQuitAndThrowError(
-    const SDLPtr<SDL_Window>& window)
+UniquePtr<SDL_Renderer> SDLGraphicsSystem::createSDLWindowRendererOrQuitAndThrowError(
+    const UniquePtr<SDL_Window>& window)
 {
     auto renderer = SDL->createRenderer(
         window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -84,7 +86,7 @@ TextureId SDLGraphicsSystem::loadTexture(const std::string& path) {
     return TextureId {static_cast<unsigned>(textures.size() - 1)};
 }
 
-SDLPtr<SDL_Surface>
+UniquePtr<SDL_Surface>
 SDLGraphicsSystem::createSDLSurfaceOrThrow(const std::string& path) const {
     auto surface = SDL->loadBMP(path);
 
@@ -97,8 +99,8 @@ SDLGraphicsSystem::createSDLSurfaceOrThrow(const std::string& path) const {
     return surface;
 }
 
-SDLPtr<SDL_Texture> SDLGraphicsSystem::createSDLTextureOrThrow(
-    const SDLPtr<SDL_Surface>& surface) const
+UniquePtr<SDL_Texture> SDLGraphicsSystem::createSDLTextureOrThrow(
+    const UniquePtr<SDL_Surface>& surface) const
 {
     auto texture = SDL->createTextureFromSurface(renderer, surface);
 

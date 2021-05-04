@@ -7,13 +7,13 @@
 #include "cards/ShuffledDeckGenerator.h"
 #include "cards/Value.h"
 #include "cards/Suit.h"
-#include "graphics/DefaultSDLWrapper.h"
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
 #include "piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
+#include "SDL/DefaultWrapper.h"
 
 using namespace solitaire;
 
@@ -139,7 +139,7 @@ int main(int, char**) {
     graphics::Renderer renderer {
         solitaire,
         std::make_unique<graphics::SDLGraphicsSystem>(
-            std::make_unique<graphics::DefaultSDLWrapper>()
+            std::make_unique<SDL::DefaultWrapper>()
         ),
         findAssetsPath()
     };

@@ -5,9 +5,9 @@ struct SDL_Surface;
 struct SDL_Texture;
 struct SDL_Window;
 
-namespace solitaire::graphics {
+namespace solitaire::SDL {
 
-class SDLDeleter {
+class PtrDeleter {
 public:
     void operator() (SDL_Window* window) const;
     void operator() (SDL_Renderer* renderer) const;

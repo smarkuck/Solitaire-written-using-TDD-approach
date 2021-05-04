@@ -7,13 +7,13 @@ target_sources(SolitaireLib PRIVATE
     sources/archivers/DefaultMoveCardsOperationSnapshotCreator.cpp
     sources/cards/Card.cpp
     sources/cards/ShuffledDeckGenerator.cpp
-    sources/graphics/DefaultSDLWrapper.cpp
     sources/graphics/Renderer.cpp
-    sources/graphics/SDLDeleter.cpp
     sources/graphics/SDLGraphicsSystem.cpp
     sources/piles/DefaultFoundationPile.cpp
     sources/piles/DefaultStockPile.cpp
     sources/piles/DefaultTableauPile.cpp
+    sources/SDL/DefaultWrapper.cpp
+    sources/SDL/PtrDeleter.cpp
 )
 
 target_link_libraries(SolitaireLib PUBLIC Boost SDL2)

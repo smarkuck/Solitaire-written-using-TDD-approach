@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "GraphicsSystem.h"
-#include "SDLPtr.h"
+#include "SDL/UniquePtr.h"
 
 struct SDL_Rect;
 struct SDL_Renderer;
@@ -12,13 +12,17 @@ struct SDL_Surface;
 struct SDL_Texture;
 struct SDL_Window;
 
-namespace solitaire::graphics {
+namespace solitaire {
 
-class SDLWrapper;
+namespace SDL {
+class Wrapper;
+}
+
+namespace graphics {
 
 class SDLGraphicsSystem: public GraphicsSystem {
 public:
-    SDLGraphicsSystem(std::unique_ptr<SDLWrapper>);
+    SDLGraphicsSystem(std::unique_ptr<SDL::Wrapper>);
     ~SDLGraphicsSystem();
 
     void createWindow(const std::string& title, const unsigned width,
@@ -35,30 +39,32 @@ public:
 private:
     void initializeSDLOrQuitAndThrowError();
 
-    SDLPtr<SDL_Window> createSDLWindowOrQuitAndThrowError(
+    SDL::UniquePtr<SDL_Window> createSDLWindowOrQuitAndThrowError(
         const std::string& title, const unsigned width, const unsigned height);
 
-    SDLPtr<SDL_Renderer> createSDLWindowRendererOrQuitAndThrowError(
-        const SDLPtr<SDL_Window>&);
+    SDL::UniquePtr<SDL_Renderer> createSDLWindowRendererOrQuitAndThrowError(
+        const SDL::UniquePtr<SDL_Window>&);
 
     void quitAndThrow(const std::string& error);
     void quit();
 
-    SDLPtr<SDL_Surface> createSDLSurfaceOrThrow(const std::string& path) const;
-    SDLPtr<SDL_Texture> createSDLTextureOrThrow(const SDLPtr<SDL_Surface>&) const;
+    SDL::UniquePtr<SDL_Surface> createSDLSurfaceOrThrow(const std::string& path) const;
+    SDL::UniquePtr<SDL_Texture> createSDLTextureOrThrow(
+        const SDL::UniquePtr<SDL_Surface>&) const;
 
     SDL_Rect createSrcRect(const TextureArea&) const;
     SDL_Rect createDstRect(const TexturePosition&, const TextureArea&) const;
 
     void throwOnInvalidTextureOperation(const TextureId) const;
 
-    std::unique_ptr<SDLWrapper> SDL;
-    SDLPtr<SDL_Window> window;
-    SDLPtr<SDL_Renderer> renderer;
-    std::vector<SDLPtr<SDL_Texture>> textures;
+    std::unique_ptr<SDL::Wrapper> SDL;
+    SDL::UniquePtr<SDL_Window> window;
+    SDL::UniquePtr<SDL_Renderer> renderer;
+    std::vector<SDL::UniquePtr<SDL_Texture>> textures;
 
     bool isSDLInitialized {false};
     bool isWindowCreated {false};
 };
 
+}
 }

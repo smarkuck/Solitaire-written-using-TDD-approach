@@ -7,9 +7,9 @@ struct SDL_Surface;
 struct SDL_Texture;
 struct SDL_Window;
 
-namespace solitaire::graphics {
+namespace solitaire::SDL {
 
-class SDLDeleterMock {
+class PtrDeleterMock {
 public:
     MOCK_METHOD(void, windowDeleter, (SDL_Window*), (const));
     MOCK_METHOD(void, rendererDeleter, (SDL_Renderer*), (const));
@@ -17,9 +17,9 @@ public:
     MOCK_METHOD(void, surfaceDeleter, (SDL_Surface*), (const));
 };
 
-class SDLDeleter {
+class PtrDeleter {
 public:
-    SDLDeleter(std::shared_ptr<SDLDeleterMock> mock):
+    PtrDeleter(std::shared_ptr<PtrDeleterMock> mock):
         mock {std::move(mock)} {
     }
 
@@ -29,7 +29,7 @@ public:
     void operator() (SDL_Surface* surface) const { mock->surfaceDeleter(surface); }
 
 private:
-    std::shared_ptr<SDLDeleterMock> mock;
+    std::shared_ptr<PtrDeleterMock> mock;
 };
 
 }
