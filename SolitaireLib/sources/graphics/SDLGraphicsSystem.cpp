@@ -111,7 +111,7 @@ UniquePtr<SDL_Texture> SDLGraphicsSystem::createSDLTextureOrThrow(
 
 void SDLGraphicsSystem::setTextureAlpha(const TextureId id, const uint8_t alpha) const {
     throwOnInvalidTextureOperation(id);
-    if (sdl->setTextureAlphaMod(textures[id], 70))
+    if (sdl->setTextureAlphaMod(textures[id], alpha))
         throw std::runtime_error {"Cannot change alpha for texture with id: " + id};
 }
 
