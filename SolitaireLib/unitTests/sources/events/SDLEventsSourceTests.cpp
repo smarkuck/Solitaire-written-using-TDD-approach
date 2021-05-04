@@ -16,54 +16,54 @@ constexpr int y {120};
 
 class SDLEventsSourceTests: public Test {
 public:
-    mock_ptr<WrapperMock> SDLMock;
-    SDLEventsSource eventsSource {SDLMock.make_unique()};
+    mock_ptr<WrapperMock> sdlMock;
+    SDLEventsSource eventsSource {sdlMock.make_unique()};
     SDL_Event event;
 };
 
 TEST_F(SDLEventsSourceTests, returnNoEventsIfSDLPollEventReturnsZero) {
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Return(0));
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Return(0));
     EXPECT_EQ(std::get<NoEvents>(eventsSource.getEvent()), NoEvents {});
 }
 
 TEST_F(SDLEventsSourceTests, ignoreEventsIfSDLPollEventReturnsNotSupportedEvents) {
     InSequence seq;
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_KEYDOWN;
         return 1;
     }));
 
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEWHEEL;
         return 1;
     }));
 
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Return(0));
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Return(0));
     EXPECT_EQ(std::get<NoEvents>(eventsSource.getEvent()), NoEvents {});
 }
 
 TEST_F(SDLEventsSourceTests, ignoreEventIfSDLPollEventReturnsNotLeftMouseButtonEvent) {
     InSequence seq;
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEBUTTONDOWN;
         event.button.button = SDL_BUTTON_RIGHT;
         return 1;
     }));
 
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEBUTTONUP;
         event.button.button = SDL_BUTTON_RIGHT;
         return 1;
     }));
 
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Return(0));
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Return(0));
     EXPECT_EQ(std::get<NoEvents>(eventsSource.getEvent()), NoEvents {});
 }
 
 TEST_F(SDLEventsSourceTests, returnMouseLeftButtonDownEvent) {
     InSequence seq;
 
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEBUTTONDOWN;
         event.button.button = SDL_BUTTON_LEFT;
         event.button.x = x;
@@ -78,7 +78,7 @@ TEST_F(SDLEventsSourceTests, returnMouseLeftButtonDownEvent) {
 TEST_F(SDLEventsSourceTests, returnMouseLeftButtonUpEvent) {
     InSequence seq;
 
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEBUTTONUP;
         event.button.button = SDL_BUTTON_LEFT;
         event.button.x = x;
@@ -93,7 +93,7 @@ TEST_F(SDLEventsSourceTests, returnMouseLeftButtonUpEvent) {
 TEST_F(SDLEventsSourceTests, returnMouseMoveEvent) {
     InSequence seq;
 
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEMOTION;
         event.motion.x = x;
         event.motion.y = y;
@@ -107,7 +107,7 @@ TEST_F(SDLEventsSourceTests, returnMouseMoveEvent) {
 TEST_F(SDLEventsSourceTests, returnQuitEvent) {
     InSequence seq;
 
-    EXPECT_CALL(*SDLMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
+    EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_QUIT;
         return 1;
     }));

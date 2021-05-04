@@ -5,14 +5,14 @@
 
 namespace solitaire::events {
 
-SDLEventsSource::SDLEventsSource(std::unique_ptr<SDL::Wrapper> SDL):
-    SDL {std::move(SDL)} {
+SDLEventsSource::SDLEventsSource(std::unique_ptr<SDL::Wrapper> sdl):
+    sdl {std::move(sdl)} {
 }
 
 Event SDLEventsSource::getEvent() const {
     SDL_Event event;
 
-    while (SDL->pollEvent(event)) {
+    while (sdl->pollEvent(event)) {
         switch (event.type) {
         case SDL_MOUSEBUTTONDOWN:
             if (event.button.button == SDL_BUTTON_LEFT)

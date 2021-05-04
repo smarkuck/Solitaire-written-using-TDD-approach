@@ -16,6 +16,8 @@ target_sources(SolitaireLib PRIVATE
     sources/piles/DefaultTableauPile.cpp
     sources/SDL/DefaultWrapper.cpp
     sources/SDL/PtrDeleter.cpp
+    sources/time/ChronoFPSLimiter.cpp
+    sources/time/DefaultStdTimeFunctionsWrapper.cpp
 )
 
 target_link_libraries(SolitaireLib PUBLIC Boost SDL2)

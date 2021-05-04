@@ -18,7 +18,7 @@ public:
     Event getEvent() const override;
 
 private:
-    std::unique_ptr<SDL::Wrapper> SDL;
+    std::unique_ptr<SDL::Wrapper> sdl;
 };
 
 }

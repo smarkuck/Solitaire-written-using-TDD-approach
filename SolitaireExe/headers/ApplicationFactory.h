@@ -14,6 +14,10 @@ class EventsSource;
 namespace graphics {
 class Renderer;
 }
+
+namespace time {
+class FPSLimiter;
+}
 }
 
 class ApplicationFactory {
@@ -25,6 +29,7 @@ private:
     std::unique_ptr<solitaire::events::EventsSource> makeEventsSource() const;
     std::unique_ptr<solitaire::graphics::Renderer> makeRenderer(
         const solitaire::Solitaire&) const;
+    std::unique_ptr<solitaire::time::FPSLimiter> makeFPSLimiter() const;
 
     std::string findAssetsPath() const;
 };

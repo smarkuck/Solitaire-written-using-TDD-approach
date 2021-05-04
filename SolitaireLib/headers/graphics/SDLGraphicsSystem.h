@@ -57,7 +57,7 @@ private:
 
     void throwOnInvalidTextureOperation(const TextureId) const;
 
-    std::unique_ptr<SDL::Wrapper> SDL;
+    std::unique_ptr<SDL::Wrapper> sdl;
     SDL::UniquePtr<SDL_Window> window;
     SDL::UniquePtr<SDL_Renderer> renderer;
     std::vector<SDL::UniquePtr<SDL_Texture>> textures;

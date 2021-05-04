@@ -15,49 +15,64 @@
 #include "piles/DefaultStockPile.h"
 #include "piles/DefaultTableauPile.h"
 #include "SDL/DefaultWrapper.h"
+#include "time/ChronoFPSLimiter.h"
+#include "time/DefaultStdTimeFunctionsWrapper.h"
 
 using namespace solitaire;
+using namespace solitaire::archivers;
+using namespace solitaire::cards;
 using namespace solitaire::events;
 using namespace solitaire::graphics;
+using namespace solitaire::piles;
+using namespace solitaire::time;
 
 Application ApplicationFactory::make() const {
     auto solitaire = makeSolitaire();
     auto renderer = makeRenderer(*solitaire);
-    return Application {std::move(solitaire), makeEventsSource(), std::move(renderer)};
+
+    return Application {std::move(solitaire), makeEventsSource(),
+                        std::move(renderer), makeFPSLimiter()};
 }
 
-std::unique_ptr<solitaire::Solitaire> ApplicationFactory::makeSolitaire() const {
+std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
     Solitaire::FoundationPiles foundationPiles;
     for (auto& pile: foundationPiles)
-        pile = std::make_shared<piles::DefaultFoundationPile>();
+        pile = std::make_shared<DefaultFoundationPile>();
 
     Solitaire::TableauPiles tableauPiles;
     for (auto& pile: tableauPiles)
-        pile = std::make_shared<piles::DefaultTableauPile>();
+        pile = std::make_shared<DefaultTableauPile>();
 
     return std::make_unique<DefaultSolitaire>(
-        std::make_unique<cards::ShuffledDeckGenerator>(),
-        std::make_shared<piles::DefaultStockPile>(),
+        std::make_unique<ShuffledDeckGenerator>(),
+        std::make_shared<DefaultStockPile>(),
         foundationPiles, tableauPiles,
-        std::make_unique<archivers::DefaultHistoryTracker>(),
-        std::make_unique<archivers::DefaultMoveCardsOperationSnapshotCreator>()
+        std::make_unique<DefaultHistoryTracker>(),
+        std::make_unique<DefaultMoveCardsOperationSnapshotCreator>()
     );
 }
 
 std::unique_ptr<EventsSource> ApplicationFactory::makeEventsSource() const {
-    return std::make_unique<events::SDLEventsSource>(
+    return std::make_unique<SDLEventsSource>(
         std::make_unique<SDL::DefaultWrapper>()
     );
 }
 
-std::unique_ptr<solitaire::graphics::Renderer>
-ApplicationFactory::makeRenderer(const Solitaire& solitaire) const {
-    return std::make_unique<graphics::DefaultRenderer>(
+std::unique_ptr<Renderer> ApplicationFactory::makeRenderer(
+    const Solitaire& solitaire) const
+{
+    return std::make_unique<DefaultRenderer>(
         solitaire,
-        std::make_unique<graphics::SDLGraphicsSystem>(
+        std::make_unique<SDLGraphicsSystem>(
             std::make_unique<SDL::DefaultWrapper>()
         ),
         findAssetsPath()
+    );
+}
+
+std::unique_ptr<FPSLimiter> ApplicationFactory::makeFPSLimiter() const {
+    return std::make_unique<ChronoFPSLimiter>(
+        std::make_unique<DefaultStdTimeFunctionsWrapper>()
     );
 }
 

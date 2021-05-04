@@ -15,6 +15,7 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/piles/DefaultFoundationPileTests.cpp
     sources/piles/DefaultStockPileTests.cpp
     sources/piles/DefaultTableauPileTests.cpp
+    sources/time/ChronoFPSLimiterTests.cpp
 )
 
 target_link_libraries(SolitaireLibUnitTests PRIVATE SolitaireLib mock_ptr gmock_main)

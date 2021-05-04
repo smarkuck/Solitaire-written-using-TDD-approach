@@ -9,8 +9,8 @@ using namespace solitaire::SDL;
 
 namespace solitaire::graphics {
 
-SDLGraphicsSystem::SDLGraphicsSystem(std::unique_ptr<Wrapper> SDL):
-    SDL {std::move(SDL)} {
+SDLGraphicsSystem::SDLGraphicsSystem(std::unique_ptr<Wrapper> sdl):
+    sdl {std::move(sdl)} {
 }
 
 SDLGraphicsSystem::~SDLGraphicsSystem() {
@@ -30,7 +30,7 @@ void SDLGraphicsSystem::createWindow(
 }
 
 void SDLGraphicsSystem::initializeSDLOrQuitAndThrowError() {
-    if (SDL->init(SDL_INIT_VIDEO))
+    if (sdl->init(SDL_INIT_VIDEO))
         quitAndThrow("Cannot initialize graphics system");
 
     isSDLInitialized = true;
@@ -39,7 +39,7 @@ void SDLGraphicsSystem::initializeSDLOrQuitAndThrowError() {
 UniquePtr<SDL_Window> SDLGraphicsSystem::createSDLWindowOrQuitAndThrowError(
     const std::string& title, const unsigned width, const unsigned height)
 {
-    auto window = SDL->createWindow(
+    auto window = sdl->createWindow(
         title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         width, height, SDL_WINDOW_SHOWN
     );
@@ -52,7 +52,7 @@ UniquePtr<SDL_Window> SDLGraphicsSystem::createSDLWindowOrQuitAndThrowError(
 UniquePtr<SDL_Renderer> SDLGraphicsSystem::createSDLWindowRendererOrQuitAndThrowError(
     const UniquePtr<SDL_Window>& window)
 {
-    auto renderer = SDL->createRenderer(
+    auto renderer = sdl->createRenderer(
         window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (not renderer)
@@ -73,7 +73,7 @@ void SDLGraphicsSystem::quit() {
     if (isSDLInitialized)
     {
         isSDLInitialized = false;
-        SDL->quit();
+        sdl->quit();
     }
 }
 
@@ -88,12 +88,12 @@ TextureId SDLGraphicsSystem::loadTexture(const std::string& path) {
 
 UniquePtr<SDL_Surface>
 SDLGraphicsSystem::createSDLSurfaceOrThrow(const std::string& path) const {
-    auto surface = SDL->loadBMP(path);
+    auto surface = sdl->loadBMP(path);
 
     if (not surface)
         throw std::runtime_error {"Cannot find texture " + path};
 
-    if (SDL->setColorKey(surface, SDL_TRUE, SDL->mapRGB(surface, 0, 255, 255)))
+    if (sdl->setColorKey(surface, SDL_TRUE, sdl->mapRGB(surface, 0, 255, 255)))
         throw std::runtime_error {"Cannot set transparent color for " + path};
 
     return surface;
@@ -102,7 +102,7 @@ SDLGraphicsSystem::createSDLSurfaceOrThrow(const std::string& path) const {
 UniquePtr<SDL_Texture> SDLGraphicsSystem::createSDLTextureOrThrow(
     const UniquePtr<SDL_Surface>& surface) const
 {
-    auto texture = SDL->createTextureFromSurface(renderer, surface);
+    auto texture = sdl->createTextureFromSurface(renderer, surface);
 
     if (not texture)
         throw std::runtime_error {"Cannot create texture from surface"};
@@ -111,7 +111,7 @@ UniquePtr<SDL_Texture> SDLGraphicsSystem::createSDLTextureOrThrow(
 
 void SDLGraphicsSystem::setTextureAlpha(const TextureId id, const uint8_t alpha) const {
     throwOnInvalidTextureOperation(id);
-    if (SDL->setTextureAlphaMod(textures[id], 70))
+    if (sdl->setTextureAlphaMod(textures[id], 70))
         throw std::runtime_error {"Cannot change alpha for texture with id: " + id};
 }
 
@@ -122,7 +122,7 @@ void SDLGraphicsSystem::renderTexture(
     const auto srcRect = createSrcRect(area);
     const auto dstRect = createDstRect(position, area);
 
-    if (SDL->renderCopy(renderer, textures[id], srcRect, dstRect))
+    if (sdl->renderCopy(renderer, textures[id], srcRect, dstRect))
         throw std::runtime_error {"Cannot render texture with id: " + id};
 }
 
@@ -144,7 +144,7 @@ SDL_Rect SDLGraphicsSystem::createDstRect(
 
 void SDLGraphicsSystem::renderTextureInFullWindow(const TextureId id) const {
     throwOnInvalidTextureOperation(id);
-     if (SDL->renderCopy(renderer, textures[id], std::nullopt, std::nullopt))
+     if (sdl->renderCopy(renderer, textures[id], std::nullopt, std::nullopt))
         throw std::runtime_error {"Cannot render texture with id: " + id};
 }
 
@@ -160,9 +160,9 @@ void SDLGraphicsSystem::renderFrame() const {
     if (not isWindowCreated)
         throw std::runtime_error {"Cannot render frame when window not created"};
 
-    SDL->renderPresent(renderer);
+    sdl->renderPresent(renderer);
 
-    if (SDL->renderClear(renderer))
+    if (sdl->renderClear(renderer))
         throw std::runtime_error {"Cannot clear frame"};
 }
 
