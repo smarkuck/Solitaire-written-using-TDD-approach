@@ -33,7 +33,7 @@ public:
     void setTextureAlpha(const TextureId, const uint8_t alpha) const override;
     void renderTexture(const TextureId, const TexturePosition&,
                        const TextureArea&) const override;
-    void renderTextureOnFullscreen(const TextureId) const override;
+    void renderTextureInFullWindow(const TextureId) const override;
     void renderFrame() const override;
 
 private:

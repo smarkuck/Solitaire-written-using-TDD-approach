@@ -202,9 +202,9 @@ TEST_F(SDLGraphicsSystemAfterWindowCreationFailedTests,
 }
 
 TEST_F(SDLGraphicsSystemAfterWindowCreationFailedTests,
-       throwOnRenderTextureOnFullscreenIfWindowNotCreated)
+       throwOnRenderTextureInFullWindowIfWindowNotCreated)
 {
-    EXPECT_THROW(system.renderTextureOnFullscreen(textureId0), std::runtime_error);
+    EXPECT_THROW(system.renderTextureInFullWindow(textureId0), std::runtime_error);
 }
 
 TEST_F(SDLGraphicsSystemAfterWindowCreationFailedTests,
@@ -342,7 +342,6 @@ TEST_F(SDLGraphicsSystemWithLoadedTexture,
        throwIfUsedWrongTextureIdDuringTextureRendering)
 {
     InSequence seq;
-
     EXPECT_THROW(
         system.renderTexture(textureId1, texturePosition, textureArea),
         std::runtime_error
@@ -355,7 +354,6 @@ TEST_F(SDLGraphicsSystemWithLoadedTexture,
        throwIfSDLRenderCopyFailedDuringTextureRendering)
 {
     InSequence seq;
-
     EXPECT_CALL(*SDLMock,
         renderCopy(Pointer(rendererPtr), Pointer(texture0Ptr),
                    IsOptionalEq(srcRect), IsOptionalEq(dstRect))
@@ -371,7 +369,6 @@ TEST_F(SDLGraphicsSystemWithLoadedTexture,
 
 TEST_F(SDLGraphicsSystemWithLoadedTexture, renderTextureSuccessfully) {
     InSequence seq;
-
     EXPECT_CALL(*SDLMock,
         renderCopy(Pointer(rendererPtr), Pointer(texture0Ptr),
                    IsOptionalEq(srcRect), IsOptionalEq(dstRect))
@@ -382,38 +379,36 @@ TEST_F(SDLGraphicsSystemWithLoadedTexture, renderTextureSuccessfully) {
 }
 
 TEST_F(SDLGraphicsSystemWithLoadedTexture,
-       throwIfUsedWrongTextureIdDuringTextureRenderingOnFullscreen)
+       throwIfUsedWrongTextureIdDuringTextureRenderingInFullWindow)
 {
     InSequence seq;
-    EXPECT_THROW(system.renderTextureOnFullscreen(textureId1), std::runtime_error);
+    EXPECT_THROW(system.renderTextureInFullWindow(textureId1), std::runtime_error);
     expectQuitSystemWithLoadedTexture();
 }
 
 TEST_F(SDLGraphicsSystemWithLoadedTexture,
-       throwIfSDLRenderCopyFailedDuringTextureRenderingOnFullscreen)
+       throwIfSDLRenderCopyFailedDuringTextureRenderingInFullWindow)
 {
     InSequence seq;
-
     EXPECT_CALL(*SDLMock,
         renderCopy(Pointer(rendererPtr), Pointer(texture0Ptr),
                    Eq(std::nullopt), Eq(std::nullopt))
     ).WillOnce(Return(failure));
 
-    EXPECT_THROW(system.renderTextureOnFullscreen(textureId0), std::runtime_error);
+    EXPECT_THROW(system.renderTextureInFullWindow(textureId0), std::runtime_error);
     expectQuitSystemWithLoadedTexture();
 }
 
 TEST_F(SDLGraphicsSystemWithLoadedTexture,
-       renderTextureOnFullscreenSuccessfully)
+       renderTextureInFullWindowSuccessfully)
 {
     InSequence seq;
-
     EXPECT_CALL(*SDLMock,
         renderCopy(Pointer(rendererPtr), Pointer(texture0Ptr),
                    Eq(std::nullopt), Eq(std::nullopt))
     ).WillOnce(Return(success));
 
-    system.renderTextureOnFullscreen(textureId0);
+    system.renderTextureInFullWindow(textureId0);
     expectQuitSystemWithLoadedTexture();
 }
 

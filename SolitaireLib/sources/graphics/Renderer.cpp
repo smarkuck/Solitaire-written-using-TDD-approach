@@ -57,7 +57,7 @@ TextureId Renderer::loadTexture(const std::string& path) const {
 }
 
 void Renderer::render() const {
-    graphicsSystem->renderTextureOnFullscreen(backgroundId);
+    graphicsSystem->renderTextureInFullWindow(backgroundId);
 
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
         renderFoundationPile(id);

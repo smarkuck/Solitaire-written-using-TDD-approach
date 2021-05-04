@@ -117,7 +117,7 @@ public:
             solitaireMock, graphicsSystemMock.make_unique(), assetsPath);
 
         InSequence seq;
-        EXPECT_CALL(*graphicsSystemMock, renderTextureOnFullscreen(backgroundTextureId));
+        EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
 
         expectRenderFoundationPile(PileId {0}, noCards);
         expectRenderFoundationPile(PileId {1}, aceHeart);

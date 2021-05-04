@@ -19,7 +19,7 @@ public:
     virtual void setTextureAlpha(const TextureId, const uint8_t alpha) const = 0;
     virtual void renderTexture(const TextureId, const TexturePosition&,
                                const TextureArea&) const = 0;
-    virtual void renderTextureOnFullscreen(const TextureId) const = 0;
+    virtual void renderTextureInFullWindow(const TextureId) const = 0;
     virtual void renderFrame() const = 0;
 };
 

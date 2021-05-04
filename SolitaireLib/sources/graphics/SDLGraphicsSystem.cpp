@@ -142,7 +142,7 @@ SDL_Rect SDLGraphicsSystem::createDstRect(
     };
 }
 
-void SDLGraphicsSystem::renderTextureOnFullscreen(const TextureId id) const {
+void SDLGraphicsSystem::renderTextureInFullWindow(const TextureId id) const {
     throwOnInvalidTextureOperation(id);
      if (SDL->renderCopy(renderer, textures[id], std::nullopt, std::nullopt))
         throw std::runtime_error {"Cannot render texture with id: " + id};

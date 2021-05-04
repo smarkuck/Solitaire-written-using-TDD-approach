@@ -15,7 +15,7 @@ public:
     MOCK_METHOD(void, setTextureAlpha, (const TextureId, const uint8_t), (const, override));
     MOCK_METHOD(void, renderTexture, (const TextureId, const TexturePosition&,
                 const TextureArea&), (const, override));
-    MOCK_METHOD(void, renderTextureOnFullscreen, (const TextureId), (const, override));
+    MOCK_METHOD(void, renderTextureInFullWindow, (const TextureId), (const, override));
     MOCK_METHOD(void, renderFrame, (), (const, override));
 };
 
