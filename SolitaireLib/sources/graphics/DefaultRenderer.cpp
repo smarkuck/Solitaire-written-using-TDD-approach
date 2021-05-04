@@ -90,9 +90,7 @@ void DefaultRenderer::renderTableauPile(const PileId id) const {
     const auto& pile = solitaire.getTableauPile(id);
     const auto& pileCards = pile.getCards();
 
-    if (pileCards.empty())
-        renderCardPlaceholder(getTableauPilePosition(id));
-    else
+    if (not pileCards.empty())
         renderTableauPileWithCards(
             getTableauPilePosition(id), pileCards, pile.getTopCoveredCardPosition());
 }

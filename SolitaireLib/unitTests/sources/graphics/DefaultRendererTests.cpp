@@ -155,9 +155,7 @@ public:
         EXPECT_CALL(tableauPileMocks[id], getCards())
             .WillOnce(ReturnRef(pileCards));
 
-        if (pileCards.empty())
-            expectRenderCardPlaceholder(tableauPilesPositions[id]);
-        else
+        if (not pileCards.empty())
             expectRenderTableauPileWithCards(id, pileCards, topCoveredCardPosition);
     }
 
