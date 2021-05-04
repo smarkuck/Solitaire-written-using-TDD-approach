@@ -7,8 +7,8 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "gmock/gmock.h"
+#include "graphics/DefaultRenderer.h"
 #include "graphics/GraphicsSystemMock.h"
-#include "graphics/Renderer.h"
 #include "graphics/TextureArea.h"
 #include "piles/FoundationPileMock.h"
 #include "piles/PileId.h"
@@ -84,9 +84,9 @@ const Cards sevenCards {7};
 const Cards nineteenCards {19};
 }
 
-class RendererTests: public Test {
+class DefaultRendererTests: public Test {
 public:
-    RendererTests() {
+    DefaultRendererTests() {
         InSequence seq;
         EXPECT_CALL(*graphicsSystemMock,
             createWindow(windowTitle, windowWidth, windowHeight));
@@ -104,16 +104,16 @@ public:
     mock_ptr<GraphicsSystemMock> graphicsSystemMock;
 };
 
-TEST_F(RendererTests, onConstructionShouldCreateWindowAndLoadAllTextures) {
-    Renderer {solitaireMock, graphicsSystemMock.make_unique(), assetsPath};
+TEST_F(DefaultRendererTests, onConstructionShouldCreateWindowAndLoadAllTextures) {
+    DefaultRenderer {solitaireMock, graphicsSystemMock.make_unique(), assetsPath};
 }
 
-class CreatedRendererTests: public RendererTests {
+class CreatedDefaultRendererTests: public DefaultRendererTests {
 public:
     using TopCoveredCardPosition = unsigned;
 
-    CreatedRendererTests() {
-        renderer = std::make_unique<Renderer>(
+    CreatedDefaultRendererTests() {
+        renderer = std::make_unique<DefaultRenderer>(
             solitaireMock, graphicsSystemMock.make_unique(), assetsPath);
 
         InSequence seq;
@@ -233,13 +233,13 @@ public:
         return cards;
     }
 
-    std::unique_ptr<Renderer> renderer;
+    std::unique_ptr<DefaultRenderer> renderer;
     std::array<FoundationPileMock, foundationPilesCount> foundationPileMocks;
     std::array<TableauPileMock, tableauPilesCount> tableauPileMocks;
     StockPileMock stockPileMock;
 };
 
-TEST_F(CreatedRendererTests, renderSolitaireWithEmptyStockPile) {
+TEST_F(CreatedDefaultRendererTests, renderSolitaireWithEmptyStockPile) {
     InSequence seq;
     expectGetStockPileData(noCards, std::nullopt);
     expectRenderCardPlaceholder(stockPilePosition);
@@ -248,7 +248,7 @@ TEST_F(CreatedRendererTests, renderSolitaireWithEmptyStockPile) {
     renderer->render();
 }
 
-TEST_F(CreatedRendererTests, throwOnInvalidStockPileSelectedCardIndex) {
+TEST_F(CreatedDefaultRendererTests, throwOnInvalidStockPileSelectedCardIndex) {
     InSequence seq;
     expectGetStockPileData(threeCardsWithLastKingClub, 3);
     EXPECT_THROW(renderer->render(), std::runtime_error);
@@ -259,13 +259,13 @@ struct StockPileRenderData {
     unsigned cardsToRender;
 };
 
-class StockPileRendererTests:
-    public CreatedRendererTests,
+class StockPileDefaultRendererTests:
+    public CreatedDefaultRendererTests,
     public testing::WithParamInterface<StockPileRenderData>
 {
 };
 
-TEST_P(StockPileRendererTests, renderStockPileWithCoveredCards) {
+TEST_P(StockPileDefaultRendererTests, renderStockPileWithCoveredCards) {
     const auto& stockPileRenderData = GetParam();
     const Cards pileCards {stockPileRenderData.pileCardsCount};
 
@@ -278,7 +278,7 @@ TEST_P(StockPileRendererTests, renderStockPileWithCoveredCards) {
     renderer->render();
 }
 
-TEST_P(StockPileRendererTests, renderStockPileWithUncoveredCards) {
+TEST_P(StockPileDefaultRendererTests, renderStockPileWithUncoveredCards) {
     const auto& stockPileRenderData = GetParam();
     const unsigned selectedCardIndex = stockPileRenderData.pileCardsCount - 1;
     const auto pileCards = getPileCardsWithSelectedFiveDiamond(
@@ -295,7 +295,7 @@ TEST_P(StockPileRendererTests, renderStockPileWithUncoveredCards) {
 }
 
 INSTANTIATE_TEST_SUITE_P(BorderPoints,
-                         StockPileRendererTests,
+                         StockPileDefaultRendererTests,
                          Values(StockPileRenderData {1, 1},
                                 StockPileRenderData {6, 1},
                                 StockPileRenderData {7, 2},
@@ -311,13 +311,13 @@ struct StockPileWithSelectedCardRenderData {
     unsigned uncoveredCardsToRender;
 };
 
-class StockPileWithCoveredAndUncoveredCardsRendererTests:
-    public CreatedRendererTests,
+class StockPileWithCoveredAndUncoveredCardsDefaultRendererTests:
+    public CreatedDefaultRendererTests,
     public testing::WithParamInterface<StockPileWithSelectedCardRenderData>
 {
 };
 
-TEST_P(StockPileWithCoveredAndUncoveredCardsRendererTests, renderStockPile) {
+TEST_P(StockPileWithCoveredAndUncoveredCardsDefaultRendererTests, renderStockPile) {
     const auto& stockPileRenderData = GetParam();
     const auto pileCards = getPileCardsWithSelectedFiveDiamond(
         stockPileRenderData.pileCardsCount, stockPileRenderData.selectedCardIndex);
@@ -333,7 +333,7 @@ TEST_P(StockPileWithCoveredAndUncoveredCardsRendererTests, renderStockPile) {
 }
 
 INSTANTIATE_TEST_SUITE_P(BorderPoints,
-                         StockPileWithCoveredAndUncoveredCardsRendererTests,
+                         StockPileWithCoveredAndUncoveredCardsDefaultRendererTests,
                          Values(StockPileWithSelectedCardRenderData {24, 10, 3, 2},
                                 StockPileWithSelectedCardRenderData {24, 11, 2, 2},
                                 StockPileWithSelectedCardRenderData {24, 12, 2, 3},
@@ -342,16 +342,16 @@ INSTANTIATE_TEST_SUITE_P(BorderPoints,
                                 StockPileWithSelectedCardRenderData {15, 5, 2, 1},
                                 StockPileWithSelectedCardRenderData {15, 6, 2, 2}));
 
-class CardsInHandRendererTests: public CreatedRendererTests {
+class CardsInHandDefaultRendererTests: public CreatedDefaultRendererTests {
 public:
-    CardsInHandRendererTests() {
+    CardsInHandDefaultRendererTests() {
         InSequence seq;
         expectGetStockPileData(noCards, std::nullopt);
         expectRenderCardPlaceholder(stockPilePosition);
     }
 };
 
-TEST_F(CardsInHandRendererTests, renderCardsInHand) {
+TEST_F(CardsInHandDefaultRendererTests, renderCardsInHand) {
     EXPECT_CALL(solitaireMock, getCardsInHand())
         .WillOnce(ReturnRef(threeCardsWithLastKingClub));
 

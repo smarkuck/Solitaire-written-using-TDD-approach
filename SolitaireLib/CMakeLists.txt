@@ -2,13 +2,14 @@ add_library(SolitaireLib STATIC)
 target_include_directories(SolitaireLib PUBLIC headers)
 
 target_sources(SolitaireLib PRIVATE
+    sources/Application.cpp
     sources/DefaultSolitaire.cpp
     sources/archivers/DefaultHistoryTracker.cpp
     sources/archivers/DefaultMoveCardsOperationSnapshotCreator.cpp
     sources/cards/Card.cpp
     sources/cards/ShuffledDeckGenerator.cpp
     sources/events/SDLEventsSource.cpp
-    sources/graphics/Renderer.cpp
+    sources/graphics/DefaultRenderer.cpp
     sources/graphics/SDLGraphicsSystem.cpp
     sources/piles/DefaultFoundationPile.cpp
     sources/piles/DefaultStockPile.cpp

@@ -1,18 +1,18 @@
 #include <cassert>
 #include <filesystem>
+#include <memory>
 
+#include "Application.h"
 #include "DefaultSolitaire.h"
 #include "archivers/DefaultHistoryTracker.h"
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
-#include "cards/Value.h"
-#include "cards/Suit.h"
-#include "graphics/Renderer.h"
+#include "events/SDLEventsSource.h"
+#include "graphics/DefaultRenderer.h"
 #include "graphics/SDLGraphicsSystem.h"
-#include "piles/FoundationPile.h"
-#include "piles/PileId.h"
-#include "piles/StockPile.h"
-#include "piles/TableauPile.h"
+#include "piles/DefaultFoundationPile.h"
+#include "piles/DefaultStockPile.h"
+#include "piles/DefaultTableauPile.h"
 #include "SDL/DefaultWrapper.h"
 
 using namespace solitaire;
@@ -29,123 +29,35 @@ std::string findAssetsPath() {
     return {};
 }
 
-class FoundationPileStub: public piles::FoundationPile {
-public:
-    void initialize() override {}
-    void tryAddCard(std::optional<cards::Card>& cardToAdd) override {}
-    std::optional<cards::Card> tryPullOutCard() override { return std::nullopt; }
-
-    const cards::Cards& getCards() const override {
-        return cards;
-    }
-
-    std::optional<cards::Value> getTopCardValue() const override { return std::nullopt; }
-    std::unique_ptr<archivers::Snapshot> createSnapshot() override { return nullptr; }
-
-private:
-    cards::Cards cards {
-        cards::Card {cards::Value::Ace, cards::Suit::Heart},
-        cards::Card {cards::Value::Seven, cards::Suit::Diamond}
-    };
-};
-
-class SnapshotStub: public archivers::Snapshot {
-public:
-    void restore() const override {}
-    bool isSnapshotOfSameObject(const Snapshot&) const override { return false; }
-};
-
-class TableauPileStub: public piles::TableauPile {
-public:
-    void initialize(const cards::Deck::const_iterator& begin,
-                    const cards::Deck::const_iterator& end) override {};
-
-    void tryUncoverTopCard() override {};
-    void tryAddCards(cards::Cards& cardsToAdd) override {};
-    cards::Cards tryPullOutCards(unsigned quantity) override { return cards; };
-
-    const cards::Cards& getCards() const override { return cards; };
-    unsigned getTopCoveredCardPosition() const override { return 1; };
-    bool isTopCardCovered() const override { return true; };
-
-    std::unique_ptr<archivers::Snapshot> createSnapshot() override {
-        return std::make_unique<SnapshotStub>();
-    }
-
-private:
-    cards::Cards cards {
-        cards::Card {cards::Value::Ace, cards::Suit::Heart},
-        cards::Card {cards::Value::Seven, cards::Suit::Spade},
-        cards::Card {cards::Value::King, cards::Suit::Club},
-    };
-};
-
-
-class StockPileStub: public piles::StockPile {
-public:
-    void initialize(const cards::Deck::const_iterator& begin,
-                    const cards::Deck::const_iterator& end) override {};
-
-    void trySelectNextCard() override {};
-
-    std::optional<cards::Card> tryPullOutCard() override {
-        return cards::Card {cards::Value::Ace, cards::Suit::Heart};
-    };
-
-    const cards::Cards& getCards() const override { return cards; };
-    std::optional<unsigned> getSelectedCardIndex() const override { return 7; };
-    std::unique_ptr<archivers::Snapshot> createSnapshot() override { return nullptr; }
-
-private:
-    cards::Cards cards {
-        cards::Card {cards::Value::Ace, cards::Suit::Heart},
-        cards::Card {cards::Value::Seven, cards::Suit::Spade},
-        cards::Card {cards::Value::King, cards::Suit::Club},
-        cards::Card {cards::Value::Ace, cards::Suit::Heart},
-        cards::Card {cards::Value::Seven, cards::Suit::Spade},
-        cards::Card {cards::Value::King, cards::Suit::Club},
-
-        cards::Card {cards::Value::Ace, cards::Suit::Heart},
-        cards::Card {cards::Value::Seven, cards::Suit::Spade},
-        cards::Card {cards::Value::King, cards::Suit::Club},
-        cards::Card {cards::Value::Ace, cards::Suit::Heart},
-        cards::Card {cards::Value::Seven, cards::Suit::Spade},
-        cards::Card {cards::Value::King, cards::Suit::Club},
-
-        cards::Card {cards::Value::King, cards::Suit::Club},
-    };
-};
-
 int main(int, char**) {
     Solitaire::FoundationPiles foundationPiles;
     for (auto& pile: foundationPiles)
-        pile = std::make_shared<FoundationPileStub>();
+        pile = std::make_shared<piles::DefaultFoundationPile>();
 
     Solitaire::TableauPiles tableauPiles;
     for (auto& pile: tableauPiles)
-        pile = std::make_shared<TableauPileStub>();
+        pile = std::make_shared<piles::DefaultTableauPile>();
 
-    DefaultSolitaire solitaire {
+    auto solitaire = std::make_unique<DefaultSolitaire>(
         std::make_unique<cards::ShuffledDeckGenerator>(),
-        std::make_shared<StockPileStub>(),
+        std::make_shared<piles::DefaultStockPile>(),
         foundationPiles, tableauPiles,
         std::make_unique<archivers::DefaultHistoryTracker>(),
         std::make_unique<archivers::DefaultMoveCardsOperationSnapshotCreator>()
-    };
+    );
 
-    solitaire.startNewGame();
-    solitaire.tryPullOutCardsFromTableauPile(piles::PileId {0}, 3);
+    auto eventsSource = std::make_unique<events::SDLEventsSource>(
+        std::make_unique<SDL::DefaultWrapper>()
+    );
 
-    graphics::Renderer renderer {
-        solitaire,
+    auto renderer = std::make_unique<graphics::DefaultRenderer>(
+        *solitaire,
         std::make_unique<graphics::SDLGraphicsSystem>(
             std::make_unique<SDL::DefaultWrapper>()
         ),
         findAssetsPath()
-    };
+    );
 
-    for (unsigned i = 0; i < 500; ++i)
-        renderer.render();
-
+    Application {std::move(solitaire), std::move(eventsSource), std::move(renderer)}.run();
     return 0;
 }
