@@ -12,11 +12,14 @@ namespace solitaire {
 class Context;
 class Solitaire;
 
+namespace geometry {
+struct Area;
+struct Position;
+}
+
 namespace graphics {
 
 class GraphicsSystem;
-struct TextureArea;
-struct TexturePosition;
 
 class DefaultRenderer: public Renderer {
 public:
@@ -32,8 +35,9 @@ private:
 
     void renderFoundationPile(const piles::PileId) const;
     void renderTableauPile(const piles::PileId) const;
-    void renderTableauPileWithCards(TexturePosition pilePosition, const cards::Cards&,
-                                    const unsigned topCoveredCardPosition) const;
+    void renderTableauPileWithCards(
+        geometry::Position pilePosition, const cards::Cards&,
+        const unsigned topCoveredCardPosition) const;
     void renderStockPile() const;
     void renderStockPileWithCards(const cards::Cards&,
                                   const SelectedCardIndex&) const;
@@ -42,9 +46,9 @@ private:
     void renderStockPileUncoveredCards(const cards::Cards&,
                                        const SelectedCardIndex&) const;
     void renderCardsInHand() const;
-    void renderCard(const TexturePosition&, const cards::Card&) const;
-    void renderCardBack(const TexturePosition&) const;
-    void renderCardPlaceholder(const TexturePosition&) const;
+    void renderCard(const geometry::Position&, const cards::Card&) const;
+    void renderCardBack(const geometry::Position&) const;
+    void renderCardPlaceholder(const geometry::Position&) const;
 
     unsigned getStockPileCoveredCardsCount(const cards::Cards&,
         const SelectedCardIndex& selectedCardIndex) const;
@@ -52,9 +56,9 @@ private:
         const SelectedCardIndex& selectedCardIndex) const;
     unsigned getStockPileCardsToRenderCount(const unsigned cardsCount) const;
 
-    TexturePosition getFoundationPilePosition(const piles::PileId) const;
-    TexturePosition getTableauPilePosition(const piles::PileId) const;
-    TextureArea getCardTextureArea(const cards::Card&) const;
+    geometry::Position getFoundationPilePosition(const piles::PileId) const;
+    geometry::Position getTableauPilePosition(const piles::PileId) const;
+    geometry::Area getCardTextureArea(const cards::Card&) const;
 
     void throwOnInvalidSelectedCardIndex(const cards::Cards&,
                                          const SelectedCardIndex&) const;

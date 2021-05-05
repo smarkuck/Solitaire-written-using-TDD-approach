@@ -5,10 +5,10 @@
 #include "events/DefaultEventsProcessor.h"
 #include "events/EventsDefinitions.h"
 #include "events/EventsSource.h"
-#include "graphics/Layout.h"
+#include "geometry/Layout.h"
 #include "piles/PileId.h"
 
-using namespace solitaire::graphics;
+using namespace solitaire::geometry;
 using namespace solitaire::piles;
 
 namespace solitaire::events {
@@ -38,8 +38,8 @@ void DefaultEventsProcessor::processEvents() {
                     mouseLeftButtonDown.y < Layout::foundationPilePositionY + Layout::cardSize.height)
                 {
                     solitaire.tryPullOutCardFromFoundationPile(id);
-                    context.setMousePosition(TexturePosition {mouseLeftButtonDown.x, mouseLeftButtonDown.y});
-                    context.setCardsInHandPosition(TexturePosition {pileX, Layout::foundationPilePositionY});
+                    context.setMousePosition(Position {mouseLeftButtonDown.x, mouseLeftButtonDown.y});
+                    context.setCardsInHandPosition(Position {pileX, Layout::foundationPilePositionY});
                     break;
                 }
             }
@@ -50,8 +50,8 @@ void DefaultEventsProcessor::processEvents() {
             auto lastCardsInHandPosition = context.getCardsInHandPosition();
             int diffX = mouseMove.x - lastMousePosition.x;
             int diffY = mouseMove.y - lastMousePosition.y;
-            context.setMousePosition(TexturePosition {mouseMove.x, mouseMove.y});
-            context.setCardsInHandPosition(TexturePosition {
+            context.setMousePosition(Position {mouseMove.x, mouseMove.y});
+            context.setCardsInHandPosition(Position {
                 lastCardsInHandPosition.x + diffX, lastCardsInHandPosition.y + diffY});
         }
         else if (std::holds_alternative<MouseLeftButtonUp>(event)) {

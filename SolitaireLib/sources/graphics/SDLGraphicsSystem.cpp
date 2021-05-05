@@ -1,10 +1,11 @@
 #include <stdexcept>
 
+#include "geometry/Area.h"
 #include "graphics/SDLGraphicsSystem.h"
 #include "graphics/TextureId.h"
-#include "graphics/TextureArea.h"
 #include "SDL/Wrapper.h"
 
+using namespace solitaire::geometry;
 using namespace solitaire::SDL;
 
 namespace solitaire::graphics {
@@ -116,7 +117,7 @@ void SDLGraphicsSystem::setTextureAlpha(const TextureId id, const uint8_t alpha)
 }
 
 void SDLGraphicsSystem::renderTexture(
-    const TextureId id, const TexturePosition& position, const TextureArea& area) const
+    const TextureId id, const Position& position, const Area& area) const
 {
     throwOnInvalidTextureOperation(id);
     const auto srcRect = createSrcRect(area);
@@ -126,7 +127,7 @@ void SDLGraphicsSystem::renderTexture(
         throw std::runtime_error {"Cannot render texture with id: " + id};
 }
 
-SDL_Rect SDLGraphicsSystem::createSrcRect(const TextureArea& area) const {
+SDL_Rect SDLGraphicsSystem::createSrcRect(const Area& area) const {
     return SDL_Rect {
         area.position.x, area.position.y,
         area.size.width, area.size.height
@@ -134,7 +135,7 @@ SDL_Rect SDLGraphicsSystem::createSrcRect(const TextureArea& area) const {
 }
 
 SDL_Rect SDLGraphicsSystem::createDstRect(
-    const TexturePosition& position, const TextureArea& area) const
+    const Position& position, const Area& area) const
 {
     return SDL_Rect {
         position.x, position.y,

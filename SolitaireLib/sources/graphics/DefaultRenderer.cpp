@@ -5,16 +5,17 @@
 #include "cards/Card.h"
 #include "cards/Suit.h"
 #include "cards/Value.h"
+#include "geometry/Area.h"
+#include "geometry/Layout.h"
 #include "graphics/DefaultRenderer.h"
 #include "graphics/GraphicsSystem.h"
-#include "graphics/Layout.h"
-#include "graphics/TextureArea.h"
 #include "piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
 
 using namespace solitaire::cards;
+using namespace solitaire::geometry;
 using namespace solitaire::piles;
 
 namespace solitaire::graphics {
@@ -26,8 +27,8 @@ constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {480};
 constexpr unsigned cardPlaceholderAlpha {70};
 
-constexpr TextureArea cardPlaceholderTextureArea {TexturePosition {0, 0}, Layout::cardSize};
-constexpr TextureArea cardBackTextureArea {TexturePosition {0, 416}, Layout::cardSize};
+constexpr Area cardPlaceholderTextureArea {Position {0, 0}, Layout::cardSize};
+constexpr Area cardBackTextureArea {Position {0, 416}, Layout::cardSize};
 }
 
 DefaultRenderer::DefaultRenderer(const Solitaire& solitaire,
@@ -73,8 +74,8 @@ void DefaultRenderer::renderFoundationPile(const PileId id) const {
         renderCard(getFoundationPilePosition(id), pileCards.back());
 }
 
-TexturePosition DefaultRenderer::getFoundationPilePosition(const PileId id) const {
-    return TexturePosition {
+Position DefaultRenderer::getFoundationPilePosition(const PileId id) const {
+    return Position {
         Layout::firstFoundationPilePositionX + static_cast<int>(id) * Layout::pilesSpacing,
         Layout::foundationPilePositionY
     };
@@ -90,7 +91,7 @@ void DefaultRenderer::renderTableauPile(const PileId id) const {
 }
 
 void DefaultRenderer::renderTableauPileWithCards(
-    TexturePosition pilePosition, const Cards& pileCards,
+    Position pilePosition, const Cards& pileCards,
     const unsigned topCoveredCardPosition) const
 {
     auto& cardPosition = pilePosition;
@@ -106,8 +107,8 @@ void DefaultRenderer::renderTableauPileWithCards(
     }
 }
 
-TexturePosition DefaultRenderer::getTableauPilePosition(const PileId id) const {
-    return TexturePosition {
+Position DefaultRenderer::getTableauPilePosition(const PileId id) const {
+    return Position {
         Layout::firstTableauPilePositionX + static_cast<int>(id) * Layout::pilesSpacing,
         Layout::tableauPilePositionY
     };
@@ -198,22 +199,22 @@ void DefaultRenderer::renderCardsInHand() const {
     }
 }
 
-void DefaultRenderer::renderCard(const TexturePosition& position, const Card& card) const {
+void DefaultRenderer::renderCard(const Position& position, const Card& card) const {
     graphicsSystem->renderTexture(
         cardsId, position, getCardTextureArea(card));
 }
 
-TextureArea DefaultRenderer::getCardTextureArea(const Card& card) const {
+Area DefaultRenderer::getCardTextureArea(const Card& card) const {
     int x = to_int(card.getValue()) * Layout::cardSize.width;
     int y = to_int(card.getSuit()) * Layout::cardSize.height;
-    return TextureArea {TexturePosition{x, y}, Layout::cardSize};
+    return Area {Position {x, y}, Layout::cardSize};
 }
 
-void DefaultRenderer::renderCardBack(const TexturePosition& position) const {
+void DefaultRenderer::renderCardBack(const Position& position) const {
     graphicsSystem->renderTexture(cardsId, position, cardBackTextureArea);
 }
 
-void DefaultRenderer::renderCardPlaceholder(const TexturePosition& position) const {
+void DefaultRenderer::renderCardPlaceholder(const Position& position) const {
     graphicsSystem->renderTexture(
         cardPlaceholderId, position, cardPlaceholderTextureArea);
 }

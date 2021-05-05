@@ -1,21 +1,21 @@
 #pragma once
 
 #include "Context.h"
-#include "graphics/TexturePosition.h"
+#include "geometry/Position.h"
 
 namespace solitaire {
 
 class DefaultContext: public Context {
 public:
-    void setMousePosition(const graphics::TexturePosition&) override;
-    void setCardsInHandPosition(const graphics::TexturePosition&) override;
+    void setMousePosition(const geometry::Position&) override;
+    void setCardsInHandPosition(const geometry::Position&) override;
 
-    graphics::TexturePosition getMousePosition() const override;
-    graphics::TexturePosition getCardsInHandPosition() const override;
+    geometry::Position getMousePosition() const override;
+    geometry::Position getCardsInHandPosition() const override;
 
 private:
-    graphics::TexturePosition mousePosition;
-    graphics::TexturePosition cardsInHandPosition;
+    geometry::Position mousePosition;
+    geometry::Position cardsInHandPosition;
 };
 
 }

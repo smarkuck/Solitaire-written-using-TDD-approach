@@ -13,8 +13,8 @@ public:
 
     MOCK_METHOD(TextureId, loadTexture, (const std::string&), (override));
     MOCK_METHOD(void, setTextureAlpha, (const TextureId, const uint8_t), (const, override));
-    MOCK_METHOD(void, renderTexture, (const TextureId, const TexturePosition&,
-                const TextureArea&), (const, override));
+    MOCK_METHOD(void, renderTexture, (const TextureId, const geometry::Position&,
+                const geometry::Area&), (const, override));
     MOCK_METHOD(void, renderTextureInFullWindow, (const TextureId), (const, override));
     MOCK_METHOD(void, renderFrame, (), (const, override));
 };

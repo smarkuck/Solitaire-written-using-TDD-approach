@@ -1,22 +1,22 @@
 #include "DefaultContext.h"
 
-using namespace solitaire::graphics;
+using namespace solitaire::geometry;
 
 namespace solitaire {
 
-void DefaultContext::setMousePosition(const TexturePosition& position) {
+void DefaultContext::setMousePosition(const Position& position) {
     mousePosition = position;
 }
 
-void DefaultContext::setCardsInHandPosition(const TexturePosition& position) {
+void DefaultContext::setCardsInHandPosition(const Position& position) {
     cardsInHandPosition = position;
 }
 
-TexturePosition DefaultContext::getMousePosition() const {
+Position DefaultContext::getMousePosition() const {
     return mousePosition;
 }
 
-TexturePosition DefaultContext::getCardsInHandPosition() const {
+Position DefaultContext::getCardsInHandPosition() const {
     return cardsInHandPosition;
 }
 

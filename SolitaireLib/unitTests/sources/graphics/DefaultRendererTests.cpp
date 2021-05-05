@@ -8,9 +8,9 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "gmock/gmock.h"
+#include "geometry/Area.h"
 #include "graphics/DefaultRenderer.h"
 #include "graphics/GraphicsSystemMock.h"
-#include "graphics/TextureArea.h"
 #include "piles/FoundationPileMock.h"
 #include "piles/PileId.h"
 #include "piles/StockPileMock.h"
@@ -18,6 +18,7 @@
 
 using namespace testing;
 using namespace solitaire::cards;
+using namespace solitaire::geometry;
 using namespace solitaire::piles;
 
 namespace solitaire::graphics {
@@ -39,31 +40,31 @@ const TextureId backgroundTextureId {0};
 const TextureId cardsTextureId {1};
 const TextureId cardPlaceholderTextureId {2};
 
-constexpr TextureSize cardSize {75, 104};
+constexpr Size cardSize {75, 104};
 
-constexpr TextureArea cardPlaceholderTextureArea {TexturePosition {0, 0}, cardSize};
-constexpr TextureArea cardBackTextureArea {TexturePosition {0, 416}, cardSize};
+constexpr Area cardPlaceholderTextureArea {Position {0, 0}, cardSize};
+constexpr Area cardBackTextureArea {Position {0, 416}, cardSize};
 
-constexpr std::array<TexturePosition, foundationPilesCount> foundationPilesPositions {
-    TexturePosition {283, 30},
-    TexturePosition {372, 30},
-    TexturePosition {461, 30},
-    TexturePosition {550, 30}
+constexpr std::array<Position, foundationPilesCount> foundationPilesPositions {
+    Position {283, 30},
+    Position {372, 30},
+    Position {461, 30},
+    Position {550, 30}
 };
 
-constexpr std::array<TexturePosition, tableauPilesCount> tableauPilesPositions {
-    TexturePosition {16, 144},
-    TexturePosition {105, 144},
-    TexturePosition {194, 144},
-    TexturePosition {283, 144},
-    TexturePosition {372, 144},
-    TexturePosition {461, 144},
-    TexturePosition {550, 144}
+constexpr std::array<Position, tableauPilesCount> tableauPilesPositions {
+    Position {16, 144},
+    Position {105, 144},
+    Position {194, 144},
+    Position {283, 144},
+    Position {372, 144},
+    Position {461, 144},
+    Position {550, 144}
 };
 
-constexpr TexturePosition stockPilePosition {16, 30};
-constexpr TexturePosition stockPileUncoveredCardsPosition {105, 30};
-constexpr TexturePosition cardsInHandPosition {15, 22};
+constexpr Position stockPilePosition {16, 30};
+constexpr Position stockPileUncoveredCardsPosition {105, 30};
+constexpr Position cardsInHandPosition {15, 22};
 
 const Card fiveDiamond {Value::Five, Suit::Diamond};
 
@@ -206,25 +207,25 @@ public:
         }
     }
 
-    void expectRenderCard(const TexturePosition& position, const Card& card) {
+    void expectRenderCard(const Position& position, const Card& card) {
         EXPECT_CALL(*graphicsSystemMock, renderTexture(
             cardsTextureId, position, getCardTextureArea(card)));
     }
 
-    void expectRenderCardBack(const TexturePosition& position) {
+    void expectRenderCardBack(const Position& position) {
         EXPECT_CALL(*graphicsSystemMock, renderTexture(
             cardsTextureId, position, cardBackTextureArea));
     }
 
-    void expectRenderCardPlaceholder(const TexturePosition& position) {
+    void expectRenderCardPlaceholder(const Position& position) {
         EXPECT_CALL(*graphicsSystemMock, renderTexture(
             cardPlaceholderTextureId, position, cardPlaceholderTextureArea));
     }
 
-    TextureArea getCardTextureArea(const Card& card) {
+    Area getCardTextureArea(const Card& card) {
         int x = to_int(card.getValue()) * cardSize.width;
         int y = to_int(card.getSuit()) * cardSize.height;
-        return TextureArea {TexturePosition{x, y}, cardSize};
+        return Area {Position {x, y}, cardSize};
     }
 
     Cards getPileCardsWithSelectedFiveDiamond(

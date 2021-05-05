@@ -1,9 +1,9 @@
 #pragma once
 
-#include "TexturePosition.h"
-#include "TextureSize.h"
+#include "Position.h"
+#include "Size.h"
 
-namespace solitaire::graphics {
+namespace solitaire::geometry {
 
 struct Layout {
     static constexpr int firstFoundationPilePositionX {283};
@@ -15,8 +15,8 @@ struct Layout {
     static constexpr int uncoveredTableauPileCardsSpacing {16};
     static constexpr int stockPileCardsSpacing {2};
 
-    static constexpr TexturePosition stockPilePosition {16, 30};
-    static constexpr TextureSize cardSize {75, 104};
+    static constexpr Position stockPilePosition {16, 30};
+    static constexpr Size cardSize {75, 104};
 };
 
 }

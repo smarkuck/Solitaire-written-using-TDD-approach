@@ -1,12 +1,13 @@
 #include "mock_ptr.h"
 #include "gmock/gmock.h"
+#include "geometry/Area.h"
 #include "graphics/SDLGraphicsSystem.h"
-#include "graphics/TextureArea.h"
 #include "graphics/TextureId.h"
 #include "SDL/PtrDeleterMock.h"
 #include "SDL/WrapperMock.h"
 
 using namespace testing;
+using namespace solitaire::geometry;
 using namespace solitaire::SDL;
 
 namespace solitaire::graphics {
@@ -25,8 +26,8 @@ constexpr int failure {-1};
 const TextureId textureId0 {0};
 const TextureId textureId1 {1};
 
-constexpr TexturePosition texturePosition {13, 17};
-constexpr TextureArea textureArea {TexturePosition {10, 15}, TextureSize {20, 30}};
+constexpr Position texturePosition {13, 17};
+constexpr Area textureArea {Position {10, 15}, Size {20, 30}};
 
 constexpr SDL_Rect srcRect {
     textureArea.position.x, textureArea.position.y,

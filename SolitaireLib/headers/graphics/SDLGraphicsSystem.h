@@ -31,8 +31,8 @@ public:
     TextureId loadTexture(const std::string& path) override;
 
     void setTextureAlpha(const TextureId, const uint8_t alpha) const override;
-    void renderTexture(const TextureId, const TexturePosition&,
-                       const TextureArea&) const override;
+    void renderTexture(const TextureId, const geometry::Position&,
+                       const geometry::Area&) const override;
     void renderTextureInFullWindow(const TextureId) const override;
     void renderFrame() const override;
 
@@ -52,8 +52,8 @@ private:
     SDL::UniquePtr<SDL_Texture> createSDLTextureOrThrow(
         const SDL::UniquePtr<SDL_Surface>&) const;
 
-    SDL_Rect createSrcRect(const TextureArea&) const;
-    SDL_Rect createDstRect(const TexturePosition&, const TextureArea&) const;
+    SDL_Rect createSrcRect(const geometry::Area&) const;
+    SDL_Rect createDstRect(const geometry::Position&, const geometry::Area&) const;
 
     void throwOnInvalidTextureOperation(const TextureId) const;
 
