@@ -8,7 +8,7 @@ class Application;
 class Solitaire;
 
 namespace events {
-class EventsSource;
+class EventsProcessor;
 }
 
 namespace graphics {
@@ -26,9 +26,13 @@ public:
 
 private:
     std::unique_ptr<solitaire::Solitaire> makeSolitaire() const;
-    std::unique_ptr<solitaire::events::EventsSource> makeEventsSource() const;
-    std::unique_ptr<solitaire::graphics::Renderer> makeRenderer(
-        const solitaire::Solitaire&) const;
+
+    std::unique_ptr<solitaire::events::EventsProcessor>
+    makeEventsProcessor(solitaire::Solitaire&) const;
+
+    std::unique_ptr<solitaire::graphics::Renderer>
+    makeRenderer(const solitaire::Solitaire&) const;
+
     std::unique_ptr<solitaire::time::FPSLimiter> makeFPSLimiter() const;
 
     std::string findAssetsPath() const;

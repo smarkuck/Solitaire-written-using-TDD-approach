@@ -9,6 +9,7 @@
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
 #include "events/SDLEventsSource.h"
+#include "events/DefaultEventsProcessor.h"
 #include "graphics/DefaultRenderer.h"
 #include "graphics/SDLGraphicsSystem.h"
 #include "piles/DefaultFoundationPile.h"
@@ -29,8 +30,9 @@ using namespace solitaire::time;
 Application ApplicationFactory::make() const {
     auto solitaire = makeSolitaire();
     auto renderer = makeRenderer(*solitaire);
+    auto eventsProcessor = makeEventsProcessor(*solitaire);
 
-    return Application {std::move(solitaire), makeEventsSource(),
+    return Application {std::move(solitaire), std::move(eventsProcessor),
                         std::move(renderer), makeFPSLimiter()};
 }
 
@@ -52,9 +54,14 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
     );
 }
 
-std::unique_ptr<EventsSource> ApplicationFactory::makeEventsSource() const {
-    return std::make_unique<SDLEventsSource>(
-        std::make_unique<SDL::DefaultWrapper>()
+std::unique_ptr<EventsProcessor>
+ApplicationFactory::makeEventsProcessor(Solitaire& solitaire) const
+{
+    return std::make_unique<DefaultEventsProcessor>(
+        solitaire,
+        std::make_unique<SDLEventsSource>(
+            std::make_unique<SDL::DefaultWrapper>()
+        )
     );
 }
 

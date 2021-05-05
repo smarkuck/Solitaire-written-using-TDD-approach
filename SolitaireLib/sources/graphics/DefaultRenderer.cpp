@@ -6,6 +6,7 @@
 #include "cards/Value.h"
 #include "graphics/DefaultRenderer.h"
 #include "graphics/GraphicsSystem.h"
+#include "graphics/Layout.h"
 #include "graphics/TextureArea.h"
 #include "piles/FoundationPile.h"
 #include "piles/PileId.h"
@@ -23,19 +24,9 @@ const std::string windowTitle {"Solitaire"};
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {480};
 constexpr unsigned cardPlaceholderAlpha {70};
-constexpr unsigned pilesSpacing {89};
-constexpr unsigned firstFoundationPilePositionX {283};
-constexpr unsigned foundationPilePositionY {30};
-constexpr unsigned firstTableauPilePositionX {16};
-constexpr unsigned tableauPilePositionY {144};
-constexpr unsigned coveredTableauPileCardsSpacing {3};
-constexpr unsigned uncoveredTableauPileCardsSpacing {16};
-constexpr unsigned stockPileCardsSpacing {2};
 
-constexpr TexturePosition stockPilePosition {16, 30};
-constexpr TextureSize cardSize {75, 104};
-constexpr TextureArea cardPlaceholderTextureArea {TexturePosition {0, 0}, cardSize};
-constexpr TextureArea cardBackTextureArea {TexturePosition {0, 416}, cardSize};
+constexpr TextureArea cardPlaceholderTextureArea {TexturePosition {0, 0}, Layout::cardSize};
+constexpr TextureArea cardBackTextureArea {TexturePosition {0, 416}, Layout::cardSize};
 }
 
 DefaultRenderer::DefaultRenderer(const Solitaire& solitaire,
@@ -81,8 +72,8 @@ void DefaultRenderer::renderFoundationPile(const PileId id) const {
 
 TexturePosition DefaultRenderer::getFoundationPilePosition(const PileId id) const {
     return TexturePosition {
-        firstFoundationPilePositionX + id * pilesSpacing,
-        foundationPilePositionY
+        Layout::firstFoundationPilePositionX + id * Layout::pilesSpacing,
+        Layout::foundationPilePositionY
     };
 }
 
@@ -103,19 +94,19 @@ void DefaultRenderer::renderTableauPileWithCards(
 
     for (unsigned i = 0; i < topCoveredCardPosition; ++i) {
         renderCardBack(cardPosition);
-        cardPosition.y += coveredTableauPileCardsSpacing;
+        cardPosition.y += Layout::coveredTableauPileCardsSpacing;
     }
 
     for (unsigned i = topCoveredCardPosition; i < pileCards.size(); ++i) {
         renderCard(cardPosition, pileCards[i]);
-        cardPosition.y += uncoveredTableauPileCardsSpacing;
+        cardPosition.y += Layout::uncoveredTableauPileCardsSpacing;
     }
 }
 
 TexturePosition DefaultRenderer::getTableauPilePosition(const PileId id) const {
     return TexturePosition {
-        firstTableauPilePositionX + id * pilesSpacing,
-        tableauPilePositionY
+        Layout::firstTableauPilePositionX + id * Layout::pilesSpacing,
+        Layout::tableauPilePositionY
     };
 }
 
@@ -125,7 +116,7 @@ void DefaultRenderer::renderStockPile() const {
     const auto& selectedCardIndex = pile.getSelectedCardIndex();
 
     if (pileCards.empty())
-        renderCardPlaceholder(stockPilePosition);
+        renderCardPlaceholder(Layout::stockPilePosition);
     else renderStockPileWithCards(pileCards, selectedCardIndex);
 }
 
@@ -152,12 +143,12 @@ void DefaultRenderer::renderStockPileCoveredCards(
         getStockPileCoveredCardsCount(pileCards, selectedCardIndex));
 
     if (cardsToRender == 0)
-        renderCardPlaceholder(stockPilePosition);
+        renderCardPlaceholder(Layout::stockPilePosition);
 
-    auto cardPosition = stockPilePosition;
+    auto cardPosition = Layout::stockPilePosition;
     for (unsigned i = 0; i < cardsToRender; ++i) {
         renderCardBack(cardPosition);
-        cardPosition.x += stockPileCardsSpacing;
+        cardPosition.x += Layout::stockPileCardsSpacing;
     }
 }
 
@@ -167,11 +158,11 @@ void DefaultRenderer::renderStockPileUncoveredCards(
     const unsigned cardsToRender = getStockPileCardsToRenderCount(
         getStockPileUncoveredCardsCount(selectedCardIndex));
 
-    auto cardPosition = stockPilePosition;
-    cardPosition.x += pilesSpacing;
+    auto cardPosition = Layout::stockPilePosition;
+    cardPosition.x += Layout::pilesSpacing;
     for (unsigned i = 0; i < cardsToRender; ++i) {
         renderCard(cardPosition, pileCards[selectedCardIndex.value()]);
-        cardPosition.x += stockPileCardsSpacing;
+        cardPosition.x += Layout::stockPileCardsSpacing;
     }
 }
 
@@ -197,7 +188,7 @@ void DefaultRenderer::renderCardsInHand() const {
     auto cardPosition = TexturePosition {0, 0};
     for (const auto& card: solitaire.getCardsInHand()) {
         renderCard(cardPosition, card);
-        cardPosition.y += uncoveredTableauPileCardsSpacing;
+        cardPosition.y += Layout::uncoveredTableauPileCardsSpacing;
     }
 }
 
@@ -207,9 +198,9 @@ void DefaultRenderer::renderCard(const TexturePosition& position, const Card& ca
 }
 
 TextureArea DefaultRenderer::getCardTextureArea(const Card& card) const {
-    unsigned x = to_int(card.getValue()) * cardSize.width;
-    unsigned y = to_int(card.getSuit()) * cardSize.height;
-    return TextureArea {TexturePosition{x, y}, cardSize};
+    unsigned x = to_int(card.getValue()) * Layout::cardSize.width;
+    unsigned y = to_int(card.getSuit()) * Layout::cardSize.height;
+    return TextureArea {TexturePosition{x, y}, Layout::cardSize};
 }
 
 void DefaultRenderer::renderCardBack(const TexturePosition& position) const {

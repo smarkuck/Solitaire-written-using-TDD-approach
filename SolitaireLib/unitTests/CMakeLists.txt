@@ -9,6 +9,7 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/cards/CardTests.cpp
     sources/cards/DeckGeneratorUtils.cpp
     sources/cards/ShuffledDeckGeneratorTests.cpp
+    sources/events/DefaultEventsProcessorTests.cpp
     sources/events/SDLEventsSourceTests.cpp
     sources/graphics/DefaultRendererTests.cpp
     sources/graphics/SDLGraphicsSystemTests.cpp

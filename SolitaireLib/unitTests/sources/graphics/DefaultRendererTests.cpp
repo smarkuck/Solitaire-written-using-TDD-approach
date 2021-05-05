@@ -43,14 +43,14 @@ constexpr TextureSize cardSize {75, 104};
 constexpr TextureArea cardPlaceholderTextureArea {TexturePosition {0, 0}, cardSize};
 constexpr TextureArea cardBackTextureArea {TexturePosition {0, 416}, cardSize};
 
-const std::array<TexturePosition, foundationPilesCount> foundationPilesPositions {
+constexpr std::array<TexturePosition, foundationPilesCount> foundationPilesPositions {
     TexturePosition {283, 30},
     TexturePosition {372, 30},
     TexturePosition {461, 30},
     TexturePosition {550, 30}
 };
 
-const std::array<TexturePosition, tableauPilesCount> tableauPilesPositions {
+constexpr std::array<TexturePosition, tableauPilesCount> tableauPilesPositions {
     TexturePosition {16, 144},
     TexturePosition {105, 144},
     TexturePosition {194, 144},

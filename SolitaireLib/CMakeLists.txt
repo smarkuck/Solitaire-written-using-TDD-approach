@@ -8,6 +8,7 @@ target_sources(SolitaireLib PRIVATE
     sources/archivers/DefaultMoveCardsOperationSnapshotCreator.cpp
     sources/cards/Card.cpp
     sources/cards/ShuffledDeckGenerator.cpp
+    sources/events/DefaultEventsProcessor.cpp
     sources/events/SDLEventsSource.cpp
     sources/graphics/DefaultRenderer.cpp
     sources/graphics/SDLGraphicsSystem.cpp
