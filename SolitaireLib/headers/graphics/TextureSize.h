@@ -5,7 +5,7 @@
 namespace solitaire::graphics {
 
 struct TextureSize {
-    unsigned width, height;
+    int width, height;
 };
 
 inline bool operator==(const TextureSize& lhs, const TextureSize& rhs) {

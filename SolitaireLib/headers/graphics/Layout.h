@@ -5,16 +5,15 @@
 
 namespace solitaire::graphics {
 
-class Layout {
-public:
-    static constexpr unsigned pilesSpacing {89};
-    static constexpr unsigned firstFoundationPilePositionX {283};
-    static constexpr unsigned foundationPilePositionY {30};
-    static constexpr unsigned firstTableauPilePositionX {16};
-    static constexpr unsigned tableauPilePositionY {144};
-    static constexpr unsigned coveredTableauPileCardsSpacing {3};
-    static constexpr unsigned uncoveredTableauPileCardsSpacing {16};
-    static constexpr unsigned stockPileCardsSpacing {2};
+struct Layout {
+    static constexpr int firstFoundationPilePositionX {283};
+    static constexpr int foundationPilePositionY {30};
+    static constexpr int firstTableauPilePositionX {16};
+    static constexpr int tableauPilePositionY {144};
+    static constexpr int pilesSpacing {89};
+    static constexpr int coveredTableauPileCardsSpacing {3};
+    static constexpr int uncoveredTableauPileCardsSpacing {16};
+    static constexpr int stockPileCardsSpacing {2};
 
     static constexpr TexturePosition stockPilePosition {16, 30};
     static constexpr TextureSize cardSize {75, 104};

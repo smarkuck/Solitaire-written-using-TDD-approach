@@ -4,6 +4,7 @@
 
 #include "Application.h"
 #include "ApplicationFactory.h"
+#include "DefaultContext.h"
 #include "DefaultSolitaire.h"
 #include "archivers/DefaultHistoryTracker.h"
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
@@ -29,11 +30,13 @@ using namespace solitaire::time;
 
 Application ApplicationFactory::make() const {
     auto solitaire = makeSolitaire();
-    auto renderer = makeRenderer(*solitaire);
-    auto eventsProcessor = makeEventsProcessor(*solitaire);
+    auto context = std::make_unique<DefaultContext>();
+    auto renderer = makeRenderer(*solitaire, *context);
+    auto eventsProcessor = makeEventsProcessor(*solitaire, *context);
 
-    return Application {std::move(solitaire), std::move(eventsProcessor),
-                        std::move(renderer), makeFPSLimiter()};
+    return Application {std::move(solitaire), std::move(context),
+                        std::move(eventsProcessor), std::move(renderer),
+                        makeFPSLimiter()};
 }
 
 std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
@@ -55,10 +58,12 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
 }
 
 std::unique_ptr<EventsProcessor>
-ApplicationFactory::makeEventsProcessor(Solitaire& solitaire) const
+ApplicationFactory::makeEventsProcessor(
+    Solitaire& solitaire, Context& context) const
 {
     return std::make_unique<DefaultEventsProcessor>(
         solitaire,
+        context,
         std::make_unique<SDLEventsSource>(
             std::make_unique<SDL::DefaultWrapper>()
         )
@@ -66,10 +71,10 @@ ApplicationFactory::makeEventsProcessor(Solitaire& solitaire) const
 }
 
 std::unique_ptr<Renderer> ApplicationFactory::makeRenderer(
-    const Solitaire& solitaire) const
+    const Solitaire& solitaire, const Context& context) const
 {
     return std::make_unique<DefaultRenderer>(
-        solitaire,
+        solitaire, context,
         std::make_unique<SDLGraphicsSystem>(
             std::make_unique<SDL::DefaultWrapper>()
         ),

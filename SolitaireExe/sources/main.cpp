@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "ApplicationFactory.h"
+#include "Context.h"
 #include "SDL.h"
 #include "Solitaire.h"
 #include "events/EventsProcessor.h"

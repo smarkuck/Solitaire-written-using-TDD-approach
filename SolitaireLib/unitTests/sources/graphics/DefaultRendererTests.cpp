@@ -1,5 +1,6 @@
 #include <array>
 
+#include "ContextMock.h"
 #include "mock_ptr.h"
 #include "SolitaireMock.h"
 #include "archivers/Snapshot.h"
@@ -62,6 +63,7 @@ constexpr std::array<TexturePosition, tableauPilesCount> tableauPilesPositions {
 
 constexpr TexturePosition stockPilePosition {16, 30};
 constexpr TexturePosition stockPileUncoveredCardsPosition {105, 30};
+constexpr TexturePosition cardsInHandPosition {15, 22};
 
 const Card fiveDiamond {Value::Five, Suit::Diamond};
 
@@ -101,11 +103,13 @@ public:
     }
 
     SolitaireMock solitaireMock;
+    ContextMock contextMock;
     mock_ptr<GraphicsSystemMock> graphicsSystemMock;
 };
 
 TEST_F(DefaultRendererTests, onConstructionShouldCreateWindowAndLoadAllTextures) {
-    DefaultRenderer {solitaireMock, graphicsSystemMock.make_unique(), assetsPath};
+    DefaultRenderer {solitaireMock, contextMock,
+                     graphicsSystemMock.make_unique(), assetsPath};
 }
 
 class CreatedDefaultRendererTests: public DefaultRendererTests {
@@ -114,7 +118,7 @@ public:
 
     CreatedDefaultRendererTests() {
         renderer = std::make_unique<DefaultRenderer>(
-            solitaireMock, graphicsSystemMock.make_unique(), assetsPath);
+            solitaireMock, contextMock, graphicsSystemMock.make_unique(), assetsPath);
 
         InSequence seq;
         EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
@@ -218,8 +222,8 @@ public:
     }
 
     TextureArea getCardTextureArea(const Card& card) {
-        unsigned x = to_int(card.getValue()) * cardSize.width;
-        unsigned y = to_int(card.getSuit()) * cardSize.height;
+        int x = to_int(card.getValue()) * cardSize.width;
+        int y = to_int(card.getSuit()) * cardSize.height;
         return TextureArea {TexturePosition{x, y}, cardSize};
     }
 
@@ -352,8 +356,10 @@ public:
 TEST_F(CardsInHandDefaultRendererTests, renderCardsInHand) {
     EXPECT_CALL(solitaireMock, getCardsInHand())
         .WillOnce(ReturnRef(threeCardsWithLastKingClub));
+    EXPECT_CALL(contextMock, getCardsInHandPosition())
+        .WillOnce(Return(cardsInHandPosition));
 
-    auto cardPosition = TexturePosition {0, 0};
+    auto cardPosition = cardsInHandPosition;
     for (unsigned i = 0; i < threeCardsWithLastKingClub.size(); ++i) {
         expectRenderCard(cardPosition, threeCardsWithLastKingClub[i]);
         cardPosition.y += uncoveredTableauPileCardsSpacing;

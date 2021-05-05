@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "ContextMock.h"
 #include "mock_ptr.h"
 #include "SolitaireMock.h"
 #include "cards/Card.h"
@@ -17,11 +18,13 @@ namespace solitaire {
 class ApplicationTests: public Test {
 public:
     mock_ptr<SolitaireMock> solitaireMock;
+    mock_ptr<ContextMock> contextMock;
     mock_ptr<EventsProcessorMock> eventsProcessorMock;
     mock_ptr<RendererMock> rendererMock;
     mock_ptr<FPSLimiterMock> fpsLimiterMock;
 
     Application application {solitaireMock.make_unique(),
+                             contextMock.make_unique(),
                              eventsProcessorMock.make_unique(),
                              rendererMock.make_unique(),
                              fpsLimiterMock.make_unique()};

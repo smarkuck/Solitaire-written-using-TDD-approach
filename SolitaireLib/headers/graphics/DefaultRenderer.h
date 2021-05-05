@@ -9,6 +9,7 @@
 
 namespace solitaire {
 
+class Context;
 class Solitaire;
 
 namespace graphics {
@@ -19,7 +20,7 @@ struct TexturePosition;
 
 class DefaultRenderer: public Renderer {
 public:
-    DefaultRenderer(const Solitaire&, std::unique_ptr<GraphicsSystem>,
+    DefaultRenderer(const Solitaire&, const Context&, std::unique_ptr<GraphicsSystem>,
                     const std::string& assetsPath);
 
     void render() const override;
@@ -59,6 +60,7 @@ private:
                                          const SelectedCardIndex&) const;
 
     const Solitaire& solitaire;
+    const Context& context;
     std::unique_ptr<GraphicsSystem> graphicsSystem;
     const std::string assetsPath;
 

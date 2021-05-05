@@ -128,8 +128,8 @@ void SDLGraphicsSystem::renderTexture(
 
 SDL_Rect SDLGraphicsSystem::createSrcRect(const TextureArea& area) const {
     return SDL_Rect {
-        static_cast<int>(area.position.x), static_cast<int>(area.position.y),
-        static_cast<int>(area.size.width), static_cast<int>(area.size.height)
+        area.position.x, area.position.y,
+        area.size.width, area.size.height
     };
 }
 
@@ -137,8 +137,8 @@ SDL_Rect SDLGraphicsSystem::createDstRect(
     const TexturePosition& position, const TextureArea& area) const
 {
     return SDL_Rect {
-        static_cast<int>(position.x), static_cast<int>(position.y),
-        static_cast<int>(area.size.width), static_cast<int>(area.size.height)
+        position.x, position.y,
+        area.size.width, area.size.height
     };
 }
 

@@ -5,7 +5,7 @@
 namespace solitaire::graphics {
 
 struct TexturePosition {
-    unsigned x, y;
+    int x, y;
 };
 
 inline bool operator==(const TexturePosition& lhs, const TexturePosition& rhs) {
