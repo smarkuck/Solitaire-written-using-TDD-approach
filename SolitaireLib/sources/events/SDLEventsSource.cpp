@@ -1,7 +1,10 @@
 #include "SDL.h"
 #include "events/EventsDefinitions.h"
 #include "events/SDLEventsSource.h"
+#include "geometry/Position.h"
 #include "SDL/Wrapper.h"
+
+using namespace solitaire::geometry;
 
 namespace solitaire::events {
 
@@ -16,12 +19,12 @@ Event SDLEventsSource::getEvent() const {
         switch (event.type) {
         case SDL_MOUSEBUTTONDOWN:
             if (event.button.button == SDL_BUTTON_LEFT)
-                return MouseLeftButtonDown {event.button.x, event.button.y};
+                return MouseLeftButtonDown {Position {event.button.x, event.button.y}};
             break;
 
         case SDL_MOUSEBUTTONUP:
             if (event.button.button == SDL_BUTTON_LEFT)
-                return MouseLeftButtonUp {event.button.x, event.button.y};
+                return MouseLeftButtonUp {};
             break;
 
         case SDL_MOUSEMOTION:

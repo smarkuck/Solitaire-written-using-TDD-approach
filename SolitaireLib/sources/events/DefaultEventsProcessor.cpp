@@ -32,13 +32,13 @@ void DefaultEventsProcessor::processEvents() {
             const auto& mouseLeftButtonDown = std::get<MouseLeftButtonDown>(event);
             for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
                 const int pileX = Layout::firstFoundationPilePositionX + Layout::pilesSpacing * id;
-                if (mouseLeftButtonDown.x >= pileX and
-                    mouseLeftButtonDown.x < pileX + Layout::cardSize.width and
-                    mouseLeftButtonDown.y >= Layout::foundationPilePositionY and
-                    mouseLeftButtonDown.y < Layout::foundationPilePositionY + Layout::cardSize.height)
+                if (mouseLeftButtonDown.position.x >= pileX and
+                    mouseLeftButtonDown.position.x < pileX + Layout::cardSize.width and
+                    mouseLeftButtonDown.position.y >= Layout::foundationPilePositionY and
+                    mouseLeftButtonDown.position.y < Layout::foundationPilePositionY + Layout::cardSize.height)
                 {
                     solitaire.tryPullOutCardFromFoundationPile(id);
-                    context.setMousePosition(Position {mouseLeftButtonDown.x, mouseLeftButtonDown.y});
+                    context.setMousePosition(mouseLeftButtonDown.position);
                     context.setCardsInHandPosition(Position {pileX, Layout::foundationPilePositionY});
                     break;
                 }
@@ -48,11 +48,9 @@ void DefaultEventsProcessor::processEvents() {
             const auto& mouseMove = std::get<MouseMove>(event);
             const auto lastMousePosition = context.getMousePosition();
             auto lastCardsInHandPosition = context.getCardsInHandPosition();
-            int diffX = mouseMove.x - lastMousePosition.x;
-            int diffY = mouseMove.y - lastMousePosition.y;
-            context.setMousePosition(Position {mouseMove.x, mouseMove.y});
-            context.setCardsInHandPosition(Position {
-                lastCardsInHandPosition.x + diffX, lastCardsInHandPosition.y + diffY});
+            auto diff = mouseMove.position - lastMousePosition;
+            context.setMousePosition(mouseMove.position);
+            context.setCardsInHandPosition(lastCardsInHandPosition + diff);
         }
         else if (std::holds_alternative<MouseLeftButtonUp>(event)) {
             const auto cardsInHandPosition = context.getCardsInHandPosition();

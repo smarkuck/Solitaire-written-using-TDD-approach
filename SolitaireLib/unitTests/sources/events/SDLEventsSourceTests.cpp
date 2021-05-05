@@ -86,8 +86,7 @@ TEST_F(SDLEventsSourceTests, returnMouseLeftButtonUpEvent) {
         return 1;
     }));
 
-    MouseLeftButtonUp mouseLeftButtonUp {x, y};
-    EXPECT_EQ(std::get<MouseLeftButtonUp>(eventsSource.getEvent()), mouseLeftButtonUp);
+    EXPECT_EQ(std::get<MouseLeftButtonUp>(eventsSource.getEvent()), MouseLeftButtonUp {});
 }
 
 TEST_F(SDLEventsSourceTests, returnMouseMoveEvent) {

@@ -1,19 +1,19 @@
 #pragma once
 
+#include "geometry/Position.h"
+
 namespace solitaire::events {
 
 struct NoEvents {};
 
 struct MouseLeftButtonDown {
-    int x, y;
+    geometry::Position position;
 };
 
-struct MouseLeftButtonUp {
-    int x, y;
-};
+struct MouseLeftButtonUp {};
 
 struct MouseMove {
-    int x, y;
+    geometry::Position position;
 };
 
 struct Quit {};
@@ -23,15 +23,15 @@ inline bool operator==(const NoEvents&, const NoEvents&) {
 }
 
 inline bool operator==(const MouseLeftButtonDown& lhs, const MouseLeftButtonDown& rhs) {
-    return lhs.x == rhs.x and lhs.y == rhs.y;
+    return lhs.position == rhs.position;
 }
 
 inline bool operator==(const MouseLeftButtonUp& lhs, const MouseLeftButtonUp& rhs) {
-    return lhs.x == rhs.x and lhs.y == rhs.y;
+    return true;
 }
 
 inline bool operator==(const MouseMove& lhs, const MouseMove& rhs) {
-    return lhs.x == rhs.x and lhs.y == rhs.y;
+    return lhs.position == rhs.position;
 }
 
 inline bool operator==(const Quit&, const Quit&) {
