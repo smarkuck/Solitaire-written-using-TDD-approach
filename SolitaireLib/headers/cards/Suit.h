@@ -8,8 +8,8 @@ enum class Suit {
     Heart, Spade, Diamond, Club
 };
 
-inline unsigned to_int(const Suit& suit) {
-    return static_cast<unsigned>(suit);
+inline int to_int(const Suit& suit) {
+    return static_cast<int>(suit);
 }
 
 inline std::string to_string(const Suit& suit) {

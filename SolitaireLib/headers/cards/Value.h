@@ -10,8 +10,8 @@ enum class Value {
     Jack, Queen, King
 };
 
-inline unsigned to_int(const Value& value) {
-    return static_cast<unsigned>(value);
+inline int to_int(const Value& value) {
+    return static_cast<int>(value);
 }
 
 inline std::string to_string(const Value& value) {

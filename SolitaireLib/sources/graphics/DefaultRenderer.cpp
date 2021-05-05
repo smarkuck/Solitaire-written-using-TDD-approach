@@ -205,8 +205,8 @@ void DefaultRenderer::renderCard(const Position& position, const Card& card) con
 }
 
 Area DefaultRenderer::getCardTextureArea(const Card& card) const {
-    int x = to_int(card.getValue()) * Layout::cardSize.width;
-    int y = to_int(card.getSuit()) * Layout::cardSize.height;
+    auto x = to_int(card.getValue()) * Layout::cardSize.width;
+    auto y = to_int(card.getSuit()) * Layout::cardSize.height;
     return Area {Position {x, y}, Layout::cardSize};
 }
 

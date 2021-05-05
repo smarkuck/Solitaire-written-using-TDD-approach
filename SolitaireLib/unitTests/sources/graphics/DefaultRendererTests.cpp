@@ -223,8 +223,8 @@ public:
     }
 
     Area getCardTextureArea(const Card& card) {
-        int x = to_int(card.getValue()) * cardSize.width;
-        int y = to_int(card.getSuit()) * cardSize.height;
+        auto x = to_int(card.getValue()) * cardSize.width;
+        auto y = to_int(card.getSuit()) * cardSize.height;
         return Area {Position {x, y}, cardSize};
     }
 
