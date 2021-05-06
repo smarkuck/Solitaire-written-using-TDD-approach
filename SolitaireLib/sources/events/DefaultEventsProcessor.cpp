@@ -1,11 +1,12 @@
 #include <cmath>
 
 #include "Context.h"
+#include "Layout.h"
 #include "Solitaire.h"
 #include "events/DefaultEventsProcessor.h"
 #include "events/EventsDefinitions.h"
 #include "events/EventsSource.h"
-#include "geometry/Layout.h"
+#include "geometry/Position.h"
 #include "piles/PileId.h"
 
 using namespace solitaire::geometry;

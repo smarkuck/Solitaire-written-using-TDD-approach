@@ -1,12 +1,12 @@
 #include <array>
 
 #include "Context.h"
+#include "Layout.h"
 #include "Solitaire.h"
 #include "cards/Card.h"
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "geometry/Area.h"
-#include "geometry/Layout.h"
 #include "graphics/DefaultRenderer.h"
 #include "graphics/GraphicsSystem.h"
 #include "piles/FoundationPile.h"
