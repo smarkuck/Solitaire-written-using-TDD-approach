@@ -6,6 +6,7 @@
 #include "cards/Card.h"
 #include "cards/Suit.h"
 #include "cards/Value.h"
+#include "colliders/FoundationPileCollider.h"
 #include "geometry/Area.h"
 #include "graphics/DefaultRenderer.h"
 #include "graphics/GraphicsSystem.h"
@@ -73,10 +74,7 @@ void DefaultRenderer::renderFoundationPile(const PileId id) const {
 }
 
 Position DefaultRenderer::getFoundationPilePosition(const PileId id) const {
-    return Position {
-        Layout::firstFoundationPilePositionX + static_cast<int>(id) * Layout::pilesSpacing,
-        Layout::foundationPilePositionY
-    };
+    return context.getFoundationPileCollider(id).getPosition();
 }
 
 void DefaultRenderer::renderTableauPile(const PileId id) const {

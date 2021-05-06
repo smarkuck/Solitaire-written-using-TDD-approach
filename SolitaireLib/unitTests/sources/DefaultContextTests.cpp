@@ -14,11 +14,14 @@ using namespace solitaire::piles;
 
 namespace solitaire {
 
+namespace {
+constexpr unsigned foundationPilesCount {4};
+}
+
 class DefaultContextTests: public Test {
 public:
-    using FoundationPileColliderMocks = std::array<
-        mock_ptr<FoundationPileColliderMock>,
-        Solitaire::foundationPilesCount>;
+    using FoundationPileColliderMocks =
+        std::array<mock_ptr<FoundationPileColliderMock>, foundationPilesCount>;
 
     DefaultContextTests() {
         DefaultContext::FoundationPileColliders foundationPileColliders;
@@ -38,18 +41,33 @@ public:
     std::unique_ptr<DefaultContext> context;
 };
 
-TEST_F(DefaultContextTests, setAndGet) {
+TEST_F(DefaultContextTests, getSolitaire) {
     EXPECT_EQ(&context->getSolitaire(), solitaireMock.get());
     EXPECT_EQ(&std::as_const(context)->getSolitaire(), solitaireMock.get());
+}
 
-    for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
+TEST_F(DefaultContextTests, getFoundationPileColliders) {
+    for (PileId id {0}; id < foundationPilesCount; ++id) {
         EXPECT_EQ(&context->getFoundationPileCollider(id),
                   foundationPileColliderMocks[id].get());
-
-        EXPECT_EQ(&std::as_const(context)->getFoundationPileCollider(id),
+        EXPECT_EQ(&std::as_const(*context).getFoundationPileCollider(id),
                   foundationPileColliderMocks[id].get());
     }
+}
 
+TEST_F(DefaultContextTests, throwOnInvalidFoundationPileColliderId) {
+    EXPECT_THROW(
+        context->getFoundationPileCollider(PileId {foundationPilesCount}),
+        std::runtime_error
+    );
+
+    EXPECT_THROW(
+        std::as_const(*context).getFoundationPileCollider(PileId {foundationPilesCount}),
+        std::runtime_error
+    );
+}
+
+TEST_F(DefaultContextTests, setAndGetPositions) {
     Position position1 {1, 7};
     Position position2 {2, 4};
 

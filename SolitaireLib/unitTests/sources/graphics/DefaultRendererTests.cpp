@@ -7,6 +7,7 @@
 #include "cards/Card.h"
 #include "cards/Suit.h"
 #include "cards/Value.h"
+#include "colliders/FoundationPileColliderMock.h"
 #include "gmock/gmock.h"
 #include "geometry/Area.h"
 #include "graphics/DefaultRenderer.h"
@@ -18,6 +19,7 @@
 
 using namespace testing;
 using namespace solitaire::cards;
+using namespace solitaire::colliders;
 using namespace solitaire::geometry;
 using namespace solitaire::piles;
 
@@ -45,12 +47,7 @@ constexpr Size cardSize {75, 104};
 constexpr Area cardPlaceholderTextureArea {Position {0, 0}, cardSize};
 constexpr Area cardBackTextureArea {Position {0, 416}, cardSize};
 
-constexpr std::array<Position, foundationPilesCount> foundationPilesPositions {
-    Position {283, 30},
-    Position {372, 30},
-    Position {461, 30},
-    Position {550, 30}
-};
+constexpr Position pilePosition {283, 30};
 
 constexpr std::array<Position, tableauPilesCount> tableauPilesPositions {
     Position {16, 144},
@@ -139,11 +136,14 @@ public:
             .WillOnce(ReturnRef(foundationPileMocks[id]));
         EXPECT_CALL(foundationPileMocks[id], getCards())
             .WillOnce(ReturnRef(pileCards));
+        EXPECT_CALL(contextMock, getFoundationPileCollider(id))
+            .WillOnce(ReturnRef(foundationPileColliderMock));
+        EXPECT_CALL(foundationPileColliderMock, getPosition()).WillOnce(Return(pilePosition));
 
         if (pileCards.empty())
-            expectRenderCardPlaceholder(foundationPilesPositions[id]);
+            expectRenderCardPlaceholder(pilePosition);
         else
-            expectRenderCard(foundationPilesPositions[id], pileCards.back());
+            expectRenderCard(pilePosition, pileCards.back());
     }
 
     void expectRenderTableauPile(const PileId id, const Cards& pileCards,
@@ -241,6 +241,7 @@ public:
     DefaultRenderer renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath};
     SolitaireMock solitaireMock;
     std::array<FoundationPileMock, foundationPilesCount> foundationPileMocks;
+    FoundationPileColliderMock foundationPileColliderMock;
     std::array<TableauPileMock, tableauPilesCount> tableauPileMocks;
     StockPileMock stockPileMock;
 };

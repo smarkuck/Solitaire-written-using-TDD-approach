@@ -33,11 +33,15 @@ const Solitaire& DefaultContext::getSolitaire() const {
 
 FoundationPileCollider&
 DefaultContext::getFoundationPileCollider(const PileId id) {
+    if (id >= Solitaire::foundationPilesCount)
+        throw std::runtime_error {"Invalid foundation pile id: " + id};
     return *foundationPileColliders[id];
 }
 
 const FoundationPileCollider&
 DefaultContext::getFoundationPileCollider(const PileId id) const {
+    if (id >= Solitaire::foundationPilesCount)
+        throw std::runtime_error {"Invalid foundation pile id: " + id};
     return *foundationPileColliders[id];
 }
 
