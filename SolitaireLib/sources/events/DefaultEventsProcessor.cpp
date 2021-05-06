@@ -1,12 +1,9 @@
-#include <cmath>
-
 #include "Context.h"
-#include "Layout.h"
 #include "Solitaire.h"
+#include "colliders/FoundationPileCollider.h"
 #include "events/DefaultEventsProcessor.h"
 #include "events/EventsDefinitions.h"
 #include "events/EventsSource.h"
-#include "geometry/Position.h"
 #include "piles/PileId.h"
 
 using namespace solitaire::geometry;
@@ -21,55 +18,69 @@ DefaultEventsProcessor::DefaultEventsProcessor(
 }
 
 void DefaultEventsProcessor::processEvents() {
-    auto event = eventsSource->getEvent();
-    while (not std::holds_alternative<NoEvents>(event)) {
-        if (std::holds_alternative<Quit>(event)) {
-            receivedQuitEvent = true;
-            return;
-        }
-
-        if (std::holds_alternative<MouseLeftButtonDown>(event)) {
-            const auto& mouseLeftButtonDown = std::get<MouseLeftButtonDown>(event);
-            for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
-                const int pileX = Layout::firstFoundationPilePositionX + Layout::pilesSpacing * id;
-                if (mouseLeftButtonDown.position.x >= pileX and
-                    mouseLeftButtonDown.position.x < pileX + Layout::cardSize.width and
-                    mouseLeftButtonDown.position.y >= Layout::foundationPilePositionY and
-                    mouseLeftButtonDown.position.y < Layout::foundationPilePositionY + Layout::cardSize.height)
-                {
-                    context.getSolitaire().tryPullOutCardFromFoundationPile(id);
-                    context.setMousePosition(mouseLeftButtonDown.position);
-                    context.setCardsInHandPosition(Position {pileX, Layout::foundationPilePositionY});
-                    break;
-                }
-            }
-        }
-        else if (std::holds_alternative<MouseMove>(event)) {
-            const auto& mouseMove = std::get<MouseMove>(event);
-            const auto lastMousePosition = context.getMousePosition();
-            auto lastCardsInHandPosition = context.getCardsInHandPosition();
-            auto diff = mouseMove.position - lastMousePosition;
-            context.setMousePosition(mouseMove.position);
-            context.setCardsInHandPosition(lastCardsInHandPosition + diff);
-        }
-        else if (std::holds_alternative<MouseLeftButtonUp>(event)) {
-            const auto cardsInHandPosition = context.getCardsInHandPosition();
-
-            for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
-                const int pileX = Layout::firstFoundationPilePositionX + Layout::pilesSpacing * id;
-                if (std::abs(cardsInHandPosition.x - pileX) < Layout::cardSize.width and
-                    std::abs(cardsInHandPosition.y - Layout::foundationPilePositionY) < Layout::cardSize.height)
-                {
-                    context.getSolitaire().tryAddCardOnFoundationPile(id);
-                    break;
-                }
-            }
-
-            context.getSolitaire().tryPutCardsBackFromHand();
-        }
-
+    Event event = eventsSource->getEvent();
+    while (eventOccured(event)) {
+        processEvent(event);
+        if (shouldQuit()) return;
         event = eventsSource->getEvent();
     }
+}
+
+bool DefaultEventsProcessor::eventOccured(const Event& event) const {
+    return not std::holds_alternative<NoEvents>(event);
+}
+
+void DefaultEventsProcessor::processEvent(const Event& event) {
+    if (std::holds_alternative<Quit>(event))
+        receivedQuitEvent = true;
+    else if (std::holds_alternative<MouseLeftButtonDown>(event))
+        processMouseLeftButtonDownEvent(std::get<MouseLeftButtonDown>(event));
+    else if (std::holds_alternative<MouseLeftButtonUp>(event))
+        processMouseLeftButtonUpEvent();
+    else if (std::holds_alternative<MouseMove>(event))
+        processMouseMoveEvent(std::get<MouseMove>(event));
+}
+
+void DefaultEventsProcessor::processMouseLeftButtonDownEvent(
+    const MouseLeftButtonDown& event) const
+{
+    for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
+        const auto& collider = context.getFoundationPileCollider(id);
+        if (collider.collidesWithPoint(event.position))
+        {
+            context.getSolitaire().tryPullOutCardFromFoundationPile(id);
+            context.setMousePosition(event.position);
+            context.setCardsInHandPosition(collider.getPosition());
+            return;
+        }
+    }
+}
+
+void DefaultEventsProcessor::processMouseLeftButtonUpEvent() const {
+    auto& solitaire = context.getSolitaire();
+    tryAddCardOnFoundationPile(solitaire, context.getCardsInHandPosition());
+    solitaire.tryPutCardsBackFromHand();
+}
+
+void DefaultEventsProcessor::tryAddCardOnFoundationPile(
+    Solitaire& solitaire, const Position& cardsInHandPosition) const
+{
+    for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
+        const auto& collider = context.getFoundationPileCollider(id);
+        if (collider.collidesWithCard(cardsInHandPosition))
+        {
+            solitaire.tryAddCardOnFoundationPile(id);
+            break;
+        }
+    }
+}
+
+void DefaultEventsProcessor::processMouseMoveEvent(const MouseMove& event) const {
+    const auto lastMousePosition = context.getMousePosition();
+    auto lastCardsInHandPosition = context.getCardsInHandPosition();
+    auto mouseMoveDelta = event.position - lastMousePosition;
+    context.setMousePosition(event.position);
+    context.setCardsInHandPosition(lastCardsInHandPosition + mouseMoveDelta);
 }
 
 bool DefaultEventsProcessor::shouldQuit() const {
