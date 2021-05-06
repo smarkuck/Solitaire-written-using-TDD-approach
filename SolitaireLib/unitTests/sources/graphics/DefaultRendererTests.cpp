@@ -116,9 +116,6 @@ public:
     using TopCoveredCardPosition = unsigned;
 
     CreatedDefaultRendererTests() {
-        renderer = std::make_unique<DefaultRenderer>(
-            contextMock, graphicsSystemMock.make_unique(), assetsPath);
-
         EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
 
         expectRenderFoundationPile(PileId {0}, noCards);
@@ -241,7 +238,7 @@ public:
         return cards;
     }
 
-    std::unique_ptr<DefaultRenderer> renderer;
+    DefaultRenderer renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath};
     SolitaireMock solitaireMock;
     std::array<FoundationPileMock, foundationPilesCount> foundationPileMocks;
     std::array<TableauPileMock, tableauPilesCount> tableauPileMocks;
@@ -253,12 +250,12 @@ TEST_F(CreatedDefaultRendererTests, renderSolitaireWithEmptyStockPile) {
     expectRenderCardPlaceholder(stockPilePosition);
     expectGetCardsInHand(noCards);
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
-    renderer->render();
+    renderer.render();
 }
 
 TEST_F(CreatedDefaultRendererTests, throwOnInvalidStockPileSelectedCardIndex) {
     expectGetStockPileData(threeCardsWithLastKingClub, 3);
-    EXPECT_THROW(renderer->render(), std::runtime_error);
+    EXPECT_THROW(renderer.render(), std::runtime_error);
 }
 
 struct StockPileRenderData {
@@ -281,7 +278,7 @@ TEST_P(StockPileDefaultRendererTests, renderStockPileWithCoveredCards) {
     expectGetCardsInHand(noCards);
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
 
-    renderer->render();
+    renderer.render();
 }
 
 TEST_P(StockPileDefaultRendererTests, renderStockPileWithUncoveredCards) {
@@ -296,7 +293,7 @@ TEST_P(StockPileDefaultRendererTests, renderStockPileWithUncoveredCards) {
     expectGetCardsInHand(noCards);
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
 
-    renderer->render();
+    renderer.render();
 }
 
 INSTANTIATE_TEST_SUITE_P(BorderPoints,
@@ -333,7 +330,7 @@ TEST_P(StockPileWithCoveredAndUncoveredCardsDefaultRendererTests, renderStockPil
     expectGetCardsInHand(noCards);
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
 
-    renderer->render();
+    renderer.render();
 }
 
 INSTANTIATE_TEST_SUITE_P(BorderPoints,
@@ -366,7 +363,7 @@ TEST_F(CardsInHandDefaultRendererTests, renderCardsInHand) {
     }
 
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
-    renderer->render();
+    renderer.render();
 }
 
 }

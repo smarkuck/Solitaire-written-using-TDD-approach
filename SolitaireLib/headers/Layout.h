@@ -5,7 +5,13 @@
 
 namespace solitaire {
 
+namespace piles {
+struct PileId;
+}
+
 struct Layout {
+    static geometry::Position getFoundationPilePosition(const piles::PileId);
+
     static constexpr int firstFoundationPilePositionX {283};
     static constexpr int foundationPilePositionY {30};
     static constexpr int firstTableauPilePositionX {16};

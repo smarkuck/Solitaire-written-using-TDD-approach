@@ -5,6 +5,7 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/ApplicationTests.cpp
     sources/DefaultContextTests.cpp
     sources/DefaultSolitaireTests.cpp
+    sources/LayoutTests.cpp
     sources/archivers/DefaultHistoryTrackerTests.cpp
     sources/archivers/DefaultMoveCardsOperationSnapshotCreatorTests.cpp
     sources/cards/CardTests.cpp
@@ -12,6 +13,7 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/cards/ShuffledDeckGeneratorTests.cpp
     sources/cards/SuitTests.cpp
     sources/cards/ValueTests.cpp
+    sources/colliders/DefaultFoundationPileColliderTests.cpp
     sources/events/DefaultEventsProcessorTests.cpp
     sources/events/EventsDefinitionsTests.cpp
     sources/events/SDLEventsSourceTests.cpp

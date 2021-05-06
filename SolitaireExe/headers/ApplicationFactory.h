@@ -25,6 +25,7 @@ public:
     solitaire::Application make() const;
 
 private:
+    std::unique_ptr<solitaire::Context> makeContext() const;
     std::unique_ptr<solitaire::Solitaire> makeSolitaire() const;
 
     std::unique_ptr<solitaire::events::EventsProcessor>

@@ -10,7 +10,6 @@
 #include "geometry/Position.h"
 #include "geometry/Size.h"
 #include "gmock/gmock.h"
-#include "piles/PileId.h"
 
 using namespace testing;
 using namespace solitaire::geometry;

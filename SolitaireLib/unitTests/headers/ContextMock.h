@@ -3,6 +3,7 @@
 #include "Context.h"
 #include "geometry/Position.h"
 #include "gmock/gmock.h"
+#include "piles/PileId.h"
 
 namespace solitaire {
 
@@ -13,6 +14,12 @@ public:
 
     MOCK_METHOD(Solitaire&, getSolitaire, (), (override));
     MOCK_METHOD(const Solitaire&, getSolitaire, (), (const, override));
+
+    MOCK_METHOD(colliders::FoundationPileCollider&,
+    getFoundationPileCollider, (const piles::PileId), (override));
+
+    MOCK_METHOD(const colliders::FoundationPileCollider&,
+    getFoundationPileCollider, (const piles::PileId), (const, override));
 
     MOCK_METHOD(geometry::Position, getMousePosition, (), (const, override));
     MOCK_METHOD(geometry::Position, getCardsInHandPosition, (), (const, override));

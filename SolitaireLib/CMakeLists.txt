@@ -5,10 +5,12 @@ target_sources(SolitaireLib PRIVATE
     sources/Application.cpp
     sources/DefaultContext.cpp
     sources/DefaultSolitaire.cpp
+    sources/Layout.cpp
     sources/archivers/DefaultHistoryTracker.cpp
     sources/archivers/DefaultMoveCardsOperationSnapshotCreator.cpp
     sources/cards/Card.cpp
     sources/cards/ShuffledDeckGenerator.cpp
+    sources/colliders/DefaultFoundationPileCollider.cpp
     sources/events/DefaultEventsProcessor.cpp
     sources/events/SDLEventsSource.cpp
     sources/graphics/DefaultRenderer.cpp
