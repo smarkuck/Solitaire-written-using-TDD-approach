@@ -39,11 +39,11 @@ public:
             std::chrono::milliseconds(ms));
     }
 
+    InSequence seq;
     mock_ptr<StdTimeFunctionsWrapperMock> stdTimeFunctionsWrapperMock;
 };
 
 TEST_F(ChronoFPSLimiterTests, sleepRestOfFrameTimeSavedDuringConstruction) {
-    InSequence seq;
     constexpr Milliseconds stop {5};
 
     expectGetActualTime(start);
@@ -67,7 +67,6 @@ public:
 };
 
 TEST_F(ConstructedChronoFPSLimiterTests, sleepRestOfFrameTimeSavedUsingSaveMethod) {
-    InSequence seq;
     constexpr Milliseconds start {4}, stop {5};
 
     expectGetActualTime(start);
@@ -81,7 +80,6 @@ TEST_F(ConstructedChronoFPSLimiterTests, sleepRestOfFrameTimeSavedUsingSaveMetho
 TEST_F(ConstructedChronoFPSLimiterTests,
        sleepZeroMillisecondsIfSleepSetSixteenMillisecondsLater)
 {
-    InSequence seq;
     constexpr Milliseconds stop {19};
 
     expectGetActualTime(stop);
@@ -92,7 +90,6 @@ TEST_F(ConstructedChronoFPSLimiterTests,
 TEST_F(ConstructedChronoFPSLimiterTests,
        dontSleepIfSleepSetMoreThanSixteenMillisecondsLater)
 {
-    InSequence seq;
     constexpr Milliseconds stop {20};
 
     expectGetActualTime(stop);

@@ -6,7 +6,6 @@
 namespace solitaire {
 
 class Context;
-class Solitaire;
 
 namespace events {
 
@@ -14,7 +13,7 @@ class EventsSource;
 
 class DefaultEventsProcessor: public EventsProcessor {
 public:
-    DefaultEventsProcessor(Solitaire&, Context&, std::unique_ptr<EventsSource>);
+    DefaultEventsProcessor(Context&, std::unique_ptr<EventsSource>);
 
     void processEvents() override;
     bool shouldQuit() const override;
@@ -22,10 +21,8 @@ public:
 private:
     bool receivedQuitEvent {false};
 
-    Solitaire& solitaire;
     Context& context;
     std::unique_ptr<EventsSource> eventsSource;
-
 };
 
 }

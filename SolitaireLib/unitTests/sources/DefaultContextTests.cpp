@@ -1,4 +1,9 @@
+#include <utility>
+
 #include "DefaultContext.h"
+#include "mock_ptr.h"
+#include "SolitaireMock.h"
+#include "cards/Card.h"
 #include "gtest/gtest.h"
 
 using namespace testing;
@@ -7,7 +12,12 @@ using namespace solitaire::geometry;
 namespace solitaire {
 
 TEST(DefaultContextTests, setAndGet) {
-    DefaultContext context;
+    mock_ptr<SolitaireMock> solitaireMock;
+    DefaultContext context {solitaireMock.make_unique()};
+
+    EXPECT_EQ(&context.getSolitaire(), solitaireMock.get());
+    EXPECT_EQ(&std::as_const(context).getSolitaire(), solitaireMock.get());
+
     Position position1 {1, 7};
     Position position2 {2, 4};
 

@@ -14,8 +14,7 @@ using namespace solitaire::piles;
 namespace solitaire::events {
 
 DefaultEventsProcessor::DefaultEventsProcessor(
-    Solitaire& solitaire, Context& context, std::unique_ptr<EventsSource> eventsSource):
-        solitaire {solitaire},
+    Context& context, std::unique_ptr<EventsSource> eventsSource):
         context {context},
         eventsSource {std::move(eventsSource)} {
 }
@@ -37,7 +36,7 @@ void DefaultEventsProcessor::processEvents() {
                     mouseLeftButtonDown.position.y >= Layout::foundationPilePositionY and
                     mouseLeftButtonDown.position.y < Layout::foundationPilePositionY + Layout::cardSize.height)
                 {
-                    solitaire.tryPullOutCardFromFoundationPile(id);
+                    context.getSolitaire().tryPullOutCardFromFoundationPile(id);
                     context.setMousePosition(mouseLeftButtonDown.position);
                     context.setCardsInHandPosition(Position {pileX, Layout::foundationPilePositionY});
                     break;
@@ -60,12 +59,12 @@ void DefaultEventsProcessor::processEvents() {
                 if (std::abs(cardsInHandPosition.x - pileX) < Layout::cardSize.width and
                     std::abs(cardsInHandPosition.y - Layout::foundationPilePositionY) < Layout::cardSize.height)
                 {
-                    solitaire.tryAddCardOnFoundationPile(id);
+                    context.getSolitaire().tryAddCardOnFoundationPile(id);
                     break;
                 }
             }
 
-            solitaire.tryPutCardsBackFromHand();
+            context.getSolitaire().tryPutCardsBackFromHand();
         }
 
         event = eventsSource->getEvent();

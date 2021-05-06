@@ -31,11 +31,9 @@ constexpr Area cardPlaceholderTextureArea {Position {0, 0}, Layout::cardSize};
 constexpr Area cardBackTextureArea {Position {0, 416}, Layout::cardSize};
 }
 
-DefaultRenderer::DefaultRenderer(const Solitaire& solitaire,
-                                 const Context& context,
+DefaultRenderer::DefaultRenderer(const Context& context,
                                  std::unique_ptr<GraphicsSystem> graphicsSystem,
                                  const std::string& assetsPath):
-    solitaire {solitaire},
     context {context},
     graphicsSystem {std::move(graphicsSystem)},
     assetsPath {assetsPath}
@@ -66,7 +64,7 @@ void DefaultRenderer::render() const {
 }
 
 void DefaultRenderer::renderFoundationPile(const PileId id) const {
-    const auto& pileCards = solitaire.getFoundationPile(id).getCards();
+    const auto& pileCards = context.getSolitaire().getFoundationPile(id).getCards();
 
     if (pileCards.empty())
         renderCardPlaceholder(getFoundationPilePosition(id));
@@ -82,7 +80,7 @@ Position DefaultRenderer::getFoundationPilePosition(const PileId id) const {
 }
 
 void DefaultRenderer::renderTableauPile(const PileId id) const {
-    const auto& pile = solitaire.getTableauPile(id);
+    const auto& pile = context.getSolitaire().getTableauPile(id);
     const auto& pileCards = pile.getCards();
 
     if (not pileCards.empty())
@@ -115,7 +113,7 @@ Position DefaultRenderer::getTableauPilePosition(const PileId id) const {
 }
 
 void DefaultRenderer::renderStockPile() const {
-    const auto& pile = solitaire.getStockPile();
+    const auto& pile = context.getSolitaire().getStockPile();
     const auto& pileCards = pile.getCards();
     const auto& selectedCardIndex = pile.getSelectedCardIndex();
 
@@ -189,7 +187,7 @@ unsigned DefaultRenderer::getStockPileCardsToRenderCount(const unsigned cardsCou
 }
 
 void DefaultRenderer::renderCardsInHand() const {
-    const auto& cards = solitaire.getCardsInHand();
+    const auto& cards = context.getSolitaire().getCardsInHand();
     if (not cards.empty()) {
         auto cardPosition = context.getCardsInHandPosition();
         for (const auto& card: cards) {

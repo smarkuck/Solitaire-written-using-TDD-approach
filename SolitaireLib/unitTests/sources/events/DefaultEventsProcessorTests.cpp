@@ -69,18 +69,19 @@ public:
         };
     }
 
+    InSequence seq;
     StrictMock<SolitaireMock> solitaireMock;
     StrictMock<ContextMock> contextMock;
     mock_ptr<StrictMock<EventsSourceMock>> eventsSourceMock;
     DefaultEventsProcessor eventsProcessor {
-        solitaireMock, contextMock, eventsSourceMock.make_unique()};
+        contextMock, eventsSourceMock.make_unique()};
 };
 
 TEST_F(DefaultEventsProcessorTests, stopProcessingWhenNoEvents) {
-    InSequence seq;
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(MouseLeftButtonDown {0, 0}));
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(MouseLeftButtonUp {}));
     EXPECT_CALL(contextMock, getCardsInHandPosition()).WillOnce(Return(Position {0, 0}));
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
     EXPECT_CALL(solitaireMock, tryPutCardsBackFromHand());
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(NoEvents {}));
     eventsProcessor.processEvents();
@@ -88,10 +89,10 @@ TEST_F(DefaultEventsProcessorTests, stopProcessingWhenNoEvents) {
 }
 
 TEST_F(DefaultEventsProcessorTests, stopProcessingOnQuitEvent) {
-    InSequence seq;
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(MouseLeftButtonDown {0, 0}));
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(MouseLeftButtonUp {}));
     EXPECT_CALL(contextMock, getCardsInHandPosition()).WillOnce(Return(Position {0, 0}));
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
     EXPECT_CALL(solitaireMock, tryPutCardsBackFromHand());
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(Quit {}));
     eventsProcessor.processEvents();
@@ -99,8 +100,6 @@ TEST_F(DefaultEventsProcessorTests, stopProcessingOnQuitEvent) {
 }
 
 TEST_F(DefaultEventsProcessorTests, ignoreLeftButtonDownEventOnPixelNextToFoundationPile) {
-    InSequence seq;
-
     for (const auto& position: foundationPilesPositions) {
         EXPECT_CALL(*eventsSourceMock, getEvent())
             .WillOnce(Return(getClickEventOnePixelBeforeFoundationPile(position)));
@@ -117,12 +116,12 @@ TEST_F(DefaultEventsProcessorTests, ignoreLeftButtonDownEventOnPixelNextToFounda
 }
 
 TEST_F(DefaultEventsProcessorTests, tryPullOutCardFromFoundationPileOnLeftButtonDownEvent) {
-    InSequence seq;
     for (PileId id {0}; id < foundationPilesCount; ++id) {
         EXPECT_CALL(*eventsSourceMock, getEvent())
             .WillOnce(Return(MouseLeftButtonDown {
                 foundationPilesPositions[id].x,
                 foundationPilesPositions[id].y}));
+        EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
         EXPECT_CALL(solitaireMock, tryPullOutCardFromFoundationPile(id));
         EXPECT_CALL(contextMock, setMousePosition(foundationPilesPositions[id]));
         EXPECT_CALL(contextMock, setCardsInHandPosition(foundationPilesPositions[id]));
@@ -131,6 +130,7 @@ TEST_F(DefaultEventsProcessorTests, tryPullOutCardFromFoundationPileOnLeftButton
             .WillOnce(Return(MouseLeftButtonDown {
                 foundationPilesPositions[id].x + cardSize.width - 1,
                 foundationPilesPositions[id].y + cardSize.height - 1}));
+        EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
         EXPECT_CALL(solitaireMock, tryPullOutCardFromFoundationPile(id));
         EXPECT_CALL(contextMock, setMousePosition(Position {
             foundationPilesPositions[id].x + cardSize.width - 1,
@@ -143,7 +143,6 @@ TEST_F(DefaultEventsProcessorTests, tryPullOutCardFromFoundationPileOnLeftButton
 }
 
 TEST_F(DefaultEventsProcessorTests, moveCardsInHandOnMoveEvent) {
-    InSequence seq;
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(MouseMove {10, 20}));
     EXPECT_CALL(contextMock, getMousePosition()).WillOnce(Return(Position {50, 10}));
     EXPECT_CALL(contextMock, getCardsInHandPosition()).WillOnce(Return(Position {60, 15}));
@@ -154,20 +153,21 @@ TEST_F(DefaultEventsProcessorTests, moveCardsInHandOnMoveEvent) {
 }
 
 TEST_F(DefaultEventsProcessorTests, tryPutCardsBackFromHandOnLeftButtonUpEventOnEmptySpace) {
-    InSequence seq;
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(MouseLeftButtonUp {}));
     EXPECT_CALL(contextMock, getCardsInHandPosition()).WillOnce(Return(Position {0, 0}));
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
     EXPECT_CALL(solitaireMock, tryPutCardsBackFromHand());
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(Quit {}));
     eventsProcessor.processEvents();
 }
 
 TEST_F(DefaultEventsProcessorTests, tryAddCardOnLeftButtonUpEventOnFoundationPile) {
-    InSequence seq;
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(MouseLeftButtonUp {}));
     EXPECT_CALL(contextMock, getCardsInHandPosition()).WillOnce(Return(Position {
             foundationPilesPositions[0].x - cardSize.width + 1, foundationPilesPositions[0].y}));
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
     EXPECT_CALL(solitaireMock, tryAddCardOnFoundationPile(PileId {0}));
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
     EXPECT_CALL(solitaireMock, tryPutCardsBackFromHand());
     EXPECT_CALL(*eventsSourceMock, getEvent()).WillOnce(Return(Quit {}));
     eventsProcessor.processEvents();

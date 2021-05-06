@@ -16,6 +16,7 @@ constexpr int y {120};
 
 class SDLEventsSourceTests: public Test {
 public:
+    InSequence seq;
     mock_ptr<WrapperMock> sdlMock;
     SDLEventsSource eventsSource {sdlMock.make_unique()};
     SDL_Event event;
@@ -27,7 +28,6 @@ TEST_F(SDLEventsSourceTests, returnNoEventsIfSDLPollEventReturnsZero) {
 }
 
 TEST_F(SDLEventsSourceTests, ignoreEventsIfSDLPollEventReturnsNotSupportedEvents) {
-    InSequence seq;
     EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_KEYDOWN;
         return 1;
@@ -43,7 +43,6 @@ TEST_F(SDLEventsSourceTests, ignoreEventsIfSDLPollEventReturnsNotSupportedEvents
 }
 
 TEST_F(SDLEventsSourceTests, ignoreEventIfSDLPollEventReturnsNotLeftMouseButtonEvent) {
-    InSequence seq;
     EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEBUTTONDOWN;
         event.button.button = SDL_BUTTON_RIGHT;
@@ -61,8 +60,6 @@ TEST_F(SDLEventsSourceTests, ignoreEventIfSDLPollEventReturnsNotLeftMouseButtonE
 }
 
 TEST_F(SDLEventsSourceTests, returnMouseLeftButtonDownEvent) {
-    InSequence seq;
-
     EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEBUTTONDOWN;
         event.button.button = SDL_BUTTON_LEFT;
@@ -76,8 +73,6 @@ TEST_F(SDLEventsSourceTests, returnMouseLeftButtonDownEvent) {
 }
 
 TEST_F(SDLEventsSourceTests, returnMouseLeftButtonUpEvent) {
-    InSequence seq;
-
     EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEBUTTONUP;
         event.button.button = SDL_BUTTON_LEFT;
@@ -90,8 +85,6 @@ TEST_F(SDLEventsSourceTests, returnMouseLeftButtonUpEvent) {
 }
 
 TEST_F(SDLEventsSourceTests, returnMouseMoveEvent) {
-    InSequence seq;
-
     EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_MOUSEMOTION;
         event.motion.x = x;
@@ -104,8 +97,6 @@ TEST_F(SDLEventsSourceTests, returnMouseMoveEvent) {
 }
 
 TEST_F(SDLEventsSourceTests, returnQuitEvent) {
-    InSequence seq;
-
     EXPECT_CALL(*sdlMock, pollEvent(_)).WillOnce(Invoke([](auto& event) {
         event.type = SDL_QUIT;
         return 1;

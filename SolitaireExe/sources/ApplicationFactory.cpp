@@ -29,14 +29,12 @@ using namespace solitaire::piles;
 using namespace solitaire::time;
 
 Application ApplicationFactory::make() const {
-    auto solitaire = makeSolitaire();
-    auto context = std::make_unique<DefaultContext>();
-    auto renderer = makeRenderer(*solitaire, *context);
-    auto eventsProcessor = makeEventsProcessor(*solitaire, *context);
+    auto context = std::make_unique<DefaultContext>(makeSolitaire());
+    auto eventsProcessor = makeEventsProcessor(*context);
+    auto renderer = makeRenderer(*context);
 
-    return Application {std::move(solitaire), std::move(context),
-                        std::move(eventsProcessor), std::move(renderer),
-                        makeFPSLimiter()};
+    return Application {std::move(context), std::move(eventsProcessor),
+                        std::move(renderer), makeFPSLimiter()};
 }
 
 std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
@@ -58,11 +56,8 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
 }
 
 std::unique_ptr<EventsProcessor>
-ApplicationFactory::makeEventsProcessor(
-    Solitaire& solitaire, Context& context) const
-{
+ApplicationFactory::makeEventsProcessor(Context& context) const {
     return std::make_unique<DefaultEventsProcessor>(
-        solitaire,
         context,
         std::make_unique<SDLEventsSource>(
             std::make_unique<SDL::DefaultWrapper>()
@@ -70,11 +65,10 @@ ApplicationFactory::makeEventsProcessor(
     );
 }
 
-std::unique_ptr<Renderer> ApplicationFactory::makeRenderer(
-    const Solitaire& solitaire, const Context& context) const
-{
+std::unique_ptr<Renderer>
+ApplicationFactory::makeRenderer(const Context& context) const {
     return std::make_unique<DefaultRenderer>(
-        solitaire, context,
+        context,
         std::make_unique<SDLGraphicsSystem>(
             std::make_unique<SDL::DefaultWrapper>()
         ),
