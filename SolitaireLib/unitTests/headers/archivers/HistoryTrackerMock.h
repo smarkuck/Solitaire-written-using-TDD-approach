@@ -1,11 +1,11 @@
 #pragma once
 
-#include "archivers/HistoryTracker.h"
 #include "gmock/gmock.h"
+#include "interfaces/archivers/HistoryTracker.h"
 
 namespace solitaire::archivers {
 
-class HistoryTrackerMock: public HistoryTracker {
+class HistoryTrackerMock: public interfaces::HistoryTracker {
 public:
     MOCK_METHOD(void, save, (std::unique_ptr<interfaces::Snapshot>), (override));
     MOCK_METHOD(void, undo, (), (override));

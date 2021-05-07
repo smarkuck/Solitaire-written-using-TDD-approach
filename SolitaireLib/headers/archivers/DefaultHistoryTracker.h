@@ -1,11 +1,11 @@
 #pragma once
 
 #include <vector>
-#include "HistoryTracker.h"
+#include "interfaces/archivers/HistoryTracker.h"
 
 namespace solitaire::archivers {
 
-class DefaultHistoryTracker: public HistoryTracker {
+class DefaultHistoryTracker: public interfaces::HistoryTracker {
 public:
     DefaultHistoryTracker(const unsigned historyMaxSize = 10);
 
