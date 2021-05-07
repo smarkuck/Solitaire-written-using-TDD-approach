@@ -5,9 +5,9 @@
 
 namespace solitaire::archivers {
 
-class DefaultHistoryTracker: public interfaces::HistoryTracker {
+class HistoryTracker: public interfaces::HistoryTracker {
 public:
-    DefaultHistoryTracker(const unsigned historyMaxSize = 10);
+    HistoryTracker(const unsigned historyMaxSize = 10);
 
     void save(std::unique_ptr<interfaces::Snapshot>) override;
     void undo() override;

@@ -1,17 +1,17 @@
 #include <stdexcept>
 
-#include "archivers/DefaultHistoryTracker.h"
+#include "archivers/HistoryTracker.h"
 #include "interfaces/archivers/Snapshot.h"
 
 using namespace solitaire::archivers::interfaces;
 
 namespace solitaire::archivers {
 
-DefaultHistoryTracker::DefaultHistoryTracker(const unsigned historyMaxSize):
+HistoryTracker::HistoryTracker(const unsigned historyMaxSize):
     historyMaxSize {historyMaxSize} {
 }
 
-void DefaultHistoryTracker::save(std::unique_ptr<Snapshot> snapshot) {
+void HistoryTracker::save(std::unique_ptr<Snapshot> snapshot) {
     if (not snapshot)
         throw std::runtime_error {"Passed snapshot is nullptr"};
 
@@ -20,7 +20,7 @@ void DefaultHistoryTracker::save(std::unique_ptr<Snapshot> snapshot) {
     history.emplace_back(std::move(snapshot));
 }
 
-void DefaultHistoryTracker::undo() {
+void HistoryTracker::undo() {
     if (history.empty())
         throw std::runtime_error {"Cannot undo operation when history is empty."};
 
@@ -28,7 +28,7 @@ void DefaultHistoryTracker::undo() {
     history.pop_back();
 }
 
-unsigned DefaultHistoryTracker::getHistorySize() const {
+unsigned HistoryTracker::getHistorySize() const {
     return history.size();
 }
 

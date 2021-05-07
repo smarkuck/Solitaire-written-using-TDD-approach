@@ -6,8 +6,8 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/DefaultContextTests.cpp
     sources/DefaultSolitaireTests.cpp
     sources/LayoutTests.cpp
-    sources/archivers/DefaultHistoryTrackerTests.cpp
     sources/archivers/DefaultMoveCardsOperationSnapshotCreatorTests.cpp
+    sources/archivers/HistoryTrackerTests.cpp
     sources/cards/CardTests.cpp
     sources/cards/DeckGeneratorUtils.cpp
     sources/cards/ShuffledDeckGeneratorTests.cpp

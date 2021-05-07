@@ -7,8 +7,8 @@
 #include "DefaultContext.h"
 #include "DefaultSolitaire.h"
 #include "Layout.h"
-#include "archivers/DefaultHistoryTracker.h"
 #include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
+#include "archivers/HistoryTracker.h"
 #include "cards/ShuffledDeckGenerator.h"
 #include "colliders/DefaultFoundationPileCollider.h"
 #include "events/SDLEventsSource.h"
@@ -47,7 +47,6 @@ Application ApplicationFactory::make() const {
 
 std::unique_ptr<Context> ApplicationFactory::makeContext() const {
     DefaultContext::FoundationPileColliders foundationPileColliders;
-
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
         foundationPileColliders[id] =
             std::make_unique<DefaultFoundationPileCollider>(
@@ -70,7 +69,7 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
         std::make_unique<ShuffledDeckGenerator>(),
         std::make_shared<DefaultStockPile>(),
         foundationPiles, tableauPiles,
-        std::make_unique<DefaultHistoryTracker>(),
+        std::make_unique<HistoryTracker>(),
         std::make_unique<DefaultMoveCardsOperationSnapshotCreator>()
     );
 }

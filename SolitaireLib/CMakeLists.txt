@@ -6,8 +6,8 @@ target_sources(SolitaireLib PRIVATE
     sources/DefaultContext.cpp
     sources/DefaultSolitaire.cpp
     sources/Layout.cpp
-    sources/archivers/DefaultHistoryTracker.cpp
     sources/archivers/DefaultMoveCardsOperationSnapshotCreator.cpp
+    sources/archivers/HistoryTracker.cpp
     sources/cards/Card.cpp
     sources/cards/ShuffledDeckGenerator.cpp
     sources/colliders/DefaultFoundationPileCollider.cpp
