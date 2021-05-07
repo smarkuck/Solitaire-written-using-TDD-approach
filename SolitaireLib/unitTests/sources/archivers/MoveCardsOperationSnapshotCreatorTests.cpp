@@ -1,4 +1,4 @@
-#include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
+#include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "archivers/SnapshotMock.h"
 #include "gmock/gmock.h"
 #include "mock_ptr.h"
@@ -7,12 +7,12 @@ using namespace testing;
 
 namespace solitaire::archivers {
 
-class DefaultMoveCardsOperationSnapshotCreatorTests: public Test {
+class MoveCardsOperationSnapshotCreatorTests: public Test {
 public:
-    DefaultMoveCardsOperationSnapshotCreator snapshotCreator;
+    MoveCardsOperationSnapshotCreator snapshotCreator;
 };
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorTests,
+TEST_F(MoveCardsOperationSnapshotCreatorTests,
        createShapshotShouldThrowIfSourcePileSnapshotNotSaved)
 {
     mock_ptr<SnapshotMock> snapshotMock;
@@ -23,17 +23,17 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorTests,
     );
 }
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorTests,
+TEST_F(MoveCardsOperationSnapshotCreatorTests,
        saveSourcePileShapshotShouldThrowIfPassedSnapshotIsNullptr)
 {
     EXPECT_THROW(snapshotCreator.saveSourcePileSnapshot(nullptr), std::runtime_error);
 }
 
-class DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest:
-    public DefaultMoveCardsOperationSnapshotCreatorTests
+class MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest:
+    public MoveCardsOperationSnapshotCreatorTests
 {
 public:
-    DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest() {
+    MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest() {
         snapshotCreator.saveSourcePileSnapshot(
             snapshotMock.make_unique()
         );
@@ -46,7 +46,7 @@ public:
     mock_ptr<SnapshotMock> snapshotMock2;
 };
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
+TEST_F(MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
        savingSourcePileSnapshotSecondTimeBeforeUsageShouldThrow)
 {
     EXPECT_THROW(
@@ -55,7 +55,7 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
     );
 }
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
+TEST_F(MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
        createSnapshotShouldThrowIfPassedSnapshotIsNullptr)
 {
     EXPECT_THROW(
@@ -64,7 +64,7 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
     );
 }
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
+TEST_F(MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
        ifPileSnapshotsAreFromSameObjectDontCreateSnapshot)
 {
     EXPECT_CALL(*snapshotMock, isSnapshotOfSameObject(Ref(*snapshotMock2)))
@@ -74,7 +74,7 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
                 snapshotMock2.make_unique()), nullptr);
 }
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest, createSnapshot) {
+TEST_F(MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest, createSnapshot) {
     auto snapshot = snapshotCreator.createSnapshotIfCardsMovedToOtherPile(
         snapshotMock2.make_unique()
     );
@@ -84,7 +84,7 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest, createSn
     snapshot->restore();
 }
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
+TEST_F(MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
        isSnapshotOfSameObjectAlwaysReturnsFalse)
 {
     auto snapshot = snapshotCreator.createSnapshotIfCardsMovedToOtherPile(
@@ -94,7 +94,7 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
     EXPECT_FALSE(snapshot->isSnapshotOfSameObject(*snapshot));
 }
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
+TEST_F(MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
        restoreSourcePileShouldThrowIfSnapshotNotCreated)
 {
     EXPECT_CALL(*snapshotMock, isSnapshotOfSameObject(Ref(*snapshotMock2)))
@@ -104,28 +104,28 @@ TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
     EXPECT_THROW(snapshotCreator.restoreSourcePile(), std::runtime_error);
 }
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
+TEST_F(MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest,
        restoreSourcePileShouldThrowIfSnapshotCreated)
 {
     snapshotCreator.createSnapshotIfCardsMovedToOtherPile(snapshotMock2.make_unique());
     EXPECT_THROW(snapshotCreator.restoreSourcePile(), std::runtime_error);
 }
 
-class DefaultMoveCardsOperationSnapshotCreatorWithRestoredSourcePileTest:
-    public DefaultMoveCardsOperationSnapshotCreatorWithSavedSourcePileTest
+class MoveCardsOperationSnapshotCreatorWithRestoredSourcePileTest:
+    public MoveCardsOperationSnapshotCreatorWithSavedSourcePileTest
 {
 public:
-    DefaultMoveCardsOperationSnapshotCreatorWithRestoredSourcePileTest() {
+    MoveCardsOperationSnapshotCreatorWithRestoredSourcePileTest() {
         EXPECT_CALL(*snapshotMock, restore());
         snapshotCreator.restoreSourcePile();
     }
 };
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithRestoredSourcePileTest, restoreSourcePile)
+TEST_F(MoveCardsOperationSnapshotCreatorWithRestoredSourcePileTest, restoreSourcePile)
 {
 }
 
-TEST_F(DefaultMoveCardsOperationSnapshotCreatorWithRestoredSourcePileTest,
+TEST_F(MoveCardsOperationSnapshotCreatorWithRestoredSourcePileTest,
        restoreSourcePileShouldThrowIfAlreadyRestored)
 {
     EXPECT_THROW(snapshotCreator.restoreSourcePile(), std::runtime_error);

@@ -7,8 +7,8 @@
 #include "DefaultContext.h"
 #include "DefaultSolitaire.h"
 #include "Layout.h"
-#include "archivers/DefaultMoveCardsOperationSnapshotCreator.h"
 #include "archivers/HistoryTracker.h"
+#include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
 #include "colliders/DefaultFoundationPileCollider.h"
 #include "events/SDLEventsSource.h"
@@ -70,7 +70,7 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
         std::make_shared<DefaultStockPile>(),
         foundationPiles, tableauPiles,
         std::make_unique<HistoryTracker>(),
-        std::make_unique<DefaultMoveCardsOperationSnapshotCreator>()
+        std::make_unique<MoveCardsOperationSnapshotCreator>()
     );
 }
 

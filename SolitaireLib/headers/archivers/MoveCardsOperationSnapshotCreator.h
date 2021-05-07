@@ -5,7 +5,7 @@
 
 namespace solitaire::archivers {
 
-class DefaultMoveCardsOperationSnapshotCreator:
+class MoveCardsOperationSnapshotCreator:
     public interfaces::MoveCardsOperationSnapshotCreator
 {
 private:
@@ -26,7 +26,7 @@ private:
     std::unique_ptr<interfaces::Snapshot> sourcePileSnapshot;
 };
 
-class DefaultMoveCardsOperationSnapshotCreator::Snapshot: public interfaces::Snapshot {
+class MoveCardsOperationSnapshotCreator::Snapshot: public interfaces::Snapshot {
 public:
     Snapshot(std::unique_ptr<interfaces::Snapshot> sourcePileSnapshot,
              std::unique_ptr<interfaces::Snapshot> destinationPileSnapshot);
