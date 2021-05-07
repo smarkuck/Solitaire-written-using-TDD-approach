@@ -5,9 +5,9 @@
 
 namespace solitaire::colliders {
 
-class DefaultFoundationPileCollider: public interfaces::FoundationPileCollider {
+class FoundationPileCollider: public interfaces::FoundationPileCollider {
 public:
-    DefaultFoundationPileCollider(const geometry::Position&);
+    FoundationPileCollider(const geometry::Position&);
 
     geometry::Position getPosition() const override;
     bool collidesWithPoint(const geometry::Position&) const override;

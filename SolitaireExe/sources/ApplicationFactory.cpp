@@ -10,7 +10,7 @@
 #include "archivers/HistoryTracker.h"
 #include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
-#include "colliders/DefaultFoundationPileCollider.h"
+#include "colliders/FoundationPileCollider.h"
 #include "events/SDLEventsSource.h"
 #include "events/DefaultEventsProcessor.h"
 #include "graphics/DefaultRenderer.h"
@@ -49,7 +49,7 @@ std::unique_ptr<Context> ApplicationFactory::makeContext() const {
     DefaultContext::FoundationPileColliders foundationPileColliders;
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
         foundationPileColliders[id] =
-            std::make_unique<DefaultFoundationPileCollider>(
+            std::make_unique<FoundationPileCollider>(
                 Layout::getFoundationPilePosition(id));
 
     return std::make_unique<DefaultContext>(

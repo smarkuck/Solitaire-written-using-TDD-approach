@@ -13,7 +13,7 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/cards/ShuffledDeckGeneratorTests.cpp
     sources/cards/SuitTests.cpp
     sources/cards/ValueTests.cpp
-    sources/colliders/DefaultFoundationPileColliderTests.cpp
+    sources/colliders/FoundationPileColliderTests.cpp
     sources/events/DefaultEventsProcessorTests.cpp
     sources/events/EventsDefinitionsTests.cpp
     sources/events/SDLEventsSourceTests.cpp

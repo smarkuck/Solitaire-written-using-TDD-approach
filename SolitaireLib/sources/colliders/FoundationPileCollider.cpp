@@ -1,20 +1,20 @@
 #include "Layout.h"
-#include "colliders/DefaultFoundationPileCollider.h"
+#include "colliders/FoundationPileCollider.h"
 
 using namespace solitaire::geometry;
 
 namespace solitaire::colliders {
 
-DefaultFoundationPileCollider::DefaultFoundationPileCollider(
+FoundationPileCollider::FoundationPileCollider(
     const Position& position):
         position {position} {
 }
 
-Position DefaultFoundationPileCollider::getPosition() const {
+Position FoundationPileCollider::getPosition() const {
     return position;
 }
 
-bool DefaultFoundationPileCollider::collidesWithPoint(
+bool FoundationPileCollider::collidesWithPoint(
     const geometry::Position& position) const
 {
     return position.x >= this->position.x and
@@ -23,7 +23,7 @@ bool DefaultFoundationPileCollider::collidesWithPoint(
            position.y < this->position.y + Layout::cardSize.height;
 }
 
-bool DefaultFoundationPileCollider::collidesWithCard(
+bool FoundationPileCollider::collidesWithCard(
     const geometry::Position& position) const
 {
     return std::abs(position.x - this->position.x) < Layout::cardSize.width and
