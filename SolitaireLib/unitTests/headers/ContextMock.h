@@ -15,11 +15,11 @@ public:
     MOCK_METHOD(Solitaire&, getSolitaire, (), (override));
     MOCK_METHOD(const Solitaire&, getSolitaire, (), (const, override));
 
-    MOCK_METHOD(colliders::FoundationPileCollider&,
-    getFoundationPileCollider, (const piles::PileId), (override));
+    MOCK_METHOD(colliders::interfaces::FoundationPileCollider&,
+                getFoundationPileCollider, (const piles::PileId), (override));
 
-    MOCK_METHOD(const colliders::FoundationPileCollider&,
-    getFoundationPileCollider, (const piles::PileId), (const, override));
+    MOCK_METHOD(const colliders::interfaces::FoundationPileCollider&,
+                getFoundationPileCollider, (const piles::PileId), (const, override));
 
     MOCK_METHOD(geometry::Position, getMousePosition, (), (const, override));
     MOCK_METHOD(geometry::Position, getCardsInHandPosition, (), (const, override));

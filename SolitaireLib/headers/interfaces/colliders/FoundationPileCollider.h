@@ -6,7 +6,7 @@ namespace geometry {
 struct Position;
 }
 
-namespace colliders {
+namespace colliders::interfaces {
 
 class FoundationPileCollider {
 public:

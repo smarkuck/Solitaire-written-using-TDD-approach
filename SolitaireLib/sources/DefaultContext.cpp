@@ -1,9 +1,9 @@
 #include "DefaultContext.h"
 #include "Solitaire.h"
-#include "colliders/FoundationPileCollider.h"
+#include "interfaces/colliders/FoundationPileCollider.h"
 #include "piles/PileId.h"
 
-using namespace solitaire::colliders;
+using namespace solitaire::colliders::interfaces;
 using namespace solitaire::geometry;
 using namespace solitaire::piles;
 

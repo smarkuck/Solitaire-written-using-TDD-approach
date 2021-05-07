@@ -1,9 +1,9 @@
 #include "Context.h"
 #include "Solitaire.h"
-#include "colliders/FoundationPileCollider.h"
 #include "events/DefaultEventsProcessor.h"
 #include "events/EventsDefinitions.h"
 #include "events/EventsSource.h"
+#include "interfaces/colliders/FoundationPileCollider.h"
 #include "piles/PileId.h"
 
 using namespace solitaire::geometry;

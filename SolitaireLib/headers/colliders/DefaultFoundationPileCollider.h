@@ -1,11 +1,11 @@
 #pragma once
 
-#include "colliders/FoundationPileCollider.h"
 #include "geometry/Position.h"
+#include "interfaces/colliders/FoundationPileCollider.h"
 
 namespace solitaire::colliders {
 
-class DefaultFoundationPileCollider: public FoundationPileCollider {
+class DefaultFoundationPileCollider: public interfaces::FoundationPileCollider {
 public:
     DefaultFoundationPileCollider(const geometry::Position&);
 

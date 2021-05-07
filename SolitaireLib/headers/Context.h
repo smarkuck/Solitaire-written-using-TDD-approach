@@ -4,7 +4,7 @@ namespace solitaire {
 
 class Solitaire;
 
-namespace colliders {
+namespace colliders::interfaces {
 class FoundationPileCollider;
 }
 
@@ -26,10 +26,10 @@ public:
     virtual Solitaire& getSolitaire() = 0;
     virtual const Solitaire& getSolitaire() const = 0;
 
-    virtual colliders::FoundationPileCollider&
+    virtual colliders::interfaces::FoundationPileCollider&
     getFoundationPileCollider(const piles::PileId) = 0;
 
-    virtual const colliders::FoundationPileCollider&
+    virtual const colliders::interfaces::FoundationPileCollider&
     getFoundationPileCollider(const piles::PileId) const = 0;
 
     virtual geometry::Position getMousePosition() const = 0;

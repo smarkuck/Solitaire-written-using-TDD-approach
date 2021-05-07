@@ -12,7 +12,7 @@ namespace solitaire {
 class DefaultContext: public Context {
 public:
     using FoundationPileColliders = std::array<
-        std::unique_ptr<colliders::FoundationPileCollider>,
+        std::unique_ptr<colliders::interfaces::FoundationPileCollider>,
         Solitaire::foundationPilesCount>;
 
     DefaultContext(std::unique_ptr<Solitaire>, FoundationPileColliders);
@@ -23,10 +23,10 @@ public:
     Solitaire& getSolitaire() override;
     const Solitaire& getSolitaire() const override;
 
-    colliders::FoundationPileCollider&
+    colliders::interfaces::FoundationPileCollider&
     getFoundationPileCollider(const piles::PileId) override;
 
-    const colliders::FoundationPileCollider&
+    const colliders::interfaces::FoundationPileCollider&
     getFoundationPileCollider(const piles::PileId) const override;
 
     geometry::Position getMousePosition() const override;
