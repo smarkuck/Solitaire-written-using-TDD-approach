@@ -15,9 +15,9 @@ target_sources(SolitaireLib PRIVATE
     sources/events/SDLEventsSource.cpp
     sources/graphics/Renderer.cpp
     sources/graphics/SDLGraphicsSystem.cpp
-    sources/piles/DefaultFoundationPile.cpp
     sources/piles/DefaultStockPile.cpp
     sources/piles/DefaultTableauPile.cpp
+    sources/piles/FoundationPile.cpp
     sources/SDL/DefaultWrapper.cpp
     sources/SDL/PtrDeleter.cpp
     sources/time/ChronoFPSLimiter.cpp

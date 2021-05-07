@@ -3,7 +3,7 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "gmock/gmock.h"
-#include "piles/DefaultFoundationPile.h"
+#include "piles/FoundationPile.h"
 
 using namespace testing;
 using namespace solitaire::archivers;
@@ -11,24 +11,24 @@ using namespace solitaire::cards;
 
 namespace solitaire::piles {
 
-TEST(DefaultFoundationPileTest,
+TEST(FoundationPileTest,
      throwExceptionOnSnapshotCreationWhenPileNotCreatedBySharedPtr)
 {
-    DefaultFoundationPile pile;
+    FoundationPile pile;
     EXPECT_THROW(pile.createSnapshot(), std::bad_weak_ptr);
 }
 
-class EmptyDefaultFoundationPileTest: public Test {
+class EmptyFoundationPileTest: public Test {
 public:
-    std::shared_ptr<DefaultFoundationPile> pile {std::make_shared<DefaultFoundationPile>()};
+    std::shared_ptr<FoundationPile> pile {std::make_shared<FoundationPile>()};
 };
 
-TEST_F(EmptyDefaultFoundationPileTest, createPile) {
+TEST_F(EmptyFoundationPileTest, createPile) {
     EXPECT_TRUE(pile->getCards().empty());
     EXPECT_EQ(pile->getTopCardValue(), std::nullopt);
 }
 
-TEST_F(EmptyDefaultFoundationPileTest, tryAddNotCard) {
+TEST_F(EmptyFoundationPileTest, tryAddNotCard) {
     std::optional<Card> notCard = std::nullopt;
 
     pile->tryAddCard(notCard);
@@ -37,7 +37,7 @@ TEST_F(EmptyDefaultFoundationPileTest, tryAddNotCard) {
     EXPECT_TRUE(pile->getCards().empty());
 }
 
-TEST_F(EmptyDefaultFoundationPileTest, tryAddNotAce) {
+TEST_F(EmptyFoundationPileTest, tryAddNotAce) {
     const Card cardToAddAfterOperation {Value::Two, Suit::Heart};
     std::optional<Card> cardToAdd = cardToAddAfterOperation;
 
@@ -47,7 +47,7 @@ TEST_F(EmptyDefaultFoundationPileTest, tryAddNotAce) {
     EXPECT_TRUE(pile->getCards().empty());
 }
 
-TEST_F(EmptyDefaultFoundationPileTest, tryAddAce) {
+TEST_F(EmptyFoundationPileTest, tryAddAce) {
     const Cards pileCards {
         Card {Value::Ace, Suit::Heart}
     };
@@ -61,14 +61,14 @@ TEST_F(EmptyDefaultFoundationPileTest, tryAddAce) {
     EXPECT_EQ(pile->getTopCardValue(), Value::Ace);
 }
 
-TEST_F(EmptyDefaultFoundationPileTest, tryPullOutCard) {
+TEST_F(EmptyFoundationPileTest, tryPullOutCard) {
     EXPECT_EQ(pile->tryPullOutCard(), std::nullopt);
     EXPECT_TRUE(pile->getCards().empty());
 }
 
-class DefaultFoundationPileWithAceTest: public EmptyDefaultFoundationPileTest {
+class FoundationPileWithAceTest: public EmptyFoundationPileTest {
 public:
-    DefaultFoundationPileWithAceTest() {
+    FoundationPileWithAceTest() {
         std::optional<Card> cardToAdd = pileCards.front();
         pile->tryAddCard(cardToAdd);
     }
@@ -78,7 +78,7 @@ public:
     };
 };
 
-TEST_F(DefaultFoundationPileWithAceTest, tryAddSameCardAsOnTopOfPile) {
+TEST_F(FoundationPileWithAceTest, tryAddSameCardAsOnTopOfPile) {
     const auto sameCardAsOnTopOfPile = pileCards.back();
     std::optional<Card> cardToAdd = sameCardAsOnTopOfPile;
 
@@ -88,7 +88,7 @@ TEST_F(DefaultFoundationPileWithAceTest, tryAddSameCardAsOnTopOfPile) {
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(DefaultFoundationPileWithAceTest,
+TEST_F(FoundationPileWithAceTest,
        tryAddCardWithValueTwoGreaterThanOnTopOfPile)
 {
     const Card cardWithValueTwoGreaterThanOnTopOfPile {Value::Three, Suit::Heart};
@@ -100,7 +100,7 @@ TEST_F(DefaultFoundationPileWithAceTest,
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(DefaultFoundationPileWithAceTest,
+TEST_F(FoundationPileWithAceTest,
        tryAddCardWithDifferentSuitThanOnTopOfPile)
 {
     const Card cardWithDifferentSuitThanOnTopOfPile {Value::Two, Suit::Spade};
@@ -112,7 +112,7 @@ TEST_F(DefaultFoundationPileWithAceTest,
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(DefaultFoundationPileWithAceTest, tryAddTwoWithSameSuitAsOnTopOfPile) {
+TEST_F(FoundationPileWithAceTest, tryAddTwoWithSameSuitAsOnTopOfPile) {
     pileCards.push_back(Card {Value::Two, Suit::Heart});
     std::optional<Card> cardToAdd = pileCards.back();
 
@@ -123,16 +123,16 @@ TEST_F(DefaultFoundationPileWithAceTest, tryAddTwoWithSameSuitAsOnTopOfPile) {
     EXPECT_EQ(pile->getTopCardValue(), Value::Two);
 }
 
-TEST_F(DefaultFoundationPileWithAceTest, tryPullOutCard) {
+TEST_F(FoundationPileWithAceTest, tryPullOutCard) {
     const auto pulledOutCard = pileCards.back();
     EXPECT_EQ(pile->tryPullOutCard(), pulledOutCard);
     EXPECT_TRUE(pile->getCards().empty());
 }
 
-class DefaultFoundationPileWithTwoTest: public DefaultFoundationPileWithAceTest
+class FoundationPileWithTwoTest: public FoundationPileWithAceTest
 {
 public:
-    DefaultFoundationPileWithTwoTest() {
+    FoundationPileWithTwoTest() {
         pileCards.push_back(Card {Value::Two, Suit::Heart});
 
         std::optional<Card> cardToAdd = pileCards.back();
@@ -140,7 +140,7 @@ public:
     }
 };
 
-TEST_F(DefaultFoundationPileWithTwoTest, tryPullOutCard) {
+TEST_F(FoundationPileWithTwoTest, tryPullOutCard) {
     const Card pulledOutCard = pileCards.back();
     pileCards.pop_back();
 
@@ -148,14 +148,14 @@ TEST_F(DefaultFoundationPileWithTwoTest, tryPullOutCard) {
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
 }
 
-TEST_F(DefaultFoundationPileWithTwoTest, initializePileAfterOperations) {
+TEST_F(FoundationPileWithTwoTest, initializePileAfterOperations) {
     pile->initialize();
 
     EXPECT_TRUE(pile->getCards().empty());
     EXPECT_EQ(pile->getTopCardValue(), std::nullopt);
 }
 
-TEST_F(DefaultFoundationPileWithTwoTest, restorePileStateUsingSnapshot) {
+TEST_F(FoundationPileWithTwoTest, restorePileStateUsingSnapshot) {
     const auto snapshot = pile->createSnapshot();
     pile->initialize();
     snapshot->restore();
@@ -164,11 +164,11 @@ TEST_F(DefaultFoundationPileWithTwoTest, restorePileStateUsingSnapshot) {
     EXPECT_EQ(pile->getTopCardValue(), pileCards.back().getValue());
 }
 
-TEST_F(DefaultFoundationPileWithTwoTest, isSnapshotOfSameObject) {
+TEST_F(FoundationPileWithTwoTest, isSnapshotOfSameObject) {
     const auto snapshot = pile->createSnapshot();
     pile->initialize();
     const auto snapshotOfSameObject = pile->createSnapshot();
-    const auto snapshotOfSameTypeObject = std::make_shared<DefaultFoundationPile>()->createSnapshot();
+    const auto snapshotOfSameTypeObject = std::make_shared<FoundationPile>()->createSnapshot();
     SnapshotMock snapshotOfDifferentTypeObject;
 
     EXPECT_TRUE(snapshot->isSnapshotOfSameObject(*snapshotOfSameObject));

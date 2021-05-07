@@ -15,9 +15,9 @@
 #include "events/SDLEventsSource.h"
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
-#include "piles/DefaultFoundationPile.h"
 #include "piles/DefaultStockPile.h"
 #include "piles/DefaultTableauPile.h"
+#include "piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "SDL/DefaultWrapper.h"
 #include "time/ChronoFPSLimiter.h"
@@ -57,7 +57,7 @@ std::unique_ptr<Context> ApplicationFactory::makeContext() const {
 std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
     Solitaire::FoundationPiles foundationPiles;
     for (auto& pile: foundationPiles)
-        pile = std::make_shared<DefaultFoundationPile>();
+        pile = std::make_shared<FoundationPile>();
 
     Solitaire::TableauPiles tableauPiles;
     for (auto& pile: tableauPiles)

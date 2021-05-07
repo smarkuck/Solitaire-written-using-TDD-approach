@@ -7,8 +7,8 @@
 
 namespace solitaire::piles {
 
-class DefaultFoundationPile: public std::enable_shared_from_this<DefaultFoundationPile>,
-                             public interfaces::FoundationPile {
+class FoundationPile: public std::enable_shared_from_this<FoundationPile>,
+                      public interfaces::FoundationPile {
 public:
     void initialize() override;
     std::unique_ptr<archivers::interfaces::Snapshot> createSnapshot() override;
@@ -29,9 +29,9 @@ private:
     cards::Cards cards;
 };
 
-class DefaultFoundationPile::Snapshot: public archivers::interfaces::Snapshot {
+class FoundationPile::Snapshot: public archivers::interfaces::Snapshot {
 public:
-    Snapshot(std::shared_ptr<DefaultFoundationPile> foundationPile,
+    Snapshot(std::shared_ptr<FoundationPile> foundationPile,
              cards::Cards pileCards);
 
     void restore() const override;
@@ -39,7 +39,7 @@ public:
         const archivers::interfaces::Snapshot&) const override;
 
 private:
-    const std::shared_ptr<DefaultFoundationPile> foundationPile;
+    const std::shared_ptr<FoundationPile> foundationPile;
     const cards::Cards pileCards;
 };
 
