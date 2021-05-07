@@ -9,11 +9,11 @@ namespace solitaire {
 
 namespace piles {
     struct PileId;
-    class TableauPile;
 
 namespace interfaces {
     class FoundationPile;
     class StockPile;
+    class TableauPile;
 }
 }
 
@@ -24,8 +24,8 @@ public:
 
     using FoundationPiles = std::array<
         std::shared_ptr<piles::interfaces::FoundationPile>, foundationPilesCount>;
-    using TableauPiles =
-        std::array<std::shared_ptr<piles::TableauPile>, tableauPilesCount>;
+    using TableauPiles = std::array<
+        std::shared_ptr<piles::interfaces::TableauPile>, tableauPilesCount>;
 
     virtual ~Solitaire() = default;
 
@@ -49,7 +49,8 @@ public:
 
     virtual const piles::interfaces::FoundationPile&
     getFoundationPile(const piles::PileId) const = 0;
-    virtual const piles::TableauPile& getTableauPile(const piles::PileId) const = 0;
+    virtual const piles::interfaces::TableauPile&
+    getTableauPile(const piles::PileId) const = 0;
     virtual const piles::interfaces::StockPile& getStockPile() const = 0;
     virtual const cards::Cards& getCardsInHand() const = 0;
 };

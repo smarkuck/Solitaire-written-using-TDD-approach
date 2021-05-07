@@ -1,12 +1,12 @@
 #pragma once
 
-#include "TableauPile.h"
 #include "interfaces/archivers/Snapshot.h"
+#include "interfaces/piles/TableauPile.h"
 
 namespace solitaire::piles {
 
 class DefaultTableauPile: public std::enable_shared_from_this<DefaultTableauPile>,
-                          public TableauPile {
+                          public interfaces::TableauPile {
 public:
     void initialize(const cards::Deck::const_iterator& begin,
                     const cards::Deck::const_iterator& end) override;

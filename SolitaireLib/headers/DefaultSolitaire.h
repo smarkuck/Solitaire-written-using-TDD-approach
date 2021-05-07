@@ -47,7 +47,8 @@ public:
 
     const piles::interfaces::FoundationPile&
     getFoundationPile(const piles::PileId) const override;
-    const piles::TableauPile& getTableauPile(const piles::PileId) const override;
+    const piles::interfaces::TableauPile&
+    getTableauPile(const piles::PileId) const override;
     const piles::interfaces::StockPile& getStockPile() const override;
     const cards::Cards& getCardsInHand() const override;
 
@@ -63,7 +64,8 @@ private:
     void tryAddPulledOutCardsToHand(cards::Cards&&, SnapshotPtr);
     void tryAddCardOnFoundationPileFromHand(
         std::shared_ptr<piles::interfaces::FoundationPile>&);
-    void tryAddCardOnTableauPileFromHand(std::shared_ptr<piles::TableauPile>&);
+    void tryAddCardOnTableauPileFromHand(
+        std::shared_ptr<piles::interfaces::TableauPile>&);
     void saveHistoryIfCardMovedToOtherPileAndClearHand(
         const std::optional<cards::Card>&, SnapshotPtr);
     void saveHistoryIfCardMovedToOtherPile(SnapshotPtr);
@@ -72,7 +74,7 @@ private:
     bool shouldAddCardOnFoundationPile() const;
     bool isCardAdded(const std::optional<cards::Card>&) const;
     bool shouldUncoverTableauPileTopCard(
-        const std::shared_ptr<piles::TableauPile>&) const;
+        const std::shared_ptr<piles::interfaces::TableauPile>&) const;
     bool shouldSelectNextStockPileCard() const;
     bool isGameInProgressAndHandContainsCards() const;
     bool isGameInProgressAndHandIsEmpty() const;

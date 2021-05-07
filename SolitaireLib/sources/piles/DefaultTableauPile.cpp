@@ -13,7 +13,7 @@ void DefaultTableauPile::initialize(const Deck::const_iterator& begin,
     topCoveredCardPosition = cards.empty() ? 0 : cards.size() - 1;
 }
 
-std::unique_ptr<interfaces::Snapshot> DefaultTableauPile::createSnapshot() {
+std::unique_ptr<archivers::interfaces::Snapshot> DefaultTableauPile::createSnapshot() {
     return std::make_unique<Snapshot>(shared_from_this(), cards,
                                       topCoveredCardPosition);
 }
@@ -89,7 +89,7 @@ void DefaultTableauPile::Snapshot::restore() const {
 }
 
 bool DefaultTableauPile::Snapshot::isSnapshotOfSameObject(
-    const interfaces::Snapshot& snapshot) const
+    const archivers::interfaces::Snapshot& snapshot) const
 try {
     const auto& castedSnaphost =
         dynamic_cast<const Snapshot&>(snapshot);

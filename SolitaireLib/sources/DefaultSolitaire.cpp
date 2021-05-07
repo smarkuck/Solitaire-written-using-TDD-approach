@@ -9,8 +9,8 @@
 #include "interfaces/cards/DeckGenerator.h"
 #include "interfaces/piles/FoundationPile.h"
 #include "interfaces/piles/StockPile.h"
+#include "interfaces/piles/TableauPile.h"
 #include "piles/PileId.h"
-#include "piles/TableauPile.h"
 
 using namespace solitaire::archivers::interfaces;
 using namespace solitaire::cards;

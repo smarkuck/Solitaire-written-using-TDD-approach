@@ -1,11 +1,11 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "piles/TableauPile.h"
+#include "interfaces/piles/TableauPile.h"
 
 namespace solitaire::piles {
 
-class TableauPileMock: public TableauPile {
+class TableauPileMock: public interfaces::TableauPile {
 public:
     MOCK_METHOD(void, initialize, (const cards::Deck::const_iterator&,
                                    const cards::Deck::const_iterator&), (override));

@@ -28,7 +28,7 @@ public:
 
     MOCK_METHOD(const piles::interfaces::FoundationPile&, getFoundationPile,
                 (const piles::PileId), (const, override));
-    MOCK_METHOD(const piles::TableauPile&, getTableauPile,
+    MOCK_METHOD(const piles::interfaces::TableauPile&, getTableauPile,
                 (const piles::PileId), (const, override));
     MOCK_METHOD(const piles::interfaces::StockPile&, getStockPile, (), (const, override));
     MOCK_METHOD(const cards::Cards&, getCardsInHand, (), (const, override));

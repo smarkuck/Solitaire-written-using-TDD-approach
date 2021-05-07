@@ -12,8 +12,8 @@
 #include "interfaces/graphics/GraphicsSystem.h"
 #include "interfaces/piles/FoundationPile.h"
 #include "interfaces/piles/StockPile.h"
+#include "interfaces/piles/TableauPile.h"
 #include "piles/PileId.h"
-#include "piles/TableauPile.h"
 
 using namespace solitaire::cards;
 using namespace solitaire::geometry;
