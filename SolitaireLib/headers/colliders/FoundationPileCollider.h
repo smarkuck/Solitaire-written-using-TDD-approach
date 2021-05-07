@@ -14,7 +14,7 @@ public:
     bool collidesWithCard(const geometry::Position&) const override;
 
 private:
-    geometry::Position position;
+    const geometry::Position position;
 };
 
 }
