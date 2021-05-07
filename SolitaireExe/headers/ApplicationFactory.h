@@ -7,6 +7,7 @@ namespace solitaire {
 class Application;
 
 namespace interfaces {
+class Context;
 class Solitaire;
 }
 
@@ -28,14 +29,14 @@ public:
     solitaire::Application make() const;
 
 private:
-    std::unique_ptr<solitaire::Context> makeContext() const;
+    std::unique_ptr<solitaire::interfaces::Context> makeContext() const;
     std::unique_ptr<solitaire::interfaces::Solitaire> makeSolitaire() const;
 
     std::unique_ptr<solitaire::events::interfaces::EventsProcessor>
-    makeEventsProcessor(solitaire::Context&) const;
+    makeEventsProcessor(solitaire::interfaces::Context&) const;
 
     std::unique_ptr<solitaire::graphics::interfaces::Renderer>
-    makeRenderer(const solitaire::Context&) const;
+    makeRenderer(const solitaire::interfaces::Context&) const;
 
     std::unique_ptr<solitaire::time::interfaces::FPSLimiter>
     makeFPSLimiter() const;

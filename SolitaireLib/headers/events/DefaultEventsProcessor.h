@@ -7,10 +7,13 @@
 
 namespace solitaire {
 
-class Context;
-
 namespace interfaces {
+class Context;
 class Solitaire;
+}
+
+namespace geometry {
+struct Position;
 }
 
 namespace events {
@@ -21,7 +24,8 @@ class EventsSource;
 
 class DefaultEventsProcessor: public interfaces::EventsProcessor {
 public:
-    DefaultEventsProcessor(Context&, std::unique_ptr<interfaces::EventsSource>);
+    DefaultEventsProcessor(solitaire::interfaces::Context&,
+                           std::unique_ptr<interfaces::EventsSource>);
 
     void processEvents() override;
     bool shouldQuit() const override;
@@ -38,7 +42,7 @@ private:
     bool eventOccured(const Event& event) const;
     bool receivedQuitEvent {false};
 
-    Context& context;
+    solitaire::interfaces::Context& context;
     std::unique_ptr<interfaces::EventsSource> eventsSource;
 };
 

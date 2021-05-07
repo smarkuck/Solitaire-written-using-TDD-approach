@@ -3,13 +3,13 @@
 #include <array>
 #include <memory>
 
-#include "Context.h"
 #include "geometry/Position.h"
+#include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 
 namespace solitaire {
 
-class DefaultContext: public Context {
+class DefaultContext: public interfaces::Context {
 public:
     using FoundationPileColliders = std::array<
         std::unique_ptr<colliders::interfaces::FoundationPileCollider>,

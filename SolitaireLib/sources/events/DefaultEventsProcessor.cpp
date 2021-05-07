@@ -1,6 +1,6 @@
-#include "Context.h"
 #include "events/DefaultEventsProcessor.h"
 #include "events/EventsDefinitions.h"
+#include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
 #include "interfaces/events/EventsSource.h"

@@ -10,7 +10,9 @@
 
 namespace solitaire {
 
+namespace interfaces {
 class Context;
+}
 
 namespace geometry {
 struct Area;
@@ -25,7 +27,8 @@ class GraphicsSystem;
 
 class DefaultRenderer: public interfaces::Renderer {
 public:
-    DefaultRenderer(const Context&, std::unique_ptr<interfaces::GraphicsSystem>,
+    DefaultRenderer(const solitaire::interfaces::Context&,
+                    std::unique_ptr<interfaces::GraphicsSystem>,
                     const std::string& assetsPath);
 
     void render() const override;
@@ -65,7 +68,7 @@ private:
     void throwOnInvalidSelectedCardIndex(const cards::Cards&,
                                          const SelectedCardIndex&) const;
 
-    const Context& context;
+    const solitaire::interfaces::Context& context;
     std::unique_ptr<interfaces::GraphicsSystem> graphicsSystem;
     const std::string assetsPath;
 

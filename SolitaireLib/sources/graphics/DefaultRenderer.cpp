@@ -1,12 +1,12 @@
 #include <array>
 
-#include "Context.h"
 #include "Layout.h"
 #include "cards/Card.h"
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "geometry/Area.h"
 #include "graphics/DefaultRenderer.h"
+#include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
 #include "interfaces/graphics/GraphicsSystem.h"

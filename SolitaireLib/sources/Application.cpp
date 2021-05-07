@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "Context.h"
+#include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/events/EventsProcessor.h"
 #include "interfaces/graphics/Renderer.h"
@@ -7,6 +7,7 @@
 
 using namespace solitaire::events::interfaces;
 using namespace solitaire::graphics::interfaces;
+using namespace solitaire::interfaces;
 using namespace solitaire::time::interfaces;
 
 namespace solitaire {
