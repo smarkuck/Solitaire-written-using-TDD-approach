@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "Event.h"
-#include "EventsProcessor.h"
+#include "interfaces/events/EventsProcessor.h"
 
 namespace solitaire {
 
@@ -13,7 +13,7 @@ namespace events {
 
 class EventsSource;
 
-class DefaultEventsProcessor: public EventsProcessor {
+class DefaultEventsProcessor: public interfaces::EventsProcessor {
 public:
     DefaultEventsProcessor(Context&, std::unique_ptr<EventsSource>);
 

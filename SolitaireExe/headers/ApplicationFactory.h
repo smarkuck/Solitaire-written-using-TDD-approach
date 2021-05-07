@@ -7,7 +7,7 @@ namespace solitaire {
 class Application;
 class Solitaire;
 
-namespace events {
+namespace events::interfaces {
 class EventsProcessor;
 }
 
@@ -28,7 +28,7 @@ private:
     std::unique_ptr<solitaire::Context> makeContext() const;
     std::unique_ptr<solitaire::Solitaire> makeSolitaire() const;
 
-    std::unique_ptr<solitaire::events::EventsProcessor>
+    std::unique_ptr<solitaire::events::interfaces::EventsProcessor>
     makeEventsProcessor(solitaire::Context&) const;
 
     std::unique_ptr<solitaire::graphics::Renderer>

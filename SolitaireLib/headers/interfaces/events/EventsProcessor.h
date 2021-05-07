@@ -1,6 +1,6 @@
 #pragma once
 
-namespace solitaire::events {
+namespace solitaire::events::interfaces {
 
 class EventsProcessor {
 public:

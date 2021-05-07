@@ -1,11 +1,11 @@
 #include "Application.h"
 #include "Context.h"
 #include "Solitaire.h"
-#include "events/EventsProcessor.h"
 #include "graphics/Renderer.h"
+#include "interfaces/events/EventsProcessor.h"
 #include "time/FPSLimiter.h"
 
-using namespace solitaire::events;
+using namespace solitaire::events::interfaces;
 using namespace solitaire::graphics;
 using namespace solitaire::time;
 
