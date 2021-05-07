@@ -4,8 +4,8 @@ target_include_directories(SolitaireLibUnitTests PRIVATE headers)
 target_sources(SolitaireLibUnitTests PRIVATE
     sources/ApplicationTests.cpp
     sources/ContextTests.cpp
-    sources/DefaultSolitaireTests.cpp
     sources/LayoutTests.cpp
+    sources/SolitaireTests.cpp
     sources/archivers/HistoryTrackerTests.cpp
     sources/archivers/MoveCardsOperationSnapshotCreatorTests.cpp
     sources/cards/CardTests.cpp

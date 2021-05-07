@@ -18,14 +18,13 @@ namespace solitaire::cards::interfaces {
 
 namespace solitaire {
 
-class DefaultSolitaire: public interfaces::Solitaire {
+class Solitaire: public interfaces::Solitaire {
 public:
-    DefaultSolitaire(std::unique_ptr<cards::interfaces::DeckGenerator>,
-                     std::shared_ptr<piles::interfaces::StockPile>,
-                     FoundationPiles, TableauPiles,
-                     std::unique_ptr<archivers::interfaces::HistoryTracker>,
-                     std::unique_ptr<
-                        archivers::interfaces::MoveCardsOperationSnapshotCreator>);
+    Solitaire(std::unique_ptr<cards::interfaces::DeckGenerator>,
+              std::shared_ptr<piles::interfaces::StockPile>,
+              FoundationPiles, TableauPiles,
+              std::unique_ptr<archivers::interfaces::HistoryTracker>,
+              std::unique_ptr<archivers::interfaces::MoveCardsOperationSnapshotCreator>);
 
     void startNewGame() override;
 

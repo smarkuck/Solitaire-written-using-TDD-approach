@@ -5,8 +5,8 @@
 #include "Application.h"
 #include "ApplicationFactory.h"
 #include "Context.h"
-#include "DefaultSolitaire.h"
 #include "Layout.h"
+#include "Solitaire.h"
 #include "archivers/HistoryTracker.h"
 #include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
@@ -29,7 +29,6 @@ using namespace solitaire::cards;
 using namespace solitaire::colliders;
 using namespace solitaire::events;
 using namespace solitaire::graphics;
-using namespace solitaire::interfaces;
 using namespace solitaire::piles;
 using namespace solitaire::time;
 
@@ -42,18 +41,22 @@ Application ApplicationFactory::make() const {
                         std::move(renderer), makeFPSLimiter()};
 }
 
-std::unique_ptr<solitaire::interfaces::Context> ApplicationFactory::makeContext() const {
-    solitaire::Context::FoundationPileColliders foundationPileColliders;
+std::unique_ptr<solitaire::interfaces::Context>
+ApplicationFactory::makeContext() const
+{
+    Context::FoundationPileColliders foundationPileColliders;
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
         foundationPileColliders[id] =
             std::make_unique<FoundationPileCollider>(
                 Layout::getFoundationPilePosition(id));
 
-    return std::make_unique<solitaire::Context>(
+    return std::make_unique<Context>(
         makeSolitaire(), std::move(foundationPileColliders));
 }
 
-std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
+std::unique_ptr<solitaire::interfaces::Solitaire>
+ApplicationFactory::makeSolitaire() const
+{
     Solitaire::FoundationPiles foundationPiles;
     for (auto& pile: foundationPiles)
         pile = std::make_shared<FoundationPile>();
@@ -62,7 +65,7 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
     for (auto& pile: tableauPiles)
         pile = std::make_shared<TableauPile>();
 
-    return std::make_unique<DefaultSolitaire>(
+    return std::make_unique<Solitaire>(
         std::make_unique<ShuffledDeckGenerator>(),
         std::make_shared<StockPile>(),
         foundationPiles, tableauPiles,
@@ -72,7 +75,9 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
 }
 
 std::unique_ptr<events::interfaces::EventsProcessor>
-ApplicationFactory::makeEventsProcessor(solitaire::interfaces::Context& context) const {
+ApplicationFactory::makeEventsProcessor(
+    solitaire::interfaces::Context& context) const
+{
     return std::make_unique<EventsProcessor>(
         context,
         std::make_unique<SDLEventsSource>(
@@ -82,7 +87,9 @@ ApplicationFactory::makeEventsProcessor(solitaire::interfaces::Context& context)
 }
 
 std::unique_ptr<graphics::interfaces::Renderer>
-ApplicationFactory::makeRenderer(const solitaire::interfaces::Context& context) const {
+ApplicationFactory::makeRenderer(
+    const solitaire::interfaces::Context& context) const
+{
     return std::make_unique<Renderer>(
         context,
         std::make_unique<SDLGraphicsSystem>(
