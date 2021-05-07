@@ -2,13 +2,13 @@
 #include "events/EventsDefinitions.h"
 #include "events/SDLEventsSource.h"
 #include "geometry/Position.h"
-#include "SDL/Wrapper.h"
+#include "interfaces/SDL/Wrapper.h"
 
 using namespace solitaire::geometry;
 
 namespace solitaire::events {
 
-SDLEventsSource::SDLEventsSource(std::unique_ptr<SDL::Wrapper> sdl):
+SDLEventsSource::SDLEventsSource(std::unique_ptr<SDL::interfaces::Wrapper> sdl):
     sdl {std::move(sdl)} {
 }
 

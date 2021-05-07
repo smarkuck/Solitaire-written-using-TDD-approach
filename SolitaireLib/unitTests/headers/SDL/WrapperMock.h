@@ -1,11 +1,11 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "SDL/Wrapper.h"
+#include "interfaces/SDL/Wrapper.h"
 
 namespace solitaire::SDL {
 
-class WrapperMock: public Wrapper {
+class WrapperMock: public interfaces::Wrapper {
 public:
     MOCK_METHOD(int, init, (Uint32), (const, override));
 

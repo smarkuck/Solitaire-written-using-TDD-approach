@@ -14,7 +14,7 @@ struct SDL_Window;
 
 namespace solitaire {
 
-namespace SDL {
+namespace SDL::interfaces {
 class Wrapper;
 }
 
@@ -22,7 +22,7 @@ namespace graphics {
 
 class SDLGraphicsSystem: public interfaces::GraphicsSystem {
 public:
-    SDLGraphicsSystem(std::unique_ptr<SDL::Wrapper>);
+    SDLGraphicsSystem(std::unique_ptr<SDL::interfaces::Wrapper>);
     ~SDLGraphicsSystem();
 
     void createWindow(const std::string& title, const unsigned width,
@@ -57,7 +57,7 @@ private:
 
     void throwOnInvalidTextureOperation(const TextureId) const;
 
-    std::unique_ptr<SDL::Wrapper> sdl;
+    std::unique_ptr<SDL::interfaces::Wrapper> sdl;
     SDL::UniquePtr<SDL_Window> window;
     SDL::UniquePtr<SDL_Renderer> renderer;
     std::vector<SDL::UniquePtr<SDL_Texture>> textures;

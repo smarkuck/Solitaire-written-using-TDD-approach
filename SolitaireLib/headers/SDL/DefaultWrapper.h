@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Wrapper.h"
+#include "interfaces/SDL/Wrapper.h"
 
 namespace solitaire::SDL {
 
-class DefaultWrapper: public Wrapper {
+class DefaultWrapper: public interfaces::Wrapper {
 public:
     int init(Uint32 flags) const override;
 

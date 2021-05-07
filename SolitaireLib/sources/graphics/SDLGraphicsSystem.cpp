@@ -3,14 +3,14 @@
 #include "geometry/Area.h"
 #include "graphics/SDLGraphicsSystem.h"
 #include "graphics/TextureId.h"
-#include "SDL/Wrapper.h"
+#include "interfaces/SDL/Wrapper.h"
 
 using namespace solitaire::geometry;
 using namespace solitaire::SDL;
 
 namespace solitaire::graphics {
 
-SDLGraphicsSystem::SDLGraphicsSystem(std::unique_ptr<Wrapper> sdl):
+SDLGraphicsSystem::SDLGraphicsSystem(std::unique_ptr<SDL::interfaces::Wrapper> sdl):
     sdl {std::move(sdl)} {
 }
 

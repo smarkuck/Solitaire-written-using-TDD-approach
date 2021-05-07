@@ -4,9 +4,9 @@
 #include <string>
 
 #include "SDL.h"
-#include "UniquePtr.h"
+#include "SDL/UniquePtr.h"
 
-namespace solitaire::SDL {
+namespace solitaire::SDL::interfaces {
 
 class Wrapper {
 public:

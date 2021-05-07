@@ -5,7 +5,7 @@
 
 namespace solitaire {
 
-namespace SDL {
+namespace SDL::interfaces {
 class Wrapper;
 }
 
@@ -13,12 +13,12 @@ namespace events {
 
 class SDLEventsSource: public interfaces::EventsSource {
 public:
-    SDLEventsSource(std::unique_ptr<SDL::Wrapper>);
+    SDLEventsSource(std::unique_ptr<SDL::interfaces::Wrapper>);
 
     Event getEvent() const override;
 
 private:
-    std::unique_ptr<SDL::Wrapper> sdl;
+    std::unique_ptr<SDL::interfaces::Wrapper> sdl;
 };
 
 }
