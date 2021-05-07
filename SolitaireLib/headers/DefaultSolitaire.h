@@ -21,7 +21,7 @@ namespace cards::interfaces {
 class DefaultSolitaire: public Solitaire {
 public:
     DefaultSolitaire(std::unique_ptr<cards::interfaces::DeckGenerator>,
-                     std::shared_ptr<piles::StockPile>,
+                     std::shared_ptr<piles::interfaces::StockPile>,
                      FoundationPiles, TableauPiles,
                      std::unique_ptr<archivers::interfaces::HistoryTracker>,
                      std::unique_ptr<
@@ -48,7 +48,7 @@ public:
     const piles::interfaces::FoundationPile&
     getFoundationPile(const piles::PileId) const override;
     const piles::TableauPile& getTableauPile(const piles::PileId) const override;
-    const piles::StockPile& getStockPile() const override;
+    const piles::interfaces::StockPile& getStockPile() const override;
     const cards::Cards& getCardsInHand() const override;
 
 private:
@@ -81,7 +81,7 @@ private:
     void throwExceptionOnInvalidTableauPileId(const piles::PileId) const;
 
     std::unique_ptr<cards::interfaces::DeckGenerator> deckGenerator;
-    std::shared_ptr<piles::StockPile> stockPile;
+    std::shared_ptr<piles::interfaces::StockPile> stockPile;
     FoundationPiles foundationPiles;
     TableauPiles tableauPiles;
     std::unique_ptr<archivers::interfaces::HistoryTracker> historyTracker;

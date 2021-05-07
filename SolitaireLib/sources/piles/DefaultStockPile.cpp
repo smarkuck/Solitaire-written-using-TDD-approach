@@ -13,7 +13,7 @@ void DefaultStockPile::initialize(const Deck::const_iterator& begin,
     selectedCardIndex.reset();
 }
 
-std::unique_ptr<interfaces::Snapshot> DefaultStockPile::createSnapshot() {
+std::unique_ptr<archivers::interfaces::Snapshot> DefaultStockPile::createSnapshot() {
     return std::make_unique<Snapshot>(shared_from_this(), cards, selectedCardIndex);
 }
 
@@ -67,7 +67,7 @@ void DefaultStockPile::Snapshot::restore() const {
 }
 
 bool DefaultStockPile::Snapshot::isSnapshotOfSameObject(
-    const interfaces::Snapshot& snapshot) const
+    const archivers::interfaces::Snapshot& snapshot) const
 try {
     const auto& castedSnaphost =
         dynamic_cast<const Snapshot&>(snapshot);

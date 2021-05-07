@@ -6,7 +6,7 @@
 #include "cards/Deck.h"
 #include "interfaces/archivers/Archiver.h"
 
-namespace solitaire::piles {
+namespace solitaire::piles::interfaces {
 
 class StockPile: public archivers::interfaces::Archiver {
 public:

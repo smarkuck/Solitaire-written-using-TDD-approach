@@ -1,12 +1,12 @@
 #pragma once
 
-#include "StockPile.h"
 #include "interfaces/archivers/Snapshot.h"
+#include "interfaces/piles/StockPile.h"
 
 namespace solitaire::piles {
 
 class DefaultStockPile: public std::enable_shared_from_this<DefaultStockPile>,
-                        public StockPile {
+                        public interfaces::StockPile {
 public:
     void initialize(const cards::Deck::const_iterator& begin,
                     const cards::Deck::const_iterator& end) override;

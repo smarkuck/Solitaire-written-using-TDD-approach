@@ -9,11 +9,11 @@ namespace solitaire {
 
 namespace piles {
     struct PileId;
-    class StockPile;
     class TableauPile;
 
 namespace interfaces {
     class FoundationPile;
+    class StockPile;
 }
 }
 
@@ -50,7 +50,7 @@ public:
     virtual const piles::interfaces::FoundationPile&
     getFoundationPile(const piles::PileId) const = 0;
     virtual const piles::TableauPile& getTableauPile(const piles::PileId) const = 0;
-    virtual const piles::StockPile& getStockPile() const = 0;
+    virtual const piles::interfaces::StockPile& getStockPile() const = 0;
     virtual const cards::Cards& getCardsInHand() const = 0;
 };
 

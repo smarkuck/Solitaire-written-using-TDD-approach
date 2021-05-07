@@ -1,11 +1,11 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "piles/StockPile.h"
+#include "interfaces/piles/StockPile.h"
 
 namespace solitaire::piles {
 
-class StockPileMock: public StockPile {
+class StockPileMock: public interfaces::StockPile {
 public:
     MOCK_METHOD(void, initialize, (const cards::Deck::const_iterator&,
                                    const cards::Deck::const_iterator&), (override));
