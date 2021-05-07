@@ -1,12 +1,12 @@
 #pragma once
 
-#include "archivers/Archiver.h"
 #include "cards/Cards.h"
 #include "cards/Deck.h"
+#include "interfaces/archivers/Archiver.h"
 
 namespace solitaire::piles {
 
-class TableauPile: public archivers::Archiver {
+class TableauPile: public archivers::interfaces::Archiver {
 public:
     virtual ~TableauPile() = default;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "StockPile.h"
-#include "archivers/Snapshot.h"
+#include "interfaces/archivers/Snapshot.h"
 
 namespace solitaire::piles {
 
@@ -11,7 +11,7 @@ public:
     void initialize(const cards::Deck::const_iterator& begin,
                     const cards::Deck::const_iterator& end) override;
 
-    std::unique_ptr<archivers::Snapshot> createSnapshot() override;
+    std::unique_ptr<archivers::interfaces::Snapshot> createSnapshot() override;
 
     void trySelectNextCard() override;
     std::optional<cards::Card> tryPullOutCard() override;
@@ -29,13 +29,14 @@ private:
     std::optional<unsigned> selectedCardIndex;
 };
 
-class DefaultStockPile::Snapshot: public archivers::Snapshot {
+class DefaultStockPile::Snapshot: public archivers::interfaces::Snapshot {
 public:
     Snapshot(std::shared_ptr<DefaultStockPile>, cards::Cards,
              std::optional<unsigned> selectedCardIndex);
 
     void restore() const override;
-    bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
+    bool isSnapshotOfSameObject(
+        const archivers::interfaces::Snapshot&) const override;
 
 private:
     const std::shared_ptr<DefaultStockPile> stockPile;

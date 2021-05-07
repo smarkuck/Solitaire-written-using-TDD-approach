@@ -4,9 +4,9 @@
 #include "DefaultSolitaire.h"
 #include "archivers/HistoryTracker.h"
 #include "archivers/MoveCardsOperationSnapshotCreator.h"
-#include "archivers/Snapshot.h"
 #include "cards/DeckGenerator.h"
 #include "cards/Value.h"
+#include "interfaces/archivers/Snapshot.h"
 #include "piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "piles/StockPile.h"
@@ -151,7 +151,7 @@ void DefaultSolitaire::tryPullOutCardsFromTableauPile(
 }
 
 void DefaultSolitaire::tryAddPulledOutCardsToHand(
-    cards::Cards&& cards, std::unique_ptr<archivers::Snapshot> snapshot)
+    cards::Cards&& cards, SnapshotPtr snapshot)
 {
     if (not cards.empty()) {
         moveCardsOperationSnapshotCreator->saveSourcePileSnapshot(std::move(snapshot));

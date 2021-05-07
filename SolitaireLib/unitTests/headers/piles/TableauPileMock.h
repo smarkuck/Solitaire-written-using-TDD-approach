@@ -9,7 +9,8 @@ class TableauPileMock: public TableauPile {
 public:
     MOCK_METHOD(void, initialize, (const cards::Deck::const_iterator&,
                                    const cards::Deck::const_iterator&), (override));
-    MOCK_METHOD(std::unique_ptr<archivers::Snapshot>, createSnapshot, (), (override));
+    MOCK_METHOD(std::unique_ptr<archivers::interfaces::Snapshot>,
+                createSnapshot, (), (override));
     MOCK_METHOD(void, tryUncoverTopCard, (), (override));
     MOCK_METHOD(void, tryAddCards, (cards::Cards&), (override));
     MOCK_METHOD(cards::Cards, tryPullOutCards, (unsigned), (override));

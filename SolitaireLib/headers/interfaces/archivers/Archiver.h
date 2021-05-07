@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace solitaire::archivers {
+namespace solitaire::archivers::interfaces {
 
 class Snapshot;
 

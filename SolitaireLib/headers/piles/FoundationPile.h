@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "archivers/Archiver.h"
 #include "cards/Cards.h"
+#include "interfaces/archivers/Archiver.h"
 
 namespace solitaire {
 
@@ -13,7 +13,7 @@ namespace cards {
 
 namespace piles {
 
-class FoundationPile: public archivers::Archiver {
+class FoundationPile: public archivers::interfaces::Archiver {
 public:
     virtual ~FoundationPile() = default;
 

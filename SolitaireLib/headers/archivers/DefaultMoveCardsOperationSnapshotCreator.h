@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MoveCardsOperationSnapshotCreator.h"
-#include "Snapshot.h"
+#include "interfaces/archivers/Snapshot.h"
 
 namespace solitaire::archivers {
 
@@ -12,31 +12,31 @@ private:
     class Snapshot;
 
 public:
-    std::unique_ptr<archivers::Snapshot> createSnapshotIfCardsMovedToOtherPile(
-        std::unique_ptr<archivers::Snapshot> destinationPileSnapshot) override;
+    std::unique_ptr<interfaces::Snapshot> createSnapshotIfCardsMovedToOtherPile(
+        std::unique_ptr<interfaces::Snapshot> destinationPileSnapshot) override;
 
-    void saveSourcePileSnapshot(std::unique_ptr<archivers::Snapshot>) override;
+    void saveSourcePileSnapshot(std::unique_ptr<interfaces::Snapshot>) override;
     void restoreSourcePile() override;
 
 private:
     void throwIfSourcePileSnapshotIsNullptr() const;
     void throwIfSourcePileSnapshotIsNotNullptr() const;
-    void throwIfSnapshotIsNullptr(const std::unique_ptr<archivers::Snapshot>&) const;
+    void throwIfSnapshotIsNullptr(const std::unique_ptr<interfaces::Snapshot>&) const;
 
-    std::unique_ptr<archivers::Snapshot> sourcePileSnapshot;
+    std::unique_ptr<interfaces::Snapshot> sourcePileSnapshot;
 };
 
-class DefaultMoveCardsOperationSnapshotCreator::Snapshot: public archivers::Snapshot {
+class DefaultMoveCardsOperationSnapshotCreator::Snapshot: public interfaces::Snapshot {
 public:
-    Snapshot(std::unique_ptr<archivers::Snapshot> sourcePileSnapshot,
-             std::unique_ptr<archivers::Snapshot> destinationPileSnapshot);
+    Snapshot(std::unique_ptr<interfaces::Snapshot> sourcePileSnapshot,
+             std::unique_ptr<interfaces::Snapshot> destinationPileSnapshot);
 
     void restore() const override;
-    bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
+    bool isSnapshotOfSameObject(const interfaces::Snapshot&) const override;
 
 private:
-    std::unique_ptr<archivers::Snapshot> sourcePileSnapshot;
-    std::unique_ptr<archivers::Snapshot> destinationPileSnapshot;
+    std::unique_ptr<interfaces::Snapshot> sourcePileSnapshot;
+    std::unique_ptr<interfaces::Snapshot> destinationPileSnapshot;
 };
 
 }

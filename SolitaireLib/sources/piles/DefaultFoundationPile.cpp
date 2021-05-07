@@ -2,6 +2,7 @@
 #include "cards/Value.h"
 #include "piles/DefaultFoundationPile.h"
 
+using namespace solitaire::archivers;
 using namespace solitaire::cards;
 
 namespace solitaire::piles {
@@ -10,7 +11,7 @@ void DefaultFoundationPile::initialize() {
     cards.clear();
 }
 
-std::unique_ptr<archivers::Snapshot> DefaultFoundationPile::createSnapshot() {
+std::unique_ptr<interfaces::Snapshot> DefaultFoundationPile::createSnapshot() {
     return std::make_unique<Snapshot>(shared_from_this(), cards);
 }
 
@@ -68,10 +69,10 @@ void DefaultFoundationPile::Snapshot::restore() const {
 }
 
 bool DefaultFoundationPile::Snapshot::isSnapshotOfSameObject(
-    const archivers::Snapshot& snapshot) const
+    const interfaces::Snapshot& snapshot) const
 try {
     const auto& castedSnaphost =
-        dynamic_cast<const DefaultFoundationPile::Snapshot&>(snapshot);
+        dynamic_cast<const Snapshot&>(snapshot);
     return foundationPile == castedSnaphost.foundationPile;
 }
 catch (const std::bad_cast&) {

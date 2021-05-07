@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "FoundationPile.h"
-#include "archivers/Snapshot.h"
+#include "interfaces/archivers/Snapshot.h"
 
 namespace solitaire::piles {
 
@@ -11,7 +11,7 @@ class DefaultFoundationPile: public std::enable_shared_from_this<DefaultFoundati
                              public FoundationPile {
 public:
     void initialize() override;
-    std::unique_ptr<archivers::Snapshot> createSnapshot() override;
+    std::unique_ptr<archivers::interfaces::Snapshot> createSnapshot() override;
 
     void tryAddCard(std::optional<cards::Card>& cardToAdd) override;
     std::optional<cards::Card> tryPullOutCard() override;
@@ -29,13 +29,14 @@ private:
     cards::Cards cards;
 };
 
-class DefaultFoundationPile::Snapshot: public archivers::Snapshot {
+class DefaultFoundationPile::Snapshot: public archivers::interfaces::Snapshot {
 public:
     Snapshot(std::shared_ptr<DefaultFoundationPile> foundationPile,
              cards::Cards pileCards);
 
     void restore() const override;
-    bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
+    bool isSnapshotOfSameObject(
+        const archivers::interfaces::Snapshot&) const override;
 
 private:
     const std::shared_ptr<DefaultFoundationPile> foundationPile;

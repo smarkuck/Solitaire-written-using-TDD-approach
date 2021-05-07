@@ -11,7 +11,10 @@ namespace solitaire {
 namespace archivers {
     class HistoryTracker;
     class MoveCardsOperationSnapshotCreator;
+
+namespace interfaces {
     class Snapshot;
+}
 }
 
 namespace cards {
@@ -50,7 +53,7 @@ public:
     const cards::Cards& getCardsInHand() const override;
 
 private:
-    using SnapshotPtr = std::unique_ptr<archivers::Snapshot>;
+    using SnapshotPtr = std::unique_ptr<archivers::interfaces::Snapshot>;
 
     void initializeFoundationPiles();
 

@@ -1,6 +1,7 @@
 #include "cards/Card.h"
 #include "piles/DefaultStockPile.h"
 
+using namespace solitaire::archivers;
 using namespace solitaire::cards;
 
 namespace solitaire::piles {
@@ -12,7 +13,7 @@ void DefaultStockPile::initialize(const Deck::const_iterator& begin,
     selectedCardIndex.reset();
 }
 
-std::unique_ptr<archivers::Snapshot> DefaultStockPile::createSnapshot() {
+std::unique_ptr<interfaces::Snapshot> DefaultStockPile::createSnapshot() {
     return std::make_unique<Snapshot>(shared_from_this(), cards, selectedCardIndex);
 }
 
@@ -66,10 +67,10 @@ void DefaultStockPile::Snapshot::restore() const {
 }
 
 bool DefaultStockPile::Snapshot::isSnapshotOfSameObject(
-    const archivers::Snapshot& snapshot) const
+    const interfaces::Snapshot& snapshot) const
 try {
     const auto& castedSnaphost =
-        dynamic_cast<const DefaultStockPile::Snapshot&>(snapshot);
+        dynamic_cast<const Snapshot&>(snapshot);
     return stockPile == castedSnaphost.stockPile;
 }
 catch (const std::bad_cast&) {

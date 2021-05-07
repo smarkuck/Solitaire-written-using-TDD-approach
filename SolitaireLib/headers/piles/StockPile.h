@@ -2,13 +2,13 @@
 
 #include <optional>
 
-#include "archivers/Archiver.h"
 #include "cards/Cards.h"
 #include "cards/Deck.h"
+#include "interfaces/archivers/Archiver.h"
 
 namespace solitaire::piles {
 
-class StockPile: public archivers::Archiver {
+class StockPile: public archivers::interfaces::Archiver {
 public:
     virtual ~StockPile() = default;
 

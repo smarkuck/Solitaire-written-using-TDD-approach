@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TableauPile.h"
-#include "archivers/Snapshot.h"
+#include "interfaces/archivers/Snapshot.h"
 
 namespace solitaire::piles {
 
@@ -11,7 +11,7 @@ public:
     void initialize(const cards::Deck::const_iterator& begin,
                     const cards::Deck::const_iterator& end) override;
 
-    std::unique_ptr<archivers::Snapshot> createSnapshot() override;
+    std::unique_ptr<archivers::interfaces::Snapshot> createSnapshot() override;
 
     void tryUncoverTopCard() override;
     void tryAddCards(cards::Cards& cardsToAdd) override;
@@ -33,13 +33,14 @@ private:
     unsigned topCoveredCardPosition {0};
 };
 
-class DefaultTableauPile::Snapshot: public archivers::Snapshot {
+class DefaultTableauPile::Snapshot: public archivers::interfaces::Snapshot {
 public:
     Snapshot(std::shared_ptr<DefaultTableauPile>, cards::Cards,
              unsigned topCoveredCardPosition);
 
     void restore() const override;
-    bool isSnapshotOfSameObject(const archivers::Snapshot&) const override;
+    bool isSnapshotOfSameObject(
+        const archivers::interfaces::Snapshot&) const override;
 
 private:
     const std::shared_ptr<DefaultTableauPile> tableauPile;

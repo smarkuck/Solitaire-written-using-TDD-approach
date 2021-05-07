@@ -1,7 +1,9 @@
 #include <stdexcept>
 
 #include "archivers/DefaultHistoryTracker.h"
-#include "archivers/Snapshot.h"
+#include "interfaces/archivers/Snapshot.h"
+
+using namespace solitaire::archivers::interfaces;
 
 namespace solitaire::archivers {
 

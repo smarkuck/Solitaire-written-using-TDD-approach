@@ -2,6 +2,7 @@
 #include "cards/Value.h"
 #include "piles/DefaultTableauPile.h"
 
+using namespace solitaire::archivers;
 using namespace solitaire::cards;
 
 namespace solitaire::piles {
@@ -12,7 +13,7 @@ void DefaultTableauPile::initialize(const Deck::const_iterator& begin,
     topCoveredCardPosition = cards.empty() ? 0 : cards.size() - 1;
 }
 
-std::unique_ptr<archivers::Snapshot> DefaultTableauPile::createSnapshot() {
+std::unique_ptr<interfaces::Snapshot> DefaultTableauPile::createSnapshot() {
     return std::make_unique<Snapshot>(shared_from_this(), cards,
                                       topCoveredCardPosition);
 }
@@ -88,10 +89,10 @@ void DefaultTableauPile::Snapshot::restore() const {
 }
 
 bool DefaultTableauPile::Snapshot::isSnapshotOfSameObject(
-    const archivers::Snapshot& snapshot) const
+    const interfaces::Snapshot& snapshot) const
 try {
     const auto& castedSnaphost =
-        dynamic_cast<const DefaultTableauPile::Snapshot&>(snapshot);
+        dynamic_cast<const Snapshot&>(snapshot);
     return tableauPile == castedSnaphost.tableauPile;
 }
 catch (const std::bad_cast&) {

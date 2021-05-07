@@ -1,6 +1,6 @@
 #pragma once
 
-namespace solitaire::archivers {
+namespace solitaire::archivers::interfaces {
 
 class Snapshot {
 public:

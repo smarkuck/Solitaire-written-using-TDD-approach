@@ -3,9 +3,9 @@
 
 namespace solitaire::archivers {
 
-std::unique_ptr<archivers::Snapshot>
+std::unique_ptr<interfaces::Snapshot>
 DefaultMoveCardsOperationSnapshotCreator::createSnapshotIfCardsMovedToOtherPile(
-    std::unique_ptr<archivers::Snapshot> destinationPileSnapshot)
+    std::unique_ptr<interfaces::Snapshot> destinationPileSnapshot)
 {
     throwIfSourcePileSnapshotIsNullptr();
     throwIfSnapshotIsNullptr(destinationPileSnapshot);
@@ -22,7 +22,7 @@ DefaultMoveCardsOperationSnapshotCreator::createSnapshotIfCardsMovedToOtherPile(
 }
 
 void DefaultMoveCardsOperationSnapshotCreator::saveSourcePileSnapshot(
-    std::unique_ptr<archivers::Snapshot> snapshot)
+    std::unique_ptr<interfaces::Snapshot> snapshot)
 {
     throwIfSourcePileSnapshotIsNotNullptr();
     throwIfSnapshotIsNullptr(snapshot);
@@ -46,15 +46,15 @@ void DefaultMoveCardsOperationSnapshotCreator::throwIfSourcePileSnapshotIsNotNul
 }
 
 void DefaultMoveCardsOperationSnapshotCreator::throwIfSnapshotIsNullptr(
-    const std::unique_ptr<archivers::Snapshot>& snapshot) const
+    const std::unique_ptr<interfaces::Snapshot>& snapshot) const
 {
     if (not snapshot)
         throw std::runtime_error {"Passed snapshot is nullptr."};
 }
 
 DefaultMoveCardsOperationSnapshotCreator::Snapshot::Snapshot(
-    std::unique_ptr<archivers::Snapshot> sourcePileSnapshot,
-    std::unique_ptr<archivers::Snapshot> destinationPileSnapshot):
+    std::unique_ptr<interfaces::Snapshot> sourcePileSnapshot,
+    std::unique_ptr<interfaces::Snapshot> destinationPileSnapshot):
         sourcePileSnapshot {std::move(sourcePileSnapshot)},
         destinationPileSnapshot {std::move(destinationPileSnapshot)} {
 }
@@ -65,7 +65,7 @@ void DefaultMoveCardsOperationSnapshotCreator::Snapshot::restore() const {
 }
 
 bool DefaultMoveCardsOperationSnapshotCreator::Snapshot::isSnapshotOfSameObject(
-    const archivers::Snapshot&) const
+    const interfaces::Snapshot&) const
 {
     return false;
 }
