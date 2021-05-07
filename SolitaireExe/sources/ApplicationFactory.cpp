@@ -31,6 +31,7 @@ using namespace solitaire::events;
 using namespace solitaire::events::interfaces;
 using namespace solitaire::graphics;
 using namespace solitaire::graphics::interfaces;
+using namespace solitaire::interfaces;
 using namespace solitaire::piles;
 using namespace solitaire::time;
 using namespace solitaire::time::interfaces;

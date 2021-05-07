@@ -1,13 +1,14 @@
 #include "Context.h"
-#include "Solitaire.h"
 #include "events/DefaultEventsProcessor.h"
 #include "events/EventsDefinitions.h"
+#include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
 #include "interfaces/events/EventsSource.h"
 #include "piles/PileId.h"
 
 using namespace solitaire::events::interfaces;
 using namespace solitaire::geometry;
+using namespace solitaire::interfaces;
 using namespace solitaire::piles;
 
 namespace solitaire::events {

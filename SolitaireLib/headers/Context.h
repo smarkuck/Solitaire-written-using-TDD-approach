@@ -2,7 +2,9 @@
 
 namespace solitaire {
 
+namespace interfaces {
 class Solitaire;
+}
 
 namespace colliders::interfaces {
 class FoundationPileCollider;
@@ -23,8 +25,8 @@ public:
     virtual void setMousePosition(const geometry::Position&) = 0;
     virtual void setCardsInHandPosition(const geometry::Position&) = 0;
 
-    virtual Solitaire& getSolitaire() = 0;
-    virtual const Solitaire& getSolitaire() const = 0;
+    virtual interfaces::Solitaire& getSolitaire() = 0;
+    virtual const interfaces::Solitaire& getSolitaire() const = 0;
 
     virtual colliders::interfaces::FoundationPileCollider&
     getFoundationPileCollider(const piles::PileId) = 0;

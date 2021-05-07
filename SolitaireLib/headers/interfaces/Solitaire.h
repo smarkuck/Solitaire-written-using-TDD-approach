@@ -17,6 +17,8 @@ namespace interfaces {
 }
 }
 
+namespace interfaces {
+
 class Solitaire {
 public:
     static constexpr unsigned foundationPilesCount {4};
@@ -55,4 +57,5 @@ public:
     virtual const cards::Cards& getCardsInHand() const = 0;
 };
 
+}
 }

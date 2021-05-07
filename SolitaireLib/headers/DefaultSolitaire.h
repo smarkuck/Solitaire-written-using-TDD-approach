@@ -2,9 +2,9 @@
 
 #include <optional>
 
-#include "Solitaire.h"
 #include "cards/Card.h"
 #include "cards/Deck.h"
+#include "interfaces/Solitaire.h"
 
 namespace solitaire {
 
@@ -18,7 +18,7 @@ namespace cards::interfaces {
     class DeckGenerator;
 }
 
-class DefaultSolitaire: public Solitaire {
+class DefaultSolitaire: public interfaces::Solitaire {
 public:
     DefaultSolitaire(std::unique_ptr<cards::interfaces::DeckGenerator>,
                      std::shared_ptr<piles::interfaces::StockPile>,

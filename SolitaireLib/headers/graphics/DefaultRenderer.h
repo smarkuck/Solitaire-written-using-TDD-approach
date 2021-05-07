@@ -4,6 +4,7 @@
 #include <optional>
 #include <string>
 
+#include "cards/Cards.h"
 #include "graphics/TextureId.h"
 #include "interfaces/graphics/Renderer.h"
 

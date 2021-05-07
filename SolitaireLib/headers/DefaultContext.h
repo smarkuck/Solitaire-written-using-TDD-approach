@@ -4,8 +4,8 @@
 #include <memory>
 
 #include "Context.h"
-#include "Solitaire.h"
 #include "geometry/Position.h"
+#include "interfaces/Solitaire.h"
 
 namespace solitaire {
 
@@ -13,15 +13,15 @@ class DefaultContext: public Context {
 public:
     using FoundationPileColliders = std::array<
         std::unique_ptr<colliders::interfaces::FoundationPileCollider>,
-        Solitaire::foundationPilesCount>;
+        interfaces::Solitaire::foundationPilesCount>;
 
-    DefaultContext(std::unique_ptr<Solitaire>, FoundationPileColliders);
+    DefaultContext(std::unique_ptr<interfaces::Solitaire>, FoundationPileColliders);
 
     void setMousePosition(const geometry::Position&) override;
     void setCardsInHandPosition(const geometry::Position&) override;
 
-    Solitaire& getSolitaire() override;
-    const Solitaire& getSolitaire() const override;
+    interfaces::Solitaire& getSolitaire() override;
+    const interfaces::Solitaire& getSolitaire() const override;
 
     colliders::interfaces::FoundationPileCollider&
     getFoundationPileCollider(const piles::PileId) override;
@@ -33,7 +33,7 @@ public:
     geometry::Position getCardsInHandPosition() const override;
 
 private:
-    std::unique_ptr<Solitaire> solitaire;
+    std::unique_ptr<interfaces::Solitaire> solitaire;
     FoundationPileColliders foundationPileColliders;
     geometry::Position mousePosition;
     geometry::Position cardsInHandPosition;

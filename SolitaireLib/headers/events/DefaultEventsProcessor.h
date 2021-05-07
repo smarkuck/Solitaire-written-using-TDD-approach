@@ -9,6 +9,10 @@ namespace solitaire {
 
 class Context;
 
+namespace interfaces {
+class Solitaire;
+}
+
 namespace events {
 
 namespace interfaces {
@@ -28,7 +32,7 @@ private:
     void processMouseLeftButtonUpEvent() const;
     void processMouseMoveEvent(const MouseMove&) const;
 
-    void tryAddCardOnFoundationPile(Solitaire&,
+    void tryAddCardOnFoundationPile(solitaire::interfaces::Solitaire&,
         const geometry::Position& cardsInHandPosition) const;
 
     bool eventOccured(const Event& event) const;

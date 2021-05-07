@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Solitaire.h"
 #include "gmock/gmock.h"
+#include "interfaces/Solitaire.h"
 #include "piles/PileId.h"
 
 namespace solitaire {
 
-class SolitaireMock: public Solitaire {
+class SolitaireMock: public interfaces::Solitaire {
 public:
     MOCK_METHOD(void, startNewGame, (), (override));
 
