@@ -8,13 +8,10 @@
 
 namespace solitaire {
 
-namespace archivers {
-    class MoveCardsOperationSnapshotCreator;
-
-namespace interfaces {
+namespace archivers::interfaces {
     class HistoryTracker;
+    class MoveCardsOperationSnapshotCreator;
     class Snapshot;
-}
 }
 
 namespace cards {
@@ -27,7 +24,8 @@ public:
                      std::shared_ptr<piles::StockPile>,
                      FoundationPiles, TableauPiles,
                      std::unique_ptr<archivers::interfaces::HistoryTracker>,
-                     std::unique_ptr<archivers::MoveCardsOperationSnapshotCreator>);
+                     std::unique_ptr<
+                        archivers::interfaces::MoveCardsOperationSnapshotCreator>);
 
     void startNewGame() override;
 
@@ -85,7 +83,7 @@ private:
     FoundationPiles foundationPiles;
     TableauPiles tableauPiles;
     std::unique_ptr<archivers::interfaces::HistoryTracker> historyTracker;
-    std::unique_ptr<archivers::MoveCardsOperationSnapshotCreator>
+    std::unique_ptr<archivers::interfaces::MoveCardsOperationSnapshotCreator>
         moveCardsOperationSnapshotCreator;
     cards::Cards cardsInHand;
 };

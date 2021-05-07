@@ -1,12 +1,12 @@
 #pragma once
 
-#include "MoveCardsOperationSnapshotCreator.h"
+#include "interfaces/archivers/MoveCardsOperationSnapshotCreator.h"
 #include "interfaces/archivers/Snapshot.h"
 
 namespace solitaire::archivers {
 
 class DefaultMoveCardsOperationSnapshotCreator:
-    public MoveCardsOperationSnapshotCreator
+    public interfaces::MoveCardsOperationSnapshotCreator
 {
 private:
     class Snapshot;

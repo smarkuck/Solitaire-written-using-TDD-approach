@@ -2,17 +2,16 @@
 #include <string>
 
 #include "DefaultSolitaire.h"
-#include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "cards/DeckGenerator.h"
 #include "cards/Value.h"
 #include "interfaces/archivers/HistoryTracker.h"
+#include "interfaces/archivers/MoveCardsOperationSnapshotCreator.h"
 #include "interfaces/archivers/Snapshot.h"
 #include "piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
 
-using namespace solitaire::archivers;
 using namespace solitaire::archivers::interfaces;
 using namespace solitaire::cards;
 using namespace solitaire::piles;

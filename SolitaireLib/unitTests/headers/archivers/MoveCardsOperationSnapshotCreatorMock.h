@@ -1,12 +1,12 @@
 #pragma once
 
-#include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "gmock/gmock.h"
+#include "interfaces/archivers/MoveCardsOperationSnapshotCreator.h"
 
 namespace solitaire::archivers {
 
 class MoveCardsOperationSnapshotCreatorMock:
-    public MoveCardsOperationSnapshotCreator
+    public interfaces::MoveCardsOperationSnapshotCreator
 {
 public:
     MOCK_METHOD(std::unique_ptr<interfaces::Snapshot>,
