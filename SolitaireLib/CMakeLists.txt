@@ -13,7 +13,7 @@ target_sources(SolitaireLib PRIVATE
     sources/colliders/FoundationPileCollider.cpp
     sources/events/EventsProcessor.cpp
     sources/events/SDLEventsSource.cpp
-    sources/graphics/DefaultRenderer.cpp
+    sources/graphics/Renderer.cpp
     sources/graphics/SDLGraphicsSystem.cpp
     sources/piles/DefaultFoundationPile.cpp
     sources/piles/DefaultStockPile.cpp

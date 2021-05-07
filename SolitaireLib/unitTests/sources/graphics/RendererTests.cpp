@@ -9,8 +9,8 @@
 #include "colliders/FoundationPileColliderMock.h"
 #include "gmock/gmock.h"
 #include "geometry/Area.h"
-#include "graphics/DefaultRenderer.h"
 #include "graphics/GraphicsSystemMock.h"
+#include "graphics/Renderer.h"
 #include "interfaces/archivers/Snapshot.h"
 #include "piles/FoundationPileMock.h"
 #include "piles/PileId.h"
@@ -84,9 +84,9 @@ const Cards sevenCards {7};
 const Cards nineteenCards {19};
 }
 
-class DefaultRendererTests: public Test {
+class RendererTests: public Test {
 public:
-    DefaultRendererTests() {
+    RendererTests() {
         EXPECT_CALL(*graphicsSystemMock,
             createWindow(windowTitle, windowWidth, windowHeight));
         EXPECT_CALL(*graphicsSystemMock, loadTexture(assetsPath + "background.bmp"))
@@ -104,15 +104,15 @@ public:
     mock_ptr<GraphicsSystemMock> graphicsSystemMock;
 };
 
-TEST_F(DefaultRendererTests, onConstructionShouldCreateWindowAndLoadAllTextures) {
-    DefaultRenderer {contextMock, graphicsSystemMock.make_unique(), assetsPath};
+TEST_F(RendererTests, onConstructionShouldCreateWindowAndLoadAllTextures) {
+    Renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath};
 }
 
-class CreatedDefaultRendererTests: public DefaultRendererTests {
+class CreatedRendererTests: public RendererTests {
 public:
     using TopCoveredCardPosition = unsigned;
 
-    CreatedDefaultRendererTests() {
+    CreatedRendererTests() {
         EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
 
         expectRenderFoundationPile(PileId {0}, noCards);
@@ -238,7 +238,7 @@ public:
         return cards;
     }
 
-    DefaultRenderer renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath};
+    Renderer renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath};
     SolitaireMock solitaireMock;
     std::array<FoundationPileMock, foundationPilesCount> foundationPileMocks;
     FoundationPileColliderMock foundationPileColliderMock;
@@ -246,7 +246,7 @@ public:
     StockPileMock stockPileMock;
 };
 
-TEST_F(CreatedDefaultRendererTests, renderSolitaireWithEmptyStockPile) {
+TEST_F(CreatedRendererTests, renderSolitaireWithEmptyStockPile) {
     expectGetStockPileData(noCards, std::nullopt);
     expectRenderCardPlaceholder(stockPilePosition);
     expectGetCardsInHand(noCards);
@@ -254,7 +254,7 @@ TEST_F(CreatedDefaultRendererTests, renderSolitaireWithEmptyStockPile) {
     renderer.render();
 }
 
-TEST_F(CreatedDefaultRendererTests, throwOnInvalidStockPileSelectedCardIndex) {
+TEST_F(CreatedRendererTests, throwOnInvalidStockPileSelectedCardIndex) {
     expectGetStockPileData(threeCardsWithLastKingClub, 3);
     EXPECT_THROW(renderer.render(), std::runtime_error);
 }
@@ -264,13 +264,13 @@ struct StockPileRenderData {
     unsigned cardsToRender;
 };
 
-class StockPileDefaultRendererTests:
-    public CreatedDefaultRendererTests,
+class StockPileRendererTests:
+    public CreatedRendererTests,
     public testing::WithParamInterface<StockPileRenderData>
 {
 };
 
-TEST_P(StockPileDefaultRendererTests, renderStockPileWithCoveredCards) {
+TEST_P(StockPileRendererTests, renderStockPileWithCoveredCards) {
     const auto& stockPileRenderData = GetParam();
     const Cards pileCards {stockPileRenderData.pileCardsCount};
 
@@ -282,7 +282,7 @@ TEST_P(StockPileDefaultRendererTests, renderStockPileWithCoveredCards) {
     renderer.render();
 }
 
-TEST_P(StockPileDefaultRendererTests, renderStockPileWithUncoveredCards) {
+TEST_P(StockPileRendererTests, renderStockPileWithUncoveredCards) {
     const auto& stockPileRenderData = GetParam();
     const unsigned selectedCardIndex = stockPileRenderData.pileCardsCount - 1;
     const auto pileCards = getPileCardsWithSelectedFiveDiamond(
@@ -298,7 +298,7 @@ TEST_P(StockPileDefaultRendererTests, renderStockPileWithUncoveredCards) {
 }
 
 INSTANTIATE_TEST_SUITE_P(BorderPoints,
-                         StockPileDefaultRendererTests,
+                         StockPileRendererTests,
                          Values(StockPileRenderData {1, 1},
                                 StockPileRenderData {6, 1},
                                 StockPileRenderData {7, 2},
@@ -314,13 +314,13 @@ struct StockPileWithSelectedCardRenderData {
     unsigned uncoveredCardsToRender;
 };
 
-class StockPileWithCoveredAndUncoveredCardsDefaultRendererTests:
-    public CreatedDefaultRendererTests,
+class StockPileWithCoveredAndUncoveredCardsRendererTests:
+    public CreatedRendererTests,
     public testing::WithParamInterface<StockPileWithSelectedCardRenderData>
 {
 };
 
-TEST_P(StockPileWithCoveredAndUncoveredCardsDefaultRendererTests, renderStockPile) {
+TEST_P(StockPileWithCoveredAndUncoveredCardsRendererTests, renderStockPile) {
     const auto& stockPileRenderData = GetParam();
     const auto pileCards = getPileCardsWithSelectedFiveDiamond(
         stockPileRenderData.pileCardsCount, stockPileRenderData.selectedCardIndex);
@@ -335,7 +335,7 @@ TEST_P(StockPileWithCoveredAndUncoveredCardsDefaultRendererTests, renderStockPil
 }
 
 INSTANTIATE_TEST_SUITE_P(BorderPoints,
-                         StockPileWithCoveredAndUncoveredCardsDefaultRendererTests,
+                         StockPileWithCoveredAndUncoveredCardsRendererTests,
                          Values(StockPileWithSelectedCardRenderData {24, 10, 3, 2},
                                 StockPileWithSelectedCardRenderData {24, 11, 2, 2},
                                 StockPileWithSelectedCardRenderData {24, 12, 2, 3},
@@ -344,15 +344,15 @@ INSTANTIATE_TEST_SUITE_P(BorderPoints,
                                 StockPileWithSelectedCardRenderData {15, 5, 2, 1},
                                 StockPileWithSelectedCardRenderData {15, 6, 2, 2}));
 
-class CardsInHandDefaultRendererTests: public CreatedDefaultRendererTests {
+class CardsInHandRendererTests: public CreatedRendererTests {
 public:
-    CardsInHandDefaultRendererTests() {
+    CardsInHandRendererTests() {
         expectGetStockPileData(noCards, std::nullopt);
         expectRenderCardPlaceholder(stockPilePosition);
     }
 };
 
-TEST_F(CardsInHandDefaultRendererTests, renderCardsInHand) {
+TEST_F(CardsInHandRendererTests, renderCardsInHand) {
     expectGetCardsInHand(threeCardsWithLastKingClub);
     EXPECT_CALL(contextMock, getCardsInHandPosition())
         .WillOnce(Return(cardsInHandPosition));

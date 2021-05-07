@@ -20,7 +20,7 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/geometry/AreaTests.cpp
     sources/geometry/PositionTests.cpp
     sources/geometry/SizeTests.cpp
-    sources/graphics/DefaultRendererTests.cpp
+    sources/graphics/RendererTests.cpp
     sources/graphics/SDLGraphicsSystemTests.cpp
     sources/piles/DefaultFoundationPileTests.cpp
     sources/piles/DefaultStockPileTests.cpp

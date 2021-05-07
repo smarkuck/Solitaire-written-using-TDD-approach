@@ -13,7 +13,7 @@
 #include "colliders/FoundationPileCollider.h"
 #include "events/EventsProcessor.h"
 #include "events/SDLEventsSource.h"
-#include "graphics/DefaultRenderer.h"
+#include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
 #include "piles/DefaultFoundationPile.h"
 #include "piles/DefaultStockPile.h"
@@ -29,7 +29,6 @@ using namespace solitaire::cards;
 using namespace solitaire::colliders;
 using namespace solitaire::events;
 using namespace solitaire::graphics;
-using namespace solitaire::graphics::interfaces;
 using namespace solitaire::interfaces;
 using namespace solitaire::piles;
 using namespace solitaire::time;
@@ -83,9 +82,9 @@ ApplicationFactory::makeEventsProcessor(Context& context) const {
     );
 }
 
-std::unique_ptr<Renderer>
+std::unique_ptr<graphics::interfaces::Renderer>
 ApplicationFactory::makeRenderer(const Context& context) const {
-    return std::make_unique<DefaultRenderer>(
+    return std::make_unique<Renderer>(
         context,
         std::make_unique<SDLGraphicsSystem>(
             std::make_unique<SDL::DefaultWrapper>()

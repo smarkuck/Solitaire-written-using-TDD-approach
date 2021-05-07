@@ -5,7 +5,7 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "geometry/Area.h"
-#include "graphics/DefaultRenderer.h"
+#include "graphics/Renderer.h"
 #include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
@@ -34,9 +34,9 @@ constexpr Area cardPlaceholderTextureArea {Position {0, 0}, Layout::cardSize};
 constexpr Area cardBackTextureArea {Position {0, 416}, Layout::cardSize};
 }
 
-DefaultRenderer::DefaultRenderer(const Context& context,
-                                 std::unique_ptr<GraphicsSystem> graphicsSystem,
-                                 const std::string& assetsPath):
+Renderer::Renderer(const Context& context,
+                   std::unique_ptr<GraphicsSystem> graphicsSystem,
+                   const std::string& assetsPath):
     context {context},
     graphicsSystem {std::move(graphicsSystem)},
     assetsPath {assetsPath}
@@ -48,11 +48,11 @@ DefaultRenderer::DefaultRenderer(const Context& context,
     this->graphicsSystem->setTextureAlpha(cardPlaceholderId, cardPlaceholderAlpha);
 }
 
-TextureId DefaultRenderer::loadTexture(const std::string& path) const {
+TextureId Renderer::loadTexture(const std::string& path) const {
     return graphicsSystem->loadTexture(assetsPath + path);
 }
 
-void DefaultRenderer::render() const {
+void Renderer::render() const {
     graphicsSystem->renderTextureInFullWindow(backgroundId);
 
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
@@ -66,7 +66,7 @@ void DefaultRenderer::render() const {
     graphicsSystem->renderFrame();
 }
 
-void DefaultRenderer::renderFoundationPile(const PileId id) const {
+void Renderer::renderFoundationPile(const PileId id) const {
     const auto& pileCards = context.getSolitaire().getFoundationPile(id).getCards();
 
     if (pileCards.empty())
@@ -75,11 +75,11 @@ void DefaultRenderer::renderFoundationPile(const PileId id) const {
         renderCard(getFoundationPilePosition(id), pileCards.back());
 }
 
-Position DefaultRenderer::getFoundationPilePosition(const PileId id) const {
+Position Renderer::getFoundationPilePosition(const PileId id) const {
     return context.getFoundationPileCollider(id).getPosition();
 }
 
-void DefaultRenderer::renderTableauPile(const PileId id) const {
+void Renderer::renderTableauPile(const PileId id) const {
     const auto& pile = context.getSolitaire().getTableauPile(id);
     const auto& pileCards = pile.getCards();
 
@@ -88,7 +88,7 @@ void DefaultRenderer::renderTableauPile(const PileId id) const {
             getTableauPilePosition(id), pileCards, pile.getTopCoveredCardPosition());
 }
 
-void DefaultRenderer::renderTableauPileWithCards(
+void Renderer::renderTableauPileWithCards(
     Position pilePosition, const Cards& pileCards,
     const unsigned topCoveredCardPosition) const
 {
@@ -105,14 +105,14 @@ void DefaultRenderer::renderTableauPileWithCards(
     }
 }
 
-Position DefaultRenderer::getTableauPilePosition(const PileId id) const {
+Position Renderer::getTableauPilePosition(const PileId id) const {
     return Position {
         Layout::firstTableauPilePositionX + static_cast<int>(id) * Layout::pilesSpacing,
         Layout::tableauPilePositionY
     };
 }
 
-void DefaultRenderer::renderStockPile() const {
+void Renderer::renderStockPile() const {
     const auto& pile = context.getSolitaire().getStockPile();
     const auto& pileCards = pile.getCards();
     const auto& selectedCardIndex = pile.getSelectedCardIndex();
@@ -122,7 +122,7 @@ void DefaultRenderer::renderStockPile() const {
     else renderStockPileWithCards(pileCards, selectedCardIndex);
 }
 
-void DefaultRenderer::renderStockPileWithCards(
+void Renderer::renderStockPileWithCards(
     const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
 {
     throwOnInvalidSelectedCardIndex(pileCards, selectedCardIndex);
@@ -130,7 +130,7 @@ void DefaultRenderer::renderStockPileWithCards(
     renderStockPileUncoveredCards(pileCards, selectedCardIndex);
 }
 
-void DefaultRenderer::throwOnInvalidSelectedCardIndex(
+void Renderer::throwOnInvalidSelectedCardIndex(
     const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
 {
     if (selectedCardIndex and selectedCardIndex >= pileCards.size())
@@ -138,7 +138,7 @@ void DefaultRenderer::throwOnInvalidSelectedCardIndex(
             "Cannot get Stock pile card with index: " + selectedCardIndex.value()};
 }
 
-void DefaultRenderer::renderStockPileCoveredCards(
+void Renderer::renderStockPileCoveredCards(
     const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
 {
     const auto cardsToRender = getStockPileCardsToRenderCount(
@@ -154,7 +154,7 @@ void DefaultRenderer::renderStockPileCoveredCards(
     }
 }
 
-void DefaultRenderer::renderStockPileUncoveredCards(
+void Renderer::renderStockPileUncoveredCards(
     const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
 {
     const unsigned cardsToRender = getStockPileCardsToRenderCount(
@@ -168,7 +168,7 @@ void DefaultRenderer::renderStockPileUncoveredCards(
     }
 }
 
-unsigned DefaultRenderer::getStockPileCoveredCardsCount(const Cards& pileCards,
+unsigned Renderer::getStockPileCoveredCardsCount(const Cards& pileCards,
     const SelectedCardIndex& selectedCardIndex) const
 {
     if (selectedCardIndex)
@@ -176,17 +176,17 @@ unsigned DefaultRenderer::getStockPileCoveredCardsCount(const Cards& pileCards,
     return pileCards.size();
 }
 
-unsigned DefaultRenderer::getStockPileUncoveredCardsCount(
+unsigned Renderer::getStockPileUncoveredCardsCount(
     const SelectedCardIndex& selectedCardIndex) const
 {
     return selectedCardIndex ? selectedCardIndex.value() + 1 : 0;
 }
 
-unsigned DefaultRenderer::getStockPileCardsToRenderCount(const unsigned cardsCount) const {
+unsigned Renderer::getStockPileCardsToRenderCount(const unsigned cardsCount) const {
     return (cardsCount + 5) / 6;
 }
 
-void DefaultRenderer::renderCardsInHand() const {
+void Renderer::renderCardsInHand() const {
     const auto& cards = context.getSolitaire().getCardsInHand();
     if (not cards.empty()) {
         auto cardPosition = context.getCardsInHandPosition();
@@ -197,22 +197,22 @@ void DefaultRenderer::renderCardsInHand() const {
     }
 }
 
-void DefaultRenderer::renderCard(const Position& position, const Card& card) const {
+void Renderer::renderCard(const Position& position, const Card& card) const {
     graphicsSystem->renderTexture(
         cardsId, position, getCardTextureArea(card));
 }
 
-Area DefaultRenderer::getCardTextureArea(const Card& card) const {
+Area Renderer::getCardTextureArea(const Card& card) const {
     auto x = to_int(card.getValue()) * Layout::cardSize.width;
     auto y = to_int(card.getSuit()) * Layout::cardSize.height;
     return Area {Position {x, y}, Layout::cardSize};
 }
 
-void DefaultRenderer::renderCardBack(const Position& position) const {
+void Renderer::renderCardBack(const Position& position) const {
     graphicsSystem->renderTexture(cardsId, position, cardBackTextureArea);
 }
 
-void DefaultRenderer::renderCardPlaceholder(const Position& position) const {
+void Renderer::renderCardPlaceholder(const Position& position) const {
     graphicsSystem->renderTexture(
         cardPlaceholderId, position, cardPlaceholderTextureArea);
 }

@@ -23,11 +23,11 @@ class Context;
 
 namespace solitaire::graphics {
 
-class DefaultRenderer: public interfaces::Renderer {
+class Renderer: public interfaces::Renderer {
 public:
-    DefaultRenderer(const solitaire::interfaces::Context&,
-                    std::unique_ptr<interfaces::GraphicsSystem>,
-                    const std::string& assetsPath);
+    Renderer(const solitaire::interfaces::Context&,
+             std::unique_ptr<interfaces::GraphicsSystem>,
+             const std::string& assetsPath);
 
     void render() const override;
 
