@@ -11,7 +11,7 @@ namespace events::interfaces {
 class EventsProcessor;
 }
 
-namespace graphics {
+namespace graphics::interfaces {
 class Renderer;
 }
 
@@ -31,7 +31,7 @@ private:
     std::unique_ptr<solitaire::events::interfaces::EventsProcessor>
     makeEventsProcessor(solitaire::Context&) const;
 
-    std::unique_ptr<solitaire::graphics::Renderer>
+    std::unique_ptr<solitaire::graphics::interfaces::Renderer>
     makeRenderer(const solitaire::Context&) const;
 
     std::unique_ptr<solitaire::time::FPSLimiter> makeFPSLimiter() const;

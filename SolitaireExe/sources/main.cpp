@@ -2,8 +2,8 @@
 #include "ApplicationFactory.h"
 #include "Context.h"
 #include "SDL.h"
-#include "graphics/Renderer.h"
 #include "interfaces/events/EventsProcessor.h"
+#include "interfaces/graphics/Renderer.h"
 #include "time/FPSLimiter.h"
 
 int main(int, char**) {

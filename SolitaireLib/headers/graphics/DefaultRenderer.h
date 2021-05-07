@@ -4,8 +4,8 @@
 #include <optional>
 #include <string>
 
-#include "graphics/Renderer.h"
 #include "graphics/TextureId.h"
+#include "interfaces/graphics/Renderer.h"
 
 namespace solitaire {
 
@@ -22,7 +22,7 @@ namespace interfaces {
 class GraphicsSystem;
 }
 
-class DefaultRenderer: public Renderer {
+class DefaultRenderer: public interfaces::Renderer {
 public:
     DefaultRenderer(const Context&, std::unique_ptr<interfaces::GraphicsSystem>,
                     const std::string& assetsPath);

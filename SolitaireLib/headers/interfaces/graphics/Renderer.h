@@ -1,6 +1,6 @@
 #pragma once
 
-namespace solitaire::graphics {
+namespace solitaire::graphics::interfaces {
 
 class Renderer {
 public:

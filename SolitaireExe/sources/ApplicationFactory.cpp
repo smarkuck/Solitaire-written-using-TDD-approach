@@ -30,6 +30,7 @@ using namespace solitaire::colliders;
 using namespace solitaire::events;
 using namespace solitaire::events::interfaces;
 using namespace solitaire::graphics;
+using namespace solitaire::graphics::interfaces;
 using namespace solitaire::piles;
 using namespace solitaire::time;
 
