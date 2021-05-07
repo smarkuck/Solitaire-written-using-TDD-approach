@@ -1,14 +1,14 @@
 #pragma once
 
 #include <vector>
-#include "DeckGenerator.h"
+#include "interfaces/cards/DeckGenerator.h"
 
 namespace solitaire::cards {
 
 enum class Suit;
 enum class Value;
 
-class ShuffledDeckGenerator: public DeckGenerator {
+class ShuffledDeckGenerator: public interfaces::DeckGenerator {
 public:
     Deck generate() const override;
 

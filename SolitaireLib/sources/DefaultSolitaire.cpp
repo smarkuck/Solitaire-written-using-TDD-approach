@@ -2,11 +2,11 @@
 #include <string>
 
 #include "DefaultSolitaire.h"
-#include "cards/DeckGenerator.h"
 #include "cards/Value.h"
 #include "interfaces/archivers/HistoryTracker.h"
 #include "interfaces/archivers/MoveCardsOperationSnapshotCreator.h"
 #include "interfaces/archivers/Snapshot.h"
+#include "interfaces/cards/DeckGenerator.h"
 #include "piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "piles/StockPile.h"
@@ -14,6 +14,7 @@
 
 using namespace solitaire::archivers::interfaces;
 using namespace solitaire::cards;
+using namespace solitaire::cards::interfaces;
 using namespace solitaire::piles;
 
 namespace solitaire {

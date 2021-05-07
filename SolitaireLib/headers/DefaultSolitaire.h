@@ -14,13 +14,13 @@ namespace archivers::interfaces {
     class Snapshot;
 }
 
-namespace cards {
+namespace cards::interfaces {
     class DeckGenerator;
 }
 
 class DefaultSolitaire: public Solitaire {
 public:
-    DefaultSolitaire(std::unique_ptr<cards::DeckGenerator>,
+    DefaultSolitaire(std::unique_ptr<cards::interfaces::DeckGenerator>,
                      std::shared_ptr<piles::StockPile>,
                      FoundationPiles, TableauPiles,
                      std::unique_ptr<archivers::interfaces::HistoryTracker>,
@@ -78,7 +78,7 @@ private:
     void throwExceptionOnInvalidFoundationPileId(const piles::PileId) const;
     void throwExceptionOnInvalidTableauPileId(const piles::PileId) const;
 
-    std::unique_ptr<cards::DeckGenerator> deckGenerator;
+    std::unique_ptr<cards::interfaces::DeckGenerator> deckGenerator;
     std::shared_ptr<piles::StockPile> stockPile;
     FoundationPiles foundationPiles;
     TableauPiles tableauPiles;

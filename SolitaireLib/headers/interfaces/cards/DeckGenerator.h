@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Deck.h"
+#include "cards/Deck.h"
 
-namespace solitaire::cards {
+namespace solitaire::cards::interfaces {
 
 class DeckGenerator {
 public:
