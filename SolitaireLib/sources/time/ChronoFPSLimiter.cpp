@@ -1,5 +1,7 @@
+#include "interfaces/time/StdTimeFunctionsWrapper.h"
 #include "time/ChronoFPSLimiter.h"
-#include "time/StdTimeFunctionsWrapper.h"
+
+using namespace solitaire::time::interfaces;
 
 namespace solitaire::time {
 

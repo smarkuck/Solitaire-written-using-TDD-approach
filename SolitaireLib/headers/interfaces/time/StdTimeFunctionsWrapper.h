@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace solitaire::time {
+namespace solitaire::time::interfaces {
 
 class StdTimeFunctionsWrapper {
 public:
