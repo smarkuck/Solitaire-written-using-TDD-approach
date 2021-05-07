@@ -1,7 +1,8 @@
 #include "Layout.h"
-#include "Solitaire.h"
+#include "interfaces/Solitaire.h"
 #include "piles/PileId.h"
 
+using namespace solitaire::interfaces;
 using namespace solitaire::piles;
 using namespace solitaire::geometry;
 

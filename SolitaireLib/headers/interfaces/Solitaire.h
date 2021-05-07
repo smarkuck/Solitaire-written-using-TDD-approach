@@ -5,19 +5,17 @@
 
 #include "cards/Cards.h"
 
-namespace solitaire {
-
-namespace piles {
+namespace solitaire::piles {
     struct PileId;
+}
 
-namespace interfaces {
+namespace solitaire::piles::interfaces {
     class FoundationPile;
     class StockPile;
     class TableauPile;
 }
-}
 
-namespace interfaces {
+namespace solitaire::interfaces {
 
 class Solitaire {
 public:
@@ -57,5 +55,4 @@ public:
     virtual const cards::Cards& getCardsInHand() const = 0;
 };
 
-}
 }

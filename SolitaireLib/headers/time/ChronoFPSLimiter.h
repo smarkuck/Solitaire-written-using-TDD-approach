@@ -5,11 +5,11 @@
 
 #include "interfaces/time/FPSLimiter.h"
 
-namespace solitaire::time {
-
-namespace interfaces {
+namespace solitaire::time::interfaces {
 class StdTimeFunctionsWrapper;
 }
+
+namespace solitaire::time {
 
 class ChronoFPSLimiter: public interfaces::FPSLimiter {
 public:

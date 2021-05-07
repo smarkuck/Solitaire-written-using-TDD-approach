@@ -5,13 +5,11 @@
 #include "cards/Cards.h"
 #include "interfaces/archivers/Archiver.h"
 
-namespace solitaire {
-
-namespace cards {
+namespace solitaire::cards {
     enum class Value;
 }
 
-namespace piles::interfaces {
+namespace solitaire::piles::interfaces {
 
 class FoundationPile: public archivers::interfaces::Archiver {
 public:
@@ -26,5 +24,4 @@ public:
     virtual std::optional<cards::Value> getTopCardValue() const = 0;
 };
 
-}
 }

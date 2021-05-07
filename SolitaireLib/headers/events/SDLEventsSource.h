@@ -3,13 +3,11 @@
 #include <memory>
 #include "interfaces/events/EventsSource.h"
 
-namespace solitaire {
-
-namespace SDL::interfaces {
+namespace solitaire::SDL::interfaces {
 class Wrapper;
 }
 
-namespace events {
+namespace solitaire::events {
 
 class SDLEventsSource: public interfaces::EventsSource {
 public:
@@ -21,5 +19,4 @@ private:
     std::unique_ptr<SDL::interfaces::Wrapper> sdl;
 };
 
-}
 }

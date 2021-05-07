@@ -6,17 +6,17 @@
 #include "cards/Deck.h"
 #include "interfaces/Solitaire.h"
 
-namespace solitaire {
-
-namespace archivers::interfaces {
+namespace solitaire::archivers::interfaces {
     class HistoryTracker;
     class MoveCardsOperationSnapshotCreator;
     class Snapshot;
 }
 
-namespace cards::interfaces {
+namespace solitaire::cards::interfaces {
     class DeckGenerator;
 }
+
+namespace solitaire {
 
 class DefaultSolitaire: public interfaces::Solitaire {
 public:

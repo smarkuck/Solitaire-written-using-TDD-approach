@@ -3,11 +3,11 @@
 #include "geometry/Position.h"
 #include "geometry/Size.h"
 
-namespace solitaire {
-
-namespace piles {
+namespace solitaire::piles {
 struct PileId;
 }
+
+namespace solitaire {
 
 struct Layout {
     static geometry::Position getFoundationPilePosition(const piles::PileId);

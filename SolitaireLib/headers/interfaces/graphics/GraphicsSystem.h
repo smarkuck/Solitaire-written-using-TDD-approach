@@ -2,17 +2,16 @@
 
 #include <string>
 
-namespace solitaire {
-
-namespace geometry {
+namespace solitaire::geometry {
 struct Area;
 struct Position;
 }
 
-namespace graphics {
+namespace solitaire::graphics {
 struct TextureId;
+}
 
-namespace interfaces {
+namespace solitaire::graphics::interfaces {
 
 class GraphicsSystem {
 public:
@@ -29,6 +28,4 @@ public:
     virtual void renderFrame() const = 0;
 };
 
-}
-}
 }

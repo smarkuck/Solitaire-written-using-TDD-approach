@@ -1,12 +1,10 @@
 #pragma once
 
-namespace solitaire {
-
-namespace geometry {
+namespace solitaire::geometry {
 struct Position;
 }
 
-namespace colliders::interfaces {
+namespace solitaire::colliders::interfaces {
 
 class FoundationPileCollider {
 public:
@@ -16,5 +14,4 @@ public:
     virtual bool collidesWithCard(const geometry::Position&) const = 0;
 };
 
-}
 }

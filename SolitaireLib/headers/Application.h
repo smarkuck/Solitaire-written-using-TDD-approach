@@ -2,23 +2,23 @@
 
 #include <memory>
 
-namespace solitaire {
-
-namespace interfaces {
-class Context;
-}
-
-namespace events::interfaces {
+namespace solitaire::events::interfaces {
 class EventsProcessor;
 }
 
-namespace graphics::interfaces {
+namespace solitaire::graphics::interfaces {
 class Renderer;
 }
 
-namespace time::interfaces {
+namespace solitaire::interfaces {
+class Context;
+}
+
+namespace solitaire::time::interfaces {
 class FPSLimiter;
 }
+
+namespace solitaire {
 
 class Application {
 public:

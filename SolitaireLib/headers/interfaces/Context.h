@@ -1,20 +1,18 @@
 #pragma once
 
-namespace solitaire {
-
-namespace colliders::interfaces {
+namespace solitaire::colliders::interfaces {
 class FoundationPileCollider;
 }
 
-namespace geometry {
+namespace solitaire::geometry {
 struct Position;
 }
 
-namespace piles {
+namespace solitaire::piles {
 struct PileId;
 }
 
-namespace interfaces {
+namespace solitaire::interfaces {
 class Solitaire;
 
 class Context {
@@ -37,5 +35,4 @@ public:
     virtual geometry::Position getCardsInHandPosition() const = 0;
 };
 
-}
 }

@@ -5,22 +5,20 @@
 #include "Event.h"
 #include "interfaces/events/EventsProcessor.h"
 
-namespace solitaire {
+namespace solitaire::events::interfaces {
+class EventsSource;
+}
 
-namespace interfaces {
+namespace solitaire::geometry {
+struct Position;
+}
+
+namespace solitaire::interfaces {
 class Context;
 class Solitaire;
 }
 
-namespace geometry {
-struct Position;
-}
-
-namespace events {
-
-namespace interfaces {
-class EventsSource;
-}
+namespace solitaire::events {
 
 class DefaultEventsProcessor: public interfaces::EventsProcessor {
 public:
@@ -46,5 +44,4 @@ private:
     std::unique_ptr<interfaces::EventsSource> eventsSource;
 };
 
-}
 }

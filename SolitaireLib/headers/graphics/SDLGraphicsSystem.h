@@ -12,13 +12,11 @@ struct SDL_Surface;
 struct SDL_Texture;
 struct SDL_Window;
 
-namespace solitaire {
-
-namespace SDL::interfaces {
+namespace solitaire::SDL::interfaces {
 class Wrapper;
 }
 
-namespace graphics {
+namespace solitaire::graphics {
 
 class SDLGraphicsSystem: public interfaces::GraphicsSystem {
 public:
@@ -66,5 +64,4 @@ private:
     bool isWindowCreated {false};
 };
 
-}
 }

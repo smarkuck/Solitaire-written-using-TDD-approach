@@ -8,22 +8,20 @@
 #include "graphics/TextureId.h"
 #include "interfaces/graphics/Renderer.h"
 
-namespace solitaire {
-
-namespace interfaces {
-class Context;
-}
-
-namespace geometry {
+namespace solitaire::geometry {
 struct Area;
 struct Position;
 }
 
-namespace graphics {
-
-namespace interfaces {
+namespace solitaire::graphics::interfaces {
 class GraphicsSystem;
 }
+
+namespace solitaire::interfaces {
+class Context;
+}
+
+namespace solitaire::graphics {
 
 class DefaultRenderer: public interfaces::Renderer {
 public:
@@ -77,5 +75,4 @@ private:
     TextureId cardPlaceholderId;
 };
 
-}
 }

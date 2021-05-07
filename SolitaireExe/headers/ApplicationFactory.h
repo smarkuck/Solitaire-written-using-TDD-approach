@@ -5,23 +5,23 @@
 
 namespace solitaire {
 class Application;
+}
 
-namespace interfaces {
+namespace solitaire::events::interfaces {
+class EventsProcessor;
+}
+
+namespace solitaire::graphics::interfaces {
+class Renderer;
+}
+
+namespace solitaire::interfaces {
 class Context;
 class Solitaire;
 }
 
-namespace events::interfaces {
-class EventsProcessor;
-}
-
-namespace graphics::interfaces {
-class Renderer;
-}
-
-namespace time::interfaces {
+namespace solitaire::time::interfaces {
 class FPSLimiter;
-}
 }
 
 class ApplicationFactory {
