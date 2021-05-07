@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "GraphicsSystem.h"
+#include "interfaces/graphics/GraphicsSystem.h"
 #include "SDL/UniquePtr.h"
 
 struct SDL_Rect;
@@ -20,7 +20,7 @@ class Wrapper;
 
 namespace graphics {
 
-class SDLGraphicsSystem: public GraphicsSystem {
+class SDLGraphicsSystem: public interfaces::GraphicsSystem {
 public:
     SDLGraphicsSystem(std::unique_ptr<SDL::Wrapper>);
     ~SDLGraphicsSystem();

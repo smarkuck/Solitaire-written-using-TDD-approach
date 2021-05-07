@@ -18,11 +18,13 @@ struct Position;
 
 namespace graphics {
 
+namespace interfaces {
 class GraphicsSystem;
+}
 
 class DefaultRenderer: public Renderer {
 public:
-    DefaultRenderer(const Context&, std::unique_ptr<GraphicsSystem>,
+    DefaultRenderer(const Context&, std::unique_ptr<interfaces::GraphicsSystem>,
                     const std::string& assetsPath);
 
     void render() const override;
@@ -63,7 +65,7 @@ private:
                                          const SelectedCardIndex&) const;
 
     const Context& context;
-    std::unique_ptr<GraphicsSystem> graphicsSystem;
+    std::unique_ptr<interfaces::GraphicsSystem> graphicsSystem;
     const std::string assetsPath;
 
     TextureId backgroundId;

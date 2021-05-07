@@ -1,12 +1,12 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "graphics/GraphicsSystem.h"
 #include "graphics/TextureId.h"
+#include "interfaces/graphics/GraphicsSystem.h"
 
 namespace solitaire::graphics {
 
-class GraphicsSystemMock: public GraphicsSystem {
+class GraphicsSystemMock: public interfaces::GraphicsSystem {
 public:
     MOCK_METHOD(void, createWindow, (const std::string&,
                 const unsigned, const unsigned), (override));

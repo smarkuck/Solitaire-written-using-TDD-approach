@@ -8,8 +8,8 @@
 #include "cards/Value.h"
 #include "geometry/Area.h"
 #include "graphics/DefaultRenderer.h"
-#include "graphics/GraphicsSystem.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
+#include "interfaces/graphics/GraphicsSystem.h"
 #include "piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "piles/StockPile.h"
@@ -17,6 +17,7 @@
 
 using namespace solitaire::cards;
 using namespace solitaire::geometry;
+using namespace solitaire::graphics::interfaces;
 using namespace solitaire::piles;
 
 namespace solitaire::graphics {

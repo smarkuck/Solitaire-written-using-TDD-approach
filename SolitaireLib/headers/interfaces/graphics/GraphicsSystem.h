@@ -10,8 +10,9 @@ struct Position;
 }
 
 namespace graphics {
-
 struct TextureId;
+
+namespace interfaces {
 
 class GraphicsSystem {
 public:
@@ -28,5 +29,6 @@ public:
     virtual void renderFrame() const = 0;
 };
 
+}
 }
 }
