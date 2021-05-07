@@ -1,29 +1,29 @@
 #include "cards/Card.h"
-#include "piles/DefaultStockPile.h"
+#include "piles/StockPile.h"
 
 using namespace solitaire::archivers;
 using namespace solitaire::cards;
 
 namespace solitaire::piles {
 
-void DefaultStockPile::initialize(const Deck::const_iterator& begin,
-                                  const Deck::const_iterator& end)
+void StockPile::initialize(const Deck::const_iterator& begin,
+                           const Deck::const_iterator& end)
 {
     cards.assign(begin, end);
     selectedCardIndex.reset();
 }
 
-std::unique_ptr<archivers::interfaces::Snapshot> DefaultStockPile::createSnapshot() {
+std::unique_ptr<archivers::interfaces::Snapshot> StockPile::createSnapshot() {
     return std::make_unique<Snapshot>(shared_from_this(), cards, selectedCardIndex);
 }
 
-void DefaultStockPile::trySelectNextCard() {
+void StockPile::trySelectNextCard() {
     incrementSelectedCardIndex();
     if (selectedCardIndex == cards.size())
         selectedCardIndex.reset();
 }
 
-std::optional<Card> DefaultStockPile::tryPullOutCard() {
+std::optional<Card> StockPile::tryPullOutCard() {
     if (selectedCardIndex) {
         const auto pulledOutCard = cards.at(selectedCardIndex.value());
         cards.erase(std::next(cards.begin(), selectedCardIndex.value()));
@@ -34,39 +34,39 @@ std::optional<Card> DefaultStockPile::tryPullOutCard() {
     return std::nullopt;
 }
 
-void DefaultStockPile::incrementSelectedCardIndex() {
+void StockPile::incrementSelectedCardIndex() {
     selectedCardIndex = selectedCardIndex ? selectedCardIndex.value() + 1 : 0;
 }
 
-void DefaultStockPile::decrementSelectedCardIndex() {
+void StockPile::decrementSelectedCardIndex() {
     if (selectedCardIndex > 0u)
         --selectedCardIndex.value();
     else
         selectedCardIndex.reset();
 }
 
-const Cards& DefaultStockPile::getCards() const {
+const Cards& StockPile::getCards() const {
     return cards;
 }
 
-std::optional<unsigned> DefaultStockPile::getSelectedCardIndex() const {
+std::optional<unsigned> StockPile::getSelectedCardIndex() const {
     return selectedCardIndex;
 }
 
-DefaultStockPile::Snapshot::Snapshot(
-    std::shared_ptr<DefaultStockPile> stockPile, Cards pileCards,
+StockPile::Snapshot::Snapshot(
+    std::shared_ptr<StockPile> stockPile, Cards pileCards,
     std::optional<unsigned> selectedCardIndex):
     stockPile {std::move(stockPile)},
     pileCards {std::move(pileCards)},
     selectedCardIndex {std::move(selectedCardIndex)} {
 }
 
-void DefaultStockPile::Snapshot::restore() const {
+void StockPile::Snapshot::restore() const {
     stockPile->cards = pileCards;
     stockPile->selectedCardIndex = selectedCardIndex;
 }
 
-bool DefaultStockPile::Snapshot::isSnapshotOfSameObject(
+bool StockPile::Snapshot::isSnapshotOfSameObject(
     const archivers::interfaces::Snapshot& snapshot) const
 try {
     const auto& castedSnaphost =

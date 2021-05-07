@@ -15,9 +15,9 @@
 #include "events/SDLEventsSource.h"
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
-#include "piles/DefaultStockPile.h"
 #include "piles/DefaultTableauPile.h"
 #include "piles/FoundationPile.h"
+#include "piles/StockPile.h"
 #include "piles/PileId.h"
 #include "SDL/DefaultWrapper.h"
 #include "time/ChronoFPSLimiter.h"
@@ -65,7 +65,7 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
 
     return std::make_unique<DefaultSolitaire>(
         std::make_unique<ShuffledDeckGenerator>(),
-        std::make_shared<DefaultStockPile>(),
+        std::make_shared<StockPile>(),
         foundationPiles, tableauPiles,
         std::make_unique<HistoryTracker>(),
         std::make_unique<MoveCardsOperationSnapshotCreator>()

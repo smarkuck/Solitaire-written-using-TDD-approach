@@ -5,8 +5,8 @@
 
 namespace solitaire::piles {
 
-class DefaultStockPile: public std::enable_shared_from_this<DefaultStockPile>,
-                        public interfaces::StockPile {
+class StockPile: public std::enable_shared_from_this<StockPile>,
+                 public interfaces::StockPile {
 public:
     void initialize(const cards::Deck::const_iterator& begin,
                     const cards::Deck::const_iterator& end) override;
@@ -29,9 +29,9 @@ private:
     std::optional<unsigned> selectedCardIndex;
 };
 
-class DefaultStockPile::Snapshot: public archivers::interfaces::Snapshot {
+class StockPile::Snapshot: public archivers::interfaces::Snapshot {
 public:
-    Snapshot(std::shared_ptr<DefaultStockPile>, cards::Cards,
+    Snapshot(std::shared_ptr<StockPile>, cards::Cards,
              std::optional<unsigned> selectedCardIndex);
 
     void restore() const override;
@@ -39,7 +39,7 @@ public:
         const archivers::interfaces::Snapshot&) const override;
 
 private:
-    const std::shared_ptr<DefaultStockPile> stockPile;
+    const std::shared_ptr<StockPile> stockPile;
     const cards::Cards pileCards;
     const std::optional<unsigned> selectedCardIndex;
 };

@@ -3,8 +3,8 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "gmock/gmock.h"
-#include "piles/DefaultStockPile.h"
 #include "piles/PileUtils.h"
+#include "piles/StockPile.h"
 
 using namespace testing;
 using namespace solitaire::archivers;
@@ -12,31 +12,31 @@ using namespace solitaire::cards;
 
 namespace solitaire::piles {
 
-TEST(DefaultStockPileTest,
+TEST(StockPileTest,
      throwExceptionOnSnapshotCreationWhenPileNotCreatedBySharedPtr)
 {
-    DefaultStockPile pile;
+    StockPile pile;
     EXPECT_THROW(pile.createSnapshot(), std::bad_weak_ptr);
 }
 
-class EmptyDefaultStockPileTest: public Test {
+class EmptyStockPileTest: public Test {
 public:
-    std::shared_ptr<DefaultStockPile> pile {std::make_shared<DefaultStockPile>()};
+    std::shared_ptr<StockPile> pile {std::make_shared<StockPile>()};
 };
 
-TEST_F(EmptyDefaultStockPileTest, createPile) {
+TEST_F(EmptyStockPileTest, createPile) {
     EXPECT_TRUE(pile->getCards().empty());
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(EmptyDefaultStockPileTest, trySelectNextCard) {
+TEST_F(EmptyStockPileTest, trySelectNextCard) {
     pile->trySelectNextCard();
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-class DefaultStockPileWithCardsTest: public EmptyDefaultStockPileTest {
+class StockPileWithCardsTest: public EmptyStockPileTest {
 public:
-    DefaultStockPileWithCardsTest() {
+    StockPileWithCardsTest() {
         initializePile(*pile, pileCards);
     }
 
@@ -47,12 +47,12 @@ public:
     };
 };
 
-TEST_F(DefaultStockPileWithCardsTest, initializePileWithCards) {
+TEST_F(StockPileWithCardsTest, initializePileWithCards) {
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(DefaultStockPileWithCardsTest, trySelectNextCard) {
+TEST_F(StockPileWithCardsTest, trySelectNextCard) {
     pile->trySelectNextCard();
     EXPECT_EQ(pile->getSelectedCardIndex(), 0);
 
@@ -66,13 +66,13 @@ TEST_F(DefaultStockPileWithCardsTest, trySelectNextCard) {
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(DefaultStockPileWithCardsTest, tryPullOutCardWhenNoneIsSelected) {
+TEST_F(StockPileWithCardsTest, tryPullOutCardWhenNoneIsSelected) {
     EXPECT_EQ(pile->tryPullOutCard(), std::nullopt);
     EXPECT_THAT(pile->getCards(), ContainerEq(pileCards));
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(DefaultStockPileWithCardsTest, tryPullOutFirstCard) {
+TEST_F(StockPileWithCardsTest, tryPullOutFirstCard) {
     const auto firstCard = pileCards.front();
     pileCards.erase(pileCards.begin());
 
@@ -83,7 +83,7 @@ TEST_F(DefaultStockPileWithCardsTest, tryPullOutFirstCard) {
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(DefaultStockPileWithCardsTest, tryPullOutSecondCard) {
+TEST_F(StockPileWithCardsTest, tryPullOutSecondCard) {
     const auto secondCardIt = std::next(pileCards.begin());
     const auto secondCard = *secondCardIt;
     pileCards.erase(secondCardIt);
@@ -96,7 +96,7 @@ TEST_F(DefaultStockPileWithCardsTest, tryPullOutSecondCard) {
     EXPECT_EQ(pile->getSelectedCardIndex(), 0);
 }
 
-TEST_F(DefaultStockPileWithCardsTest, tryPullOutLastCard) {
+TEST_F(StockPileWithCardsTest, tryPullOutLastCard) {
     const Card lastCard = pileCards.back();
     pileCards.pop_back();
 
@@ -109,7 +109,7 @@ TEST_F(DefaultStockPileWithCardsTest, tryPullOutLastCard) {
     EXPECT_EQ(pile->getSelectedCardIndex(), 1);
 }
 
-class DefaultStockPileInitializationTest: public DefaultStockPileWithCardsTest {
+class StockPileInitializationTest: public StockPileWithCardsTest {
 public:
     const Cards newPileCards {
         Card {Value::Six, Suit::Club},
@@ -117,14 +117,14 @@ public:
     };
 };
 
-TEST_F(DefaultStockPileInitializationTest, initializePileAfterOperations) {
+TEST_F(StockPileInitializationTest, initializePileAfterOperations) {
     initializePile(*pile, newPileCards);
 
     EXPECT_THAT(pile->getCards(), ContainerEq(newPileCards));
     EXPECT_EQ(pile->getSelectedCardIndex(), std::nullopt);
 }
 
-TEST_F(DefaultStockPileInitializationTest, restorePileStateUsingSnapshot) {
+TEST_F(StockPileInitializationTest, restorePileStateUsingSnapshot) {
     pile->trySelectNextCard();
     const auto snapshot = pile->createSnapshot();
     initializePile(*pile, newPileCards);
@@ -134,11 +134,11 @@ TEST_F(DefaultStockPileInitializationTest, restorePileStateUsingSnapshot) {
     EXPECT_EQ(pile->getSelectedCardIndex(), 0);
 }
 
-TEST_F(DefaultStockPileInitializationTest, isSnapshotOfSameObject) {
+TEST_F(StockPileInitializationTest, isSnapshotOfSameObject) {
     const auto snapshot = pile->createSnapshot();
     initializePile(*pile, newPileCards);
     const auto snapshotOfSameObject = pile->createSnapshot();
-    const auto snapshotOfSameTypeObject = std::make_shared<DefaultStockPile>()->createSnapshot();
+    const auto snapshotOfSameTypeObject = std::make_shared<StockPile>()->createSnapshot();
     SnapshotMock snapshotOfDifferentTypeObject;
 
     EXPECT_TRUE(snapshot->isSnapshotOfSameObject(*snapshotOfSameObject));
