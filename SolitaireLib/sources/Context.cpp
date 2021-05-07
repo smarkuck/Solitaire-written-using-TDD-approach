@@ -1,4 +1,4 @@
-#include "DefaultContext.h"
+#include "Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
 #include "piles/PileId.h"
@@ -10,47 +10,45 @@ using namespace solitaire::piles;
 
 namespace solitaire {
 
-DefaultContext::DefaultContext(std::unique_ptr<Solitaire> solitaire,
-                               FoundationPileColliders foundationPileColliders):
+Context::Context(std::unique_ptr<Solitaire> solitaire,
+                 FoundationPileColliders foundationPileColliders):
     solitaire {std::move(solitaire)},
     foundationPileColliders {std::move(foundationPileColliders)} {
 }
 
-void DefaultContext::setMousePosition(const Position& position) {
+void Context::setMousePosition(const Position& position) {
     mousePosition = position;
 }
 
-void DefaultContext::setCardsInHandPosition(const Position& position) {
+void Context::setCardsInHandPosition(const Position& position) {
     cardsInHandPosition = position;
 }
 
-Solitaire& DefaultContext::getSolitaire() {
+Solitaire& Context::getSolitaire() {
     return *solitaire;
 }
 
-const Solitaire& DefaultContext::getSolitaire() const {
+const Solitaire& Context::getSolitaire() const {
     return *solitaire;
 }
 
-FoundationPileCollider&
-DefaultContext::getFoundationPileCollider(const PileId id) {
+FoundationPileCollider& Context::getFoundationPileCollider(const PileId id) {
     if (id >= Solitaire::foundationPilesCount)
         throw std::runtime_error {"Invalid foundation pile id: " + id};
     return *foundationPileColliders[id];
 }
 
-const FoundationPileCollider&
-DefaultContext::getFoundationPileCollider(const PileId id) const {
+const FoundationPileCollider& Context::getFoundationPileCollider(const PileId id) const {
     if (id >= Solitaire::foundationPilesCount)
         throw std::runtime_error {"Invalid foundation pile id: " + id};
     return *foundationPileColliders[id];
 }
 
-Position DefaultContext::getMousePosition() const {
+Position Context::getMousePosition() const {
     return mousePosition;
 }
 
-Position DefaultContext::getCardsInHandPosition() const {
+Position Context::getCardsInHandPosition() const {
     return cardsInHandPosition;
 }
 

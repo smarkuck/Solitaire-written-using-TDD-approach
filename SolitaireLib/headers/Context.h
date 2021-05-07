@@ -9,13 +9,13 @@
 
 namespace solitaire {
 
-class DefaultContext: public interfaces::Context {
+class Context: public interfaces::Context {
 public:
     using FoundationPileColliders = std::array<
         std::unique_ptr<colliders::interfaces::FoundationPileCollider>,
         interfaces::Solitaire::foundationPilesCount>;
 
-    DefaultContext(std::unique_ptr<interfaces::Solitaire>, FoundationPileColliders);
+    Context(std::unique_ptr<interfaces::Solitaire>, FoundationPileColliders);
 
     void setMousePosition(const geometry::Position&) override;
     void setCardsInHandPosition(const geometry::Position&) override;

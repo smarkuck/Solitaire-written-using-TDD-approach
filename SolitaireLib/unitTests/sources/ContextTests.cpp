@@ -1,6 +1,6 @@
 #include <utility>
 
-#include "DefaultContext.h"
+#include "Context.h"
 #include "mock_ptr.h"
 #include "SolitaireMock.h"
 #include "cards/Card.h"
@@ -18,13 +18,13 @@ namespace {
 constexpr unsigned foundationPilesCount {4};
 }
 
-class DefaultContextTests: public Test {
+class ContextTests: public Test {
 public:
     using FoundationPileColliderMocks =
         std::array<mock_ptr<FoundationPileColliderMock>, foundationPilesCount>;
 
-    DefaultContextTests() {
-        DefaultContext::FoundationPileColliders foundationPileColliders;
+    ContextTests() {
+        Context::FoundationPileColliders foundationPileColliders;
         std::transform(
             foundationPileColliderMocks.begin(), foundationPileColliderMocks.end(),
             foundationPileColliders.begin(), [](auto& collider) {
@@ -32,21 +32,21 @@ public:
             }
         );
 
-        context = std::make_unique<DefaultContext>(
+        context = std::make_unique<Context>(
             solitaireMock.make_unique(), std::move(foundationPileColliders));
     }
 
     mock_ptr<SolitaireMock> solitaireMock;
     FoundationPileColliderMocks foundationPileColliderMocks;
-    std::unique_ptr<DefaultContext> context;
+    std::unique_ptr<Context> context;
 };
 
-TEST_F(DefaultContextTests, getSolitaire) {
+TEST_F(ContextTests, getSolitaire) {
     EXPECT_EQ(&context->getSolitaire(), solitaireMock.get());
     EXPECT_EQ(&std::as_const(context)->getSolitaire(), solitaireMock.get());
 }
 
-TEST_F(DefaultContextTests, getFoundationPileColliders) {
+TEST_F(ContextTests, getFoundationPileColliders) {
     for (PileId id {0}; id < foundationPilesCount; ++id) {
         EXPECT_EQ(&context->getFoundationPileCollider(id),
                   foundationPileColliderMocks[id].get());
@@ -55,7 +55,7 @@ TEST_F(DefaultContextTests, getFoundationPileColliders) {
     }
 }
 
-TEST_F(DefaultContextTests, throwOnInvalidFoundationPileColliderId) {
+TEST_F(ContextTests, throwOnInvalidFoundationPileColliderId) {
     EXPECT_THROW(
         context->getFoundationPileCollider(PileId {foundationPilesCount}),
         std::runtime_error
@@ -67,7 +67,7 @@ TEST_F(DefaultContextTests, throwOnInvalidFoundationPileColliderId) {
     );
 }
 
-TEST_F(DefaultContextTests, setAndGetPositions) {
+TEST_F(ContextTests, setAndGetPositions) {
     Position position1 {1, 7};
     Position position2 {2, 4};
 

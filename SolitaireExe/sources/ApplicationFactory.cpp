@@ -4,7 +4,7 @@
 
 #include "Application.h"
 #include "ApplicationFactory.h"
-#include "DefaultContext.h"
+#include "Context.h"
 #include "DefaultSolitaire.h"
 #include "Layout.h"
 #include "archivers/HistoryTracker.h"
@@ -42,14 +42,14 @@ Application ApplicationFactory::make() const {
                         std::move(renderer), makeFPSLimiter()};
 }
 
-std::unique_ptr<Context> ApplicationFactory::makeContext() const {
-    DefaultContext::FoundationPileColliders foundationPileColliders;
+std::unique_ptr<solitaire::interfaces::Context> ApplicationFactory::makeContext() const {
+    solitaire::Context::FoundationPileColliders foundationPileColliders;
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
         foundationPileColliders[id] =
             std::make_unique<FoundationPileCollider>(
                 Layout::getFoundationPilePosition(id));
 
-    return std::make_unique<DefaultContext>(
+    return std::make_unique<solitaire::Context>(
         makeSolitaire(), std::move(foundationPileColliders));
 }
 
@@ -72,7 +72,7 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
 }
 
 std::unique_ptr<events::interfaces::EventsProcessor>
-ApplicationFactory::makeEventsProcessor(Context& context) const {
+ApplicationFactory::makeEventsProcessor(solitaire::interfaces::Context& context) const {
     return std::make_unique<EventsProcessor>(
         context,
         std::make_unique<SDLEventsSource>(
@@ -82,7 +82,7 @@ ApplicationFactory::makeEventsProcessor(Context& context) const {
 }
 
 std::unique_ptr<graphics::interfaces::Renderer>
-ApplicationFactory::makeRenderer(const Context& context) const {
+ApplicationFactory::makeRenderer(const solitaire::interfaces::Context& context) const {
     return std::make_unique<Renderer>(
         context,
         std::make_unique<SDLGraphicsSystem>(

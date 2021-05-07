@@ -3,7 +3,7 @@ target_include_directories(SolitaireLib PUBLIC headers)
 
 target_sources(SolitaireLib PRIVATE
     sources/Application.cpp
-    sources/DefaultContext.cpp
+    sources/Context.cpp
     sources/DefaultSolitaire.cpp
     sources/Layout.cpp
     sources/archivers/HistoryTracker.cpp

@@ -3,7 +3,7 @@ target_include_directories(SolitaireLibUnitTests PRIVATE headers)
 
 target_sources(SolitaireLibUnitTests PRIVATE
     sources/ApplicationTests.cpp
-    sources/DefaultContextTests.cpp
+    sources/ContextTests.cpp
     sources/DefaultSolitaireTests.cpp
     sources/LayoutTests.cpp
     sources/archivers/HistoryTrackerTests.cpp
