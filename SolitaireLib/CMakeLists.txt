@@ -11,7 +11,7 @@ target_sources(SolitaireLib PRIVATE
     sources/cards/Card.cpp
     sources/cards/ShuffledDeckGenerator.cpp
     sources/colliders/FoundationPileCollider.cpp
-    sources/events/DefaultEventsProcessor.cpp
+    sources/events/EventsProcessor.cpp
     sources/events/SDLEventsSource.cpp
     sources/graphics/DefaultRenderer.cpp
     sources/graphics/SDLGraphicsSystem.cpp

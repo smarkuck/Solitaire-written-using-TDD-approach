@@ -11,8 +11,8 @@
 #include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
 #include "colliders/FoundationPileCollider.h"
+#include "events/EventsProcessor.h"
 #include "events/SDLEventsSource.h"
-#include "events/DefaultEventsProcessor.h"
 #include "graphics/DefaultRenderer.h"
 #include "graphics/SDLGraphicsSystem.h"
 #include "piles/DefaultFoundationPile.h"
@@ -28,7 +28,6 @@ using namespace solitaire::archivers;
 using namespace solitaire::cards;
 using namespace solitaire::colliders;
 using namespace solitaire::events;
-using namespace solitaire::events::interfaces;
 using namespace solitaire::graphics;
 using namespace solitaire::graphics::interfaces;
 using namespace solitaire::interfaces;
@@ -74,9 +73,9 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
     );
 }
 
-std::unique_ptr<EventsProcessor>
+std::unique_ptr<events::interfaces::EventsProcessor>
 ApplicationFactory::makeEventsProcessor(Context& context) const {
-    return std::make_unique<DefaultEventsProcessor>(
+    return std::make_unique<EventsProcessor>(
         context,
         std::make_unique<SDLEventsSource>(
             std::make_unique<SDL::DefaultWrapper>()

@@ -1,5 +1,5 @@
-#include "events/DefaultEventsProcessor.h"
 #include "events/EventsDefinitions.h"
+#include "events/EventsProcessor.h"
 #include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
@@ -13,13 +13,13 @@ using namespace solitaire::piles;
 
 namespace solitaire::events {
 
-DefaultEventsProcessor::DefaultEventsProcessor(
+EventsProcessor::EventsProcessor(
     Context& context, std::unique_ptr<EventsSource> eventsSource):
         context {context},
         eventsSource {std::move(eventsSource)} {
 }
 
-void DefaultEventsProcessor::processEvents() {
+void EventsProcessor::processEvents() {
     Event event = eventsSource->getEvent();
     while (eventOccured(event)) {
         processEvent(event);
@@ -28,11 +28,11 @@ void DefaultEventsProcessor::processEvents() {
     }
 }
 
-bool DefaultEventsProcessor::eventOccured(const Event& event) const {
+bool EventsProcessor::eventOccured(const Event& event) const {
     return not std::holds_alternative<NoEvents>(event);
 }
 
-void DefaultEventsProcessor::processEvent(const Event& event) {
+void EventsProcessor::processEvent(const Event& event) {
     if (std::holds_alternative<Quit>(event))
         receivedQuitEvent = true;
     else if (std::holds_alternative<MouseLeftButtonDown>(event))
@@ -43,7 +43,7 @@ void DefaultEventsProcessor::processEvent(const Event& event) {
         processMouseMoveEvent(std::get<MouseMove>(event));
 }
 
-void DefaultEventsProcessor::processMouseLeftButtonDownEvent(
+void EventsProcessor::processMouseLeftButtonDownEvent(
     const MouseLeftButtonDown& event) const
 {
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
@@ -58,13 +58,13 @@ void DefaultEventsProcessor::processMouseLeftButtonDownEvent(
     }
 }
 
-void DefaultEventsProcessor::processMouseLeftButtonUpEvent() const {
+void EventsProcessor::processMouseLeftButtonUpEvent() const {
     auto& solitaire = context.getSolitaire();
     tryAddCardOnFoundationPile(solitaire, context.getCardsInHandPosition());
     solitaire.tryPutCardsBackFromHand();
 }
 
-void DefaultEventsProcessor::tryAddCardOnFoundationPile(
+void EventsProcessor::tryAddCardOnFoundationPile(
     Solitaire& solitaire, const Position& cardsInHandPosition) const
 {
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
@@ -77,7 +77,7 @@ void DefaultEventsProcessor::tryAddCardOnFoundationPile(
     }
 }
 
-void DefaultEventsProcessor::processMouseMoveEvent(const MouseMove& event) const {
+void EventsProcessor::processMouseMoveEvent(const MouseMove& event) const {
     const auto lastMousePosition = context.getMousePosition();
     auto lastCardsInHandPosition = context.getCardsInHandPosition();
     auto mouseMoveDelta = event.position - lastMousePosition;
@@ -85,7 +85,7 @@ void DefaultEventsProcessor::processMouseMoveEvent(const MouseMove& event) const
     context.setCardsInHandPosition(lastCardsInHandPosition + mouseMoveDelta);
 }
 
-bool DefaultEventsProcessor::shouldQuit() const {
+bool EventsProcessor::shouldQuit() const {
     return receivedQuitEvent;
 }
 

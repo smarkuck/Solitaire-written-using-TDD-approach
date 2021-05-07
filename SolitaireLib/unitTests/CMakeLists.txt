@@ -14,8 +14,8 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/cards/SuitTests.cpp
     sources/cards/ValueTests.cpp
     sources/colliders/FoundationPileColliderTests.cpp
-    sources/events/DefaultEventsProcessorTests.cpp
     sources/events/EventsDefinitionsTests.cpp
+    sources/events/EventsProcessorTests.cpp
     sources/events/SDLEventsSourceTests.cpp
     sources/geometry/AreaTests.cpp
     sources/geometry/PositionTests.cpp

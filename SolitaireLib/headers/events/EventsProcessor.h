@@ -20,10 +20,10 @@ class Solitaire;
 
 namespace solitaire::events {
 
-class DefaultEventsProcessor: public interfaces::EventsProcessor {
+class EventsProcessor: public interfaces::EventsProcessor {
 public:
-    DefaultEventsProcessor(solitaire::interfaces::Context&,
-                           std::unique_ptr<interfaces::EventsSource>);
+    EventsProcessor(solitaire::interfaces::Context&,
+                    std::unique_ptr<interfaces::EventsSource>);
 
     void processEvents() override;
     bool shouldQuit() const override;
