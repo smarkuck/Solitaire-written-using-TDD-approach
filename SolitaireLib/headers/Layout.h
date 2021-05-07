@@ -11,6 +11,7 @@ namespace solitaire {
 
 struct Layout {
     static geometry::Position getFoundationPilePosition(const piles::PileId);
+    static geometry::Position getTableauPilePosition(const piles::PileId);
 
     static constexpr int firstFoundationPilePositionX {283};
     static constexpr int foundationPilePositionY {30};

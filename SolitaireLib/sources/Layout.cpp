@@ -18,4 +18,14 @@ Position Layout::getFoundationPilePosition(const piles::PileId id) {
     };
 }
 
+Position Layout::getTableauPilePosition(const piles::PileId id) {
+    if (id >= Solitaire::tableauPilesCount)
+        throw std::runtime_error {"Invalid tableau pile id: " + id};
+
+    return Position {
+        firstTableauPilePositionX + static_cast<int>(id) * pilesSpacing,
+        tableauPilePositionY
+    };
+}
+
 }

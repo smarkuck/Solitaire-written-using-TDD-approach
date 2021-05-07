@@ -1,6 +1,6 @@
 #include "cards/Card.h"
 #include "colliders/TableauPileCollider.h"
-#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "interfaces/archivers/Snapshot.h"
 #include "piles/TableauPileMock.h"
 

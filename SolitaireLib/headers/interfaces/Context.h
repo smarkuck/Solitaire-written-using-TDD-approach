@@ -2,6 +2,7 @@
 
 namespace solitaire::colliders::interfaces {
 class FoundationPileCollider;
+class TableauPileCollider;
 }
 
 namespace solitaire::geometry {
@@ -30,6 +31,12 @@ public:
 
     virtual const colliders::interfaces::FoundationPileCollider&
     getFoundationPileCollider(const piles::PileId) const = 0;
+
+    virtual colliders::interfaces::TableauPileCollider&
+    getTableauPileCollider(const piles::PileId) = 0;
+
+    virtual const colliders::interfaces::TableauPileCollider&
+    getTableauPileCollider(const piles::PileId) const = 0;
 
     virtual geometry::Position getMousePosition() const = 0;
     virtual geometry::Position getCardsInHandPosition() const = 0;

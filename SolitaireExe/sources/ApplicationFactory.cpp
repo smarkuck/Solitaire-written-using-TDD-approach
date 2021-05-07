@@ -11,6 +11,7 @@
 #include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
 #include "colliders/FoundationPileCollider.h"
+#include "colliders/TableauPileCollider.h"
 #include "events/EventsProcessor.h"
 #include "events/SDLEventsSource.h"
 #include "graphics/Renderer.h"
@@ -44,14 +45,23 @@ Application ApplicationFactory::make() const {
 std::unique_ptr<solitaire::interfaces::Context>
 ApplicationFactory::makeContext() const
 {
+    auto solitaire = makeSolitaire();
+
     Context::FoundationPileColliders foundationPileColliders;
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
         foundationPileColliders[id] =
             std::make_unique<FoundationPileCollider>(
                 Layout::getFoundationPilePosition(id));
 
+    Context::TableauPileColliders tableauPileColliders;
+    for (PileId id {0}; id < Solitaire::tableauPilesCount; ++id)
+        tableauPileColliders[id] =
+            std::make_unique<TableauPileCollider>(
+                Layout::getTableauPilePosition(id), solitaire->getTableauPile(id));
+
     return std::make_unique<Context>(
-        makeSolitaire(), std::move(foundationPileColliders));
+        std::move(solitaire), std::move(foundationPileColliders),
+        std::move(tableauPileColliders));
 }
 
 std::unique_ptr<solitaire::interfaces::Solitaire>
