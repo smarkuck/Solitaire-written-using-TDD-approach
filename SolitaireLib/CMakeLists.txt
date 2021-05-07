@@ -21,7 +21,7 @@ target_sources(SolitaireLib PRIVATE
     sources/SDL/PtrDeleter.cpp
     sources/SDL/Wrapper.cpp
     sources/time/ChronoFPSLimiter.cpp
-    sources/time/DefaultStdTimeFunctionsWrapper.cpp
+    sources/time/StdTimeFunctionsWrapper.cpp
 )
 
 target_link_libraries(SolitaireLib PUBLIC Boost SDL2)

@@ -21,7 +21,7 @@
 #include "piles/PileId.h"
 #include "SDL/Wrapper.h"
 #include "time/ChronoFPSLimiter.h"
-#include "time/DefaultStdTimeFunctionsWrapper.h"
+#include "time/StdTimeFunctionsWrapper.h"
 
 using namespace solitaire;
 using namespace solitaire::archivers;
@@ -32,7 +32,6 @@ using namespace solitaire::graphics;
 using namespace solitaire::interfaces;
 using namespace solitaire::piles;
 using namespace solitaire::time;
-using namespace solitaire::time::interfaces;
 
 Application ApplicationFactory::make() const {
     auto context = makeContext();
@@ -93,9 +92,10 @@ ApplicationFactory::makeRenderer(const Context& context) const {
     );
 }
 
-std::unique_ptr<FPSLimiter> ApplicationFactory::makeFPSLimiter() const {
+std::unique_ptr<time::interfaces::FPSLimiter>
+ApplicationFactory::makeFPSLimiter() const {
     return std::make_unique<ChronoFPSLimiter>(
-        std::make_unique<DefaultStdTimeFunctionsWrapper>()
+        std::make_unique<StdTimeFunctionsWrapper>()
     );
 }
 
