@@ -22,9 +22,9 @@ target_sources(SolitaireLibUnitTests PRIVATE
     sources/geometry/SizeTests.cpp
     sources/graphics/RendererTests.cpp
     sources/graphics/SDLGraphicsSystemTests.cpp
-    sources/piles/DefaultTableauPileTests.cpp
     sources/piles/FoundationPileTests.cpp
     sources/piles/StockPileTests.cpp
+    sources/piles/TableauPileTests.cpp
     sources/time/ChronoFPSLimiterTests.cpp
 )
 

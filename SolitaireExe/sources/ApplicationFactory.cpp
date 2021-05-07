@@ -15,9 +15,9 @@
 #include "events/SDLEventsSource.h"
 #include "graphics/Renderer.h"
 #include "graphics/SDLGraphicsSystem.h"
-#include "piles/DefaultTableauPile.h"
 #include "piles/FoundationPile.h"
 #include "piles/StockPile.h"
+#include "piles/TableauPile.h"
 #include "piles/PileId.h"
 #include "SDL/DefaultWrapper.h"
 #include "time/ChronoFPSLimiter.h"
@@ -61,7 +61,7 @@ std::unique_ptr<Solitaire> ApplicationFactory::makeSolitaire() const {
 
     Solitaire::TableauPiles tableauPiles;
     for (auto& pile: tableauPiles)
-        pile = std::make_shared<DefaultTableauPile>();
+        pile = std::make_shared<TableauPile>();
 
     return std::make_unique<DefaultSolitaire>(
         std::make_unique<ShuffledDeckGenerator>(),

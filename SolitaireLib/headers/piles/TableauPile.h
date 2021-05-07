@@ -5,8 +5,8 @@
 
 namespace solitaire::piles {
 
-class DefaultTableauPile: public std::enable_shared_from_this<DefaultTableauPile>,
-                          public interfaces::TableauPile {
+class TableauPile: public std::enable_shared_from_this<TableauPile>,
+                   public interfaces::TableauPile {
 public:
     void initialize(const cards::Deck::const_iterator& begin,
                     const cards::Deck::const_iterator& end) override;
@@ -33,9 +33,9 @@ private:
     unsigned topCoveredCardPosition {0};
 };
 
-class DefaultTableauPile::Snapshot: public archivers::interfaces::Snapshot {
+class TableauPile::Snapshot: public archivers::interfaces::Snapshot {
 public:
-    Snapshot(std::shared_ptr<DefaultTableauPile>, cards::Cards,
+    Snapshot(std::shared_ptr<TableauPile>, cards::Cards,
              unsigned topCoveredCardPosition);
 
     void restore() const override;
@@ -43,7 +43,7 @@ public:
         const archivers::interfaces::Snapshot&) const override;
 
 private:
-    const std::shared_ptr<DefaultTableauPile> tableauPile;
+    const std::shared_ptr<TableauPile> tableauPile;
     const cards::Cards pileCards;
     const unsigned topCoveredCardPosition;
 };

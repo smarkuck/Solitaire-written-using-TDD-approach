@@ -1,46 +1,46 @@
 #include "cards/Card.h"
 #include "cards/Value.h"
-#include "piles/DefaultTableauPile.h"
+#include "piles/TableauPile.h"
 
 using namespace solitaire::archivers;
 using namespace solitaire::cards;
 
 namespace solitaire::piles {
 
-void DefaultTableauPile::initialize(const Deck::const_iterator& begin,
-                                    const Deck::const_iterator& end) {
+void TableauPile::initialize(const Deck::const_iterator& begin,
+                             const Deck::const_iterator& end) {
     cards.assign(begin, end);
     topCoveredCardPosition = cards.empty() ? 0 : cards.size() - 1;
 }
 
-std::unique_ptr<archivers::interfaces::Snapshot> DefaultTableauPile::createSnapshot() {
+std::unique_ptr<archivers::interfaces::Snapshot> TableauPile::createSnapshot() {
     return std::make_unique<Snapshot>(shared_from_this(), cards,
                                       topCoveredCardPosition);
 }
 
-void DefaultTableauPile::tryUncoverTopCard() {
+void TableauPile::tryUncoverTopCard() {
     if (isTopCardCovered())
         --topCoveredCardPosition;
 }
 
-void DefaultTableauPile::tryAddCards(Cards& cardsToAdd) {
+void TableauPile::tryAddCards(Cards& cardsToAdd) {
     if (shouldAddCards(cardsToAdd)) {
         cards.insert(cards.end(), cardsToAdd.begin(), cardsToAdd.end());
         cardsToAdd.clear();
     }
 }
 
-bool DefaultTableauPile::shouldAddCards(const Cards& cardsToAdd) const {
+bool TableauPile::shouldAddCards(const Cards& cardsToAdd) const {
     if (cardsToAdd.empty() or isTopCardCovered()) return false;
     if (cards.empty()) return isFirstCardToAddKing(cardsToAdd);
     return isFirstCardToAddCorrect(cardsToAdd);
 }
 
-bool DefaultTableauPile::isFirstCardToAddKing(const Cards& cardsToAdd) const {
+bool TableauPile::isFirstCardToAddKing(const Cards& cardsToAdd) const {
     return cardsToAdd.front().getValue() == Value::King;
 }
 
-bool DefaultTableauPile::isFirstCardToAddCorrect(const Cards& cardsToAdd) const {
+bool TableauPile::isFirstCardToAddCorrect(const Cards& cardsToAdd) const {
     const Card& topPileCard = cards.back();
     const Card& firstCardToAdd = cardsToAdd.front();
 
@@ -48,7 +48,7 @@ bool DefaultTableauPile::isFirstCardToAddCorrect(const Cards& cardsToAdd) const 
            topPileCard.hasDifferentColorThan(firstCardToAdd);
 }
 
-Cards DefaultTableauPile::tryPullOutCards(unsigned quantity) {
+Cards TableauPile::tryPullOutCards(unsigned quantity) {
     if (shouldPullOutCards(quantity)) {
         const auto firstCardToPullOut = std::prev(cards.end(), quantity);
         const Cards pulledOutCards {firstCardToPullOut, cards.end()};
@@ -59,36 +59,36 @@ Cards DefaultTableauPile::tryPullOutCards(unsigned quantity) {
     return Cards {};
 }
 
-bool DefaultTableauPile::shouldPullOutCards(unsigned quantity) const {
+bool TableauPile::shouldPullOutCards(unsigned quantity) const {
     return cards.size() - topCoveredCardPosition >= quantity;
 }
 
-const Cards& DefaultTableauPile::getCards() const {
+const Cards& TableauPile::getCards() const {
     return cards;
 }
 
-unsigned DefaultTableauPile::getTopCoveredCardPosition() const {
+unsigned TableauPile::getTopCoveredCardPosition() const {
     return topCoveredCardPosition;
 }
 
-bool DefaultTableauPile::isTopCardCovered() const {
+bool TableauPile::isTopCardCovered() const {
     return not cards.empty() and cards.size() == topCoveredCardPosition;
 }
 
-DefaultTableauPile::Snapshot::Snapshot(
-    std::shared_ptr<DefaultTableauPile> tableauPile,
+TableauPile::Snapshot::Snapshot(
+    std::shared_ptr<TableauPile> tableauPile,
     Cards pileCards, unsigned topCoveredCardPosition):
     tableauPile {std::move(tableauPile)},
     pileCards {std::move(pileCards)},
     topCoveredCardPosition {std::move(topCoveredCardPosition)} {
 }
 
-void DefaultTableauPile::Snapshot::restore() const {
+void TableauPile::Snapshot::restore() const {
     tableauPile->cards = pileCards;
     tableauPile->topCoveredCardPosition = topCoveredCardPosition;
 }
 
-bool DefaultTableauPile::Snapshot::isSnapshotOfSameObject(
+bool TableauPile::Snapshot::isSnapshotOfSameObject(
     const archivers::interfaces::Snapshot& snapshot) const
 try {
     const auto& castedSnaphost =
