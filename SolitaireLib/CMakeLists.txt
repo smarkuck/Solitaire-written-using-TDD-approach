@@ -18,8 +18,8 @@ target_sources(SolitaireLib PRIVATE
     sources/piles/FoundationPile.cpp
     sources/piles/StockPile.cpp
     sources/piles/TableauPile.cpp
-    sources/SDL/DefaultWrapper.cpp
     sources/SDL/PtrDeleter.cpp
+    sources/SDL/Wrapper.cpp
     sources/time/ChronoFPSLimiter.cpp
     sources/time/DefaultStdTimeFunctionsWrapper.cpp
 )

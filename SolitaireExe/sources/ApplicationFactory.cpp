@@ -19,7 +19,7 @@
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
 #include "piles/PileId.h"
-#include "SDL/DefaultWrapper.h"
+#include "SDL/Wrapper.h"
 #include "time/ChronoFPSLimiter.h"
 #include "time/DefaultStdTimeFunctionsWrapper.h"
 
@@ -77,7 +77,7 @@ ApplicationFactory::makeEventsProcessor(Context& context) const {
     return std::make_unique<EventsProcessor>(
         context,
         std::make_unique<SDLEventsSource>(
-            std::make_unique<SDL::DefaultWrapper>()
+            std::make_unique<SDL::Wrapper>()
         )
     );
 }
@@ -87,7 +87,7 @@ ApplicationFactory::makeRenderer(const Context& context) const {
     return std::make_unique<Renderer>(
         context,
         std::make_unique<SDLGraphicsSystem>(
-            std::make_unique<SDL::DefaultWrapper>()
+            std::make_unique<SDL::Wrapper>()
         ),
         findAssetsPath()
     );

@@ -4,7 +4,7 @@
 
 namespace solitaire::SDL {
 
-class DefaultWrapper: public interfaces::Wrapper {
+class Wrapper: public interfaces::Wrapper {
 public:
     int init(Uint32 flags) const override;
 
