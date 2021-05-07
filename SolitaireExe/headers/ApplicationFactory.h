@@ -15,7 +15,7 @@ namespace graphics::interfaces {
 class Renderer;
 }
 
-namespace time {
+namespace time::interfaces {
 class FPSLimiter;
 }
 }
@@ -34,7 +34,8 @@ private:
     std::unique_ptr<solitaire::graphics::interfaces::Renderer>
     makeRenderer(const solitaire::Context&) const;
 
-    std::unique_ptr<solitaire::time::FPSLimiter> makeFPSLimiter() const;
+    std::unique_ptr<solitaire::time::interfaces::FPSLimiter>
+    makeFPSLimiter() const;
 
     std::string findAssetsPath() const;
 };

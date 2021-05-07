@@ -14,7 +14,7 @@ namespace graphics::interfaces {
 class Renderer;
 }
 
-namespace time {
+namespace time::interfaces {
 class FPSLimiter;
 }
 
@@ -23,7 +23,7 @@ public:
     Application(std::unique_ptr<Context>,
                 std::unique_ptr<events::interfaces::EventsProcessor>,
                 std::unique_ptr<graphics::interfaces::Renderer>,
-                std::unique_ptr<time::FPSLimiter>);
+                std::unique_ptr<time::interfaces::FPSLimiter>);
 
     void run() const;
 
@@ -31,7 +31,7 @@ private:
     std::unique_ptr<Context> context;
     std::unique_ptr<events::interfaces::EventsProcessor> eventsProcessor;
     std::unique_ptr<graphics::interfaces::Renderer> renderer;
-    std::unique_ptr<time::FPSLimiter> fpsLimiter;
+    std::unique_ptr<time::interfaces::FPSLimiter> fpsLimiter;
 };
 
 }

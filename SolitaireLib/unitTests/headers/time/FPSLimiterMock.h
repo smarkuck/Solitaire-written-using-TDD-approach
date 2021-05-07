@@ -1,11 +1,11 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "time/FPSLimiter.h"
+#include "interfaces/time/FPSLimiter.h"
 
 namespace solitaire::time {
 
-class FPSLimiterMock: public FPSLimiter {
+class FPSLimiterMock: public interfaces::FPSLimiter {
 public:
     MOCK_METHOD(void, saveFrameStartTime, (), (override));
     MOCK_METHOD(void, sleepRestOfFrameTime, (), (const, override));

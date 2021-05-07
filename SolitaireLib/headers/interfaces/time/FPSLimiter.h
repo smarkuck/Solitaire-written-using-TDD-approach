@@ -1,6 +1,6 @@
 #pragma once
 
-namespace solitaire::time {
+namespace solitaire::time::interfaces {
 
 class FPSLimiter {
 public:

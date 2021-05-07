@@ -3,13 +3,13 @@
 #include <chrono>
 #include <memory>
 
-#include "FPSLimiter.h"
+#include "interfaces/time/FPSLimiter.h"
 
 namespace solitaire::time {
 
 class StdTimeFunctionsWrapper;
 
-class ChronoFPSLimiter: public FPSLimiter {
+class ChronoFPSLimiter: public interfaces::FPSLimiter {
 public:
     ChronoFPSLimiter(std::unique_ptr<StdTimeFunctionsWrapper>);
 
