@@ -26,7 +26,7 @@ public:
 
     MOCK_METHOD(bool, isGameFinished, (), (const, override));
 
-    MOCK_METHOD(const piles::FoundationPile&, getFoundationPile,
+    MOCK_METHOD(const piles::interfaces::FoundationPile&, getFoundationPile,
                 (const piles::PileId), (const, override));
     MOCK_METHOD(const piles::TableauPile&, getTableauPile,
                 (const piles::PileId), (const, override));

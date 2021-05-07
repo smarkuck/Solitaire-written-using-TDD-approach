@@ -18,6 +18,7 @@ using namespace testing;
 using namespace solitaire::archivers;
 using namespace solitaire::cards;
 using namespace solitaire::piles;
+using namespace solitaire::piles::interfaces;
 
 namespace solitaire {
 

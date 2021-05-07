@@ -45,7 +45,8 @@ public:
 
     bool isGameFinished() const override;
 
-    const piles::FoundationPile& getFoundationPile(const piles::PileId) const override;
+    const piles::interfaces::FoundationPile&
+    getFoundationPile(const piles::PileId) const override;
     const piles::TableauPile& getTableauPile(const piles::PileId) const override;
     const piles::StockPile& getStockPile() const override;
     const cards::Cards& getCardsInHand() const override;
@@ -60,7 +61,8 @@ private:
 
     void tryAddPulledOutCardToHand(const std::optional<cards::Card>&, SnapshotPtr);
     void tryAddPulledOutCardsToHand(cards::Cards&&, SnapshotPtr);
-    void tryAddCardOnFoundationPileFromHand(std::shared_ptr<piles::FoundationPile>&);
+    void tryAddCardOnFoundationPileFromHand(
+        std::shared_ptr<piles::interfaces::FoundationPile>&);
     void tryAddCardOnTableauPileFromHand(std::shared_ptr<piles::TableauPile>&);
     void saveHistoryIfCardMovedToOtherPileAndClearHand(
         const std::optional<cards::Card>&, SnapshotPtr);

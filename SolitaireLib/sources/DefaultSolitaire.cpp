@@ -7,7 +7,7 @@
 #include "interfaces/archivers/MoveCardsOperationSnapshotCreator.h"
 #include "interfaces/archivers/Snapshot.h"
 #include "interfaces/cards/DeckGenerator.h"
-#include "piles/FoundationPile.h"
+#include "interfaces/piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"
@@ -16,6 +16,7 @@ using namespace solitaire::archivers::interfaces;
 using namespace solitaire::cards;
 using namespace solitaire::cards::interfaces;
 using namespace solitaire::piles;
+using namespace solitaire::piles::interfaces;
 
 namespace solitaire {
 
@@ -88,7 +89,7 @@ void DefaultSolitaire::tryPullOutCardFromFoundationPile(const PileId id) {
     }
 }
 
-void DefaultSolitaire::tryAddCardOnFoundationPile(const piles::PileId id) {
+void DefaultSolitaire::tryAddCardOnFoundationPile(const PileId id) {
     throwExceptionOnInvalidFoundationPileId(id);
 
     if (shouldAddCardOnFoundationPile())
@@ -100,7 +101,7 @@ bool DefaultSolitaire::shouldAddCardOnFoundationPile() const {
 }
 
 void DefaultSolitaire::tryAddCardOnFoundationPileFromHand(
-    std::shared_ptr<piles::FoundationPile>& pile)
+    std::shared_ptr<FoundationPile>& pile)
 {
     auto snapshot = pile->createSnapshot();
     std::optional<Card> cardToAdd {cardsInHand.back()};
@@ -122,7 +123,7 @@ bool DefaultSolitaire::isCardAdded(const std::optional<Card>& card) const {
     return not card;
 }
 
-void DefaultSolitaire::tryUncoverTableauPileTopCard(const piles::PileId id) {
+void DefaultSolitaire::tryUncoverTableauPileTopCard(const PileId id) {
     throwExceptionOnInvalidTableauPileId(id);
 
     auto& pile = tableauPiles[id];
@@ -160,7 +161,7 @@ void DefaultSolitaire::tryAddPulledOutCardsToHand(
     }
 }
 
-void DefaultSolitaire::tryAddCardsOnTableauPile(const piles::PileId id) {
+void DefaultSolitaire::tryAddCardsOnTableauPile(const PileId id) {
     throwExceptionOnInvalidTableauPileId(id);
 
     if (isGameInProgressAndHandContainsCards())
@@ -172,7 +173,7 @@ bool DefaultSolitaire::isGameInProgressAndHandContainsCards() const {
 }
 
 void DefaultSolitaire::tryAddCardOnTableauPileFromHand(
-    std::shared_ptr<piles::TableauPile>& pile)
+    std::shared_ptr<TableauPile>& pile)
 {
     auto snapshot = pile->createSnapshot();
     pile->tryAddCards(cardsInHand);
@@ -246,8 +247,7 @@ const StockPile& DefaultSolitaire::getStockPile() const {
     return *stockPile;
 }
 
-void DefaultSolitaire::throwExceptionOnInvalidFoundationPileId(
-    const piles::PileId id) const
+void DefaultSolitaire::throwExceptionOnInvalidFoundationPileId(const PileId id) const
 {
     if (id.t >= foundationPilesCount)
         throw std::runtime_error {
@@ -255,8 +255,7 @@ void DefaultSolitaire::throwExceptionOnInvalidFoundationPileId(
         };
 }
 
-void DefaultSolitaire::throwExceptionOnInvalidTableauPileId(
-    const piles::PileId id) const
+void DefaultSolitaire::throwExceptionOnInvalidTableauPileId(const PileId id) const
 {
     if (id.t >= tableauPilesCount)
         throw std::runtime_error {

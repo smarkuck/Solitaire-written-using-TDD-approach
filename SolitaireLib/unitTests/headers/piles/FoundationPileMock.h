@@ -1,11 +1,11 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "piles/FoundationPile.h"
+#include "interfaces/piles/FoundationPile.h"
 
 namespace solitaire::piles {
 
-class FoundationPileMock: public FoundationPile {
+class FoundationPileMock: public interfaces::FoundationPile {
 public:
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(std::unique_ptr<archivers::interfaces::Snapshot>,

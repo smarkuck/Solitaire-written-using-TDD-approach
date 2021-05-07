@@ -8,10 +8,13 @@
 namespace solitaire {
 
 namespace piles {
-    class FoundationPile;
     struct PileId;
     class StockPile;
     class TableauPile;
+
+namespace interfaces {
+    class FoundationPile;
+}
 }
 
 class Solitaire {
@@ -19,8 +22,8 @@ public:
     static constexpr unsigned foundationPilesCount {4};
     static constexpr unsigned tableauPilesCount {7};
 
-    using FoundationPiles =
-        std::array<std::shared_ptr<piles::FoundationPile>, foundationPilesCount>;
+    using FoundationPiles = std::array<
+        std::shared_ptr<piles::interfaces::FoundationPile>, foundationPilesCount>;
     using TableauPiles =
         std::array<std::shared_ptr<piles::TableauPile>, tableauPilesCount>;
 
@@ -44,7 +47,8 @@ public:
 
     virtual bool isGameFinished() const = 0;
 
-    virtual const piles::FoundationPile& getFoundationPile(const piles::PileId) const = 0;
+    virtual const piles::interfaces::FoundationPile&
+    getFoundationPile(const piles::PileId) const = 0;
     virtual const piles::TableauPile& getTableauPile(const piles::PileId) const = 0;
     virtual const piles::StockPile& getStockPile() const = 0;
     virtual const cards::Cards& getCardsInHand() const = 0;

@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "FoundationPile.h"
 #include "interfaces/archivers/Snapshot.h"
+#include "interfaces/piles/FoundationPile.h"
 
 namespace solitaire::piles {
 
 class DefaultFoundationPile: public std::enable_shared_from_this<DefaultFoundationPile>,
-                             public FoundationPile {
+                             public interfaces::FoundationPile {
 public:
     void initialize() override;
     std::unique_ptr<archivers::interfaces::Snapshot> createSnapshot() override;

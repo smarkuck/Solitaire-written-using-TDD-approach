@@ -10,7 +10,7 @@
 #include "graphics/DefaultRenderer.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
 #include "interfaces/graphics/GraphicsSystem.h"
-#include "piles/FoundationPile.h"
+#include "interfaces/piles/FoundationPile.h"
 #include "piles/PileId.h"
 #include "piles/StockPile.h"
 #include "piles/TableauPile.h"

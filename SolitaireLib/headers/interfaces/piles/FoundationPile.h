@@ -11,7 +11,7 @@ namespace cards {
     enum class Value;
 }
 
-namespace piles {
+namespace piles::interfaces {
 
 class FoundationPile: public archivers::interfaces::Archiver {
 public:
