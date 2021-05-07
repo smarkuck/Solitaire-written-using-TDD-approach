@@ -11,11 +11,13 @@ class Context;
 
 namespace events {
 
+namespace interfaces {
 class EventsSource;
+}
 
 class DefaultEventsProcessor: public interfaces::EventsProcessor {
 public:
-    DefaultEventsProcessor(Context&, std::unique_ptr<EventsSource>);
+    DefaultEventsProcessor(Context&, std::unique_ptr<interfaces::EventsSource>);
 
     void processEvents() override;
     bool shouldQuit() const override;
@@ -33,7 +35,7 @@ private:
     bool receivedQuitEvent {false};
 
     Context& context;
-    std::unique_ptr<EventsSource> eventsSource;
+    std::unique_ptr<interfaces::EventsSource> eventsSource;
 };
 
 }

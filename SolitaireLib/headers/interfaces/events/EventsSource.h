@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Event.h"
+#include "events/Event.h"
 
-namespace solitaire::events {
+namespace solitaire::events::interfaces {
 
 class EventsSource {
 public:

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "EventsSource.h"
+#include "interfaces/events/EventsSource.h"
 
 namespace solitaire {
 
@@ -11,7 +11,7 @@ class Wrapper;
 
 namespace events {
 
-class SDLEventsSource: public EventsSource {
+class SDLEventsSource: public interfaces::EventsSource {
 public:
     SDLEventsSource(std::unique_ptr<SDL::Wrapper>);
 

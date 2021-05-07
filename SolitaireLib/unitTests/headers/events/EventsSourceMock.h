@@ -1,11 +1,11 @@
 #pragma once
 
-#include "events/EventsSource.h"
 #include "gmock/gmock.h"
+#include "interfaces/events/EventsSource.h"
 
 namespace solitaire::events {
 
-class EventsSourceMock: public EventsSource {
+class EventsSourceMock: public interfaces::EventsSource {
 public:
     MOCK_METHOD(Event, getEvent, (), (const, override));
 };
