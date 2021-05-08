@@ -7,6 +7,7 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "colliders/FoundationPileColliderMock.h"
+#include "colliders/TableauPileColliderMock.h"
 #include "gmock/gmock.h"
 #include "geometry/Area.h"
 #include "graphics/GraphicsSystemMock.h"
@@ -48,17 +49,6 @@ constexpr Area cardPlaceholderTextureArea {Position {0, 0}, cardSize};
 constexpr Area cardBackTextureArea {Position {0, 416}, cardSize};
 
 constexpr Position pilePosition {283, 30};
-
-constexpr std::array<Position, tableauPilesCount> tableauPilesPositions {
-    Position {16, 144},
-    Position {105, 144},
-    Position {194, 144},
-    Position {283, 144},
-    Position {372, 144},
-    Position {461, 144},
-    Position {550, 144}
-};
-
 constexpr Position stockPilePosition {16, 30};
 constexpr Position stockPileUncoveredCardsPosition {105, 30};
 constexpr Position cardsInHandPosition {15, 22};
@@ -155,6 +145,8 @@ public:
             .WillOnce(ReturnRef(tableauPileMocks[id]));
         EXPECT_CALL(tableauPileMocks[id], getCards())
             .WillOnce(ReturnRef(pileCards));
+        EXPECT_CALL(contextMock, getTableauPileCollider(id))
+            .WillOnce(ReturnRef(tableauPileColliderMock));
 
         if (not pileCards.empty())
             expectRenderTableauPileWithCards(id, pileCards, topCoveredCardPosition);
@@ -166,16 +158,16 @@ public:
         EXPECT_CALL(tableauPileMocks[id], getTopCoveredCardPosition())
             .WillOnce(Return(topCoveredCardPosition));
 
-        auto cardPosition = tableauPilesPositions[id];
-
         for (unsigned i = 0; i < topCoveredCardPosition; ++i) {
-            expectRenderCardBack(cardPosition);
-            cardPosition.y += coveredTableauPileCardsSpacing;
+            EXPECT_CALL(tableauPileColliderMock, getCardPosition(i))
+                .WillOnce(Return(pilePosition));
+            expectRenderCardBack(pilePosition);
         }
 
         for (unsigned i = topCoveredCardPosition; i < pileCards.size(); ++i) {
-            expectRenderCard(cardPosition, pileCards[i]);
-            cardPosition.y += uncoveredTableauPileCardsSpacing;
+            EXPECT_CALL(tableauPileColliderMock, getCardPosition(i))
+                .WillOnce(Return(pilePosition));
+            expectRenderCard(pilePosition, pileCards[i]);
         }
     }
 
@@ -243,6 +235,7 @@ public:
     std::array<FoundationPileMock, foundationPilesCount> foundationPileMocks;
     FoundationPileColliderMock foundationPileColliderMock;
     std::array<TableauPileMock, tableauPilesCount> tableauPileMocks;
+    TableauPileColliderMock tableauPileColliderMock;
     StockPileMock stockPileMock;
 };
 

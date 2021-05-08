@@ -8,6 +8,10 @@
 #include "graphics/TextureId.h"
 #include "interfaces/graphics/Renderer.h"
 
+namespace solitaire::colliders::interfaces {
+class TableauPileCollider;
+}
+
 namespace solitaire::geometry {
 struct Area;
 struct Position;
@@ -39,7 +43,7 @@ private:
     void renderFoundationPile(const piles::PileId) const;
     void renderTableauPile(const piles::PileId) const;
     void renderTableauPileWithCards(
-        geometry::Position pilePosition, const cards::Cards&,
+        const colliders::interfaces::TableauPileCollider&, const cards::Cards&,
         const unsigned topCoveredCardPosition) const;
     void renderStockPile() const;
     void renderStockPileWithCards(const cards::Cards&,

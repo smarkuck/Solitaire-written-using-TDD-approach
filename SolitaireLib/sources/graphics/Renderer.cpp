@@ -9,6 +9,7 @@
 #include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
+#include "interfaces/colliders/TableauPileCollider.h"
 #include "interfaces/graphics/GraphicsSystem.h"
 #include "interfaces/piles/FoundationPile.h"
 #include "interfaces/piles/StockPile.h"
@@ -16,6 +17,7 @@
 #include "piles/PileId.h"
 
 using namespace solitaire::cards;
+using namespace solitaire::colliders::interfaces;
 using namespace solitaire::geometry;
 using namespace solitaire::graphics::interfaces;
 using namespace solitaire::interfaces;
@@ -82,34 +84,22 @@ Position Renderer::getFoundationPilePosition(const PileId id) const {
 void Renderer::renderTableauPile(const PileId id) const {
     const auto& pile = context.getSolitaire().getTableauPile(id);
     const auto& pileCards = pile.getCards();
+    const auto& pileCollider = context.getTableauPileCollider(id);
 
     if (not pileCards.empty())
         renderTableauPileWithCards(
-            getTableauPilePosition(id), pileCards, pile.getTopCoveredCardPosition());
+            pileCollider,pileCards, pile.getTopCoveredCardPosition());
 }
 
 void Renderer::renderTableauPileWithCards(
-    Position pilePosition, const Cards& pileCards,
+    const TableauPileCollider& pileCollider, const Cards& pileCards,
     const unsigned topCoveredCardPosition) const
 {
-    auto& cardPosition = pilePosition;
+    for (unsigned i = 0; i < topCoveredCardPosition; ++i)
+        renderCardBack(pileCollider.getCardPosition(i));
 
-    for (unsigned i = 0; i < topCoveredCardPosition; ++i) {
-        renderCardBack(cardPosition);
-        cardPosition.y += Layout::coveredTableauPileCardsSpacing;
-    }
-
-    for (unsigned i = topCoveredCardPosition; i < pileCards.size(); ++i) {
-        renderCard(cardPosition, pileCards[i]);
-        cardPosition.y += Layout::uncoveredTableauPileCardsSpacing;
-    }
-}
-
-Position Renderer::getTableauPilePosition(const PileId id) const {
-    return Position {
-        Layout::firstTableauPilePositionX + static_cast<int>(id) * Layout::pilesSpacing,
-        Layout::tableauPilePositionY
-    };
+    for (unsigned i = topCoveredCardPosition; i < pileCards.size(); ++i)
+        renderCard(pileCollider.getCardPosition(i), pileCards[i]);
 }
 
 void Renderer::renderStockPile() const {
