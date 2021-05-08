@@ -15,13 +15,21 @@ public:
     TableauPileCollider(const geometry::Position&,
                         const piles::interfaces::TableauPile&);
 
+    std::optional<unsigned> tryGetCollidedCardIndex(
+        const geometry::Position&) const override;
+
     geometry::Position getCardPosition(const unsigned index) const override;
 
 private:
-    void throwIfInvalidIndex(const unsigned index) const;
+    bool isEmptyOrNotCollidesWithPileXPosition(const geometry::Position&) const;
+    bool collidesWithPileXPosition(const geometry::Position&) const;
+    bool collidesWithCardYPosition(const geometry::Position&,
+                                   const unsigned index) const;
 
     geometry::Position getRelativeCardPosition(
         const unsigned index, const unsigned topCoveredCardPosition) const;
+
+    void throwIfInvalidIndex(const unsigned index) const;
 
     const geometry::Position position;
     const piles::interfaces::TableauPile& tableauPile;

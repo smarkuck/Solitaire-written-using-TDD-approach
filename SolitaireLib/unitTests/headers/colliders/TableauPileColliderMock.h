@@ -7,6 +7,9 @@ namespace solitaire::colliders {
 
 class TableauPileColliderMock: public interfaces::TableauPileCollider {
 public:
+    MOCK_METHOD(std::optional<unsigned>, tryGetCollidedCardIndex,
+                (const geometry::Position&), (const, override));
+
     MOCK_METHOD(geometry::Position, getCardPosition, (const unsigned), (const));
 };
 

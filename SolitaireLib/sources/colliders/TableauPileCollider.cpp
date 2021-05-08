@@ -14,6 +14,36 @@ TableauPileCollider::TableauPileCollider(
         position {std::move(position)}, tableauPile {std::move(tableauPile)} {
 }
 
+std::optional<unsigned>
+TableauPileCollider::tryGetCollidedCardIndex(const Position& position) const {
+    if (isEmptyOrNotCollidesWithPileXPosition(position))
+        return std::nullopt;
+
+    for (int cardIndex = tableauPile.getCards().size() - 1; cardIndex >= 0; --cardIndex)
+        if (collidesWithCardYPosition(position, cardIndex))
+            return cardIndex;
+
+    return std::nullopt;
+}
+
+bool TableauPileCollider::
+isEmptyOrNotCollidesWithPileXPosition(const Position& position) const {
+    return tableauPile.getCards().empty() or not collidesWithPileXPosition(position);
+}
+
+bool TableauPileCollider::collidesWithPileXPosition(const Position& position) const {
+    return position.x >= this->position.x and
+           position.x < this->position.x + Layout::cardSize.width;
+}
+
+bool TableauPileCollider::collidesWithCardYPosition(
+    const Position& position, const unsigned index) const
+{
+    const auto cardPosition = getCardPosition(index);
+    return position.y >= cardPosition.y and
+           position.y < cardPosition.y + Layout::cardSize.height;
+}
+
 Position TableauPileCollider::getCardPosition(const unsigned index) const {
     throwIfInvalidIndex(index);
     const auto topCoveredCardPosition = tableauPile.getTopCoveredCardPosition();

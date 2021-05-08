@@ -10,10 +10,6 @@ FoundationPileCollider::FoundationPileCollider(
         position {position} {
 }
 
-Position FoundationPileCollider::getPosition() const {
-    return position;
-}
-
 bool FoundationPileCollider::collidesWithPoint(
     const geometry::Position& position) const
 {
@@ -28,6 +24,10 @@ bool FoundationPileCollider::collidesWithCard(
 {
     return std::abs(position.x - this->position.x) < Layout::cardSize.width and
            std::abs(position.y - this->position.y) < Layout::cardSize.height;
+}
+
+Position FoundationPileCollider::getPosition() const {
+    return position;
 }
 
 }
