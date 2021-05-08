@@ -1,11 +1,15 @@
+#include "cards/Card.h"
 #include "events/EventsDefinitions.h"
 #include "events/EventsProcessor.h"
 #include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
+#include "interfaces/colliders/TableauPileCollider.h"
 #include "interfaces/events/EventsSource.h"
 #include "piles/PileId.h"
+#include "piles/TableauPile.h"
 
+using namespace solitaire::colliders::interfaces;
 using namespace solitaire::events::interfaces;
 using namespace solitaire::geometry;
 using namespace solitaire::interfaces;
@@ -46,16 +50,107 @@ void EventsProcessor::processEvent(const Event& event) {
 void EventsProcessor::processMouseLeftButtonDownEvent(
     const MouseLeftButtonDown& event) const
 {
-    for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
-        const auto& collider = context.getFoundationPileCollider(id);
-        if (collider.collidesWithPoint(event.position))
-        {
-            context.getSolitaire().tryPullOutCardFromFoundationPile(id);
-            context.setMousePosition(event.position);
-            context.setCardsInHandPosition(collider.getPosition());
-            return;
-        }
+    if (checkIfCollidesAndTryPullOutCardFromAnyFoundationPile(event))
+        return;
+
+    tryPullOutOrUncoverCardsFromAnyTableauPile(event);
+}
+
+bool EventsProcessor::
+checkIfCollidesAndTryPullOutCardFromAnyFoundationPile(
+    const MouseLeftButtonDown& event) const
+{
+    for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
+        if (checkIfCollidesAndTryPullOutCardFromFoundationPile(id, event))
+            return true;
+    return false;
+}
+
+bool EventsProcessor::checkIfCollidesAndTryPullOutCardFromFoundationPile(
+    const PileId id, const MouseLeftButtonDown& event) const
+{
+    const auto& collider = context.getFoundationPileCollider(id);
+    if (collider.collidesWithPoint(event.position))
+    {
+        tryPullOutCardFromFoundationPile(id, event, collider);
+        return true;
     }
+    return false;
+}
+
+void EventsProcessor::tryPullOutCardFromFoundationPile(
+    const PileId id, const MouseLeftButtonDown& event,
+    const FoundationPileCollider& collider) const
+{
+    context.getSolitaire().tryPullOutCardFromFoundationPile(id);
+    context.setMousePosition(event.position);
+    context.setCardsInHandPosition(collider.getPosition());
+}
+
+void EventsProcessor::
+tryPullOutOrUncoverCardsFromAnyTableauPile(
+    const MouseLeftButtonDown& event) const
+{
+    for (PileId id {0}; id < Solitaire::tableauPilesCount; ++id)
+        if (checkIfCollidesAndTryPullOutOrUncoverCardsFromTableauPile(id, event))
+            return;
+}
+
+bool EventsProcessor::checkIfCollidesAndTryPullOutOrUncoverCardsFromTableauPile(
+    const PileId id, const MouseLeftButtonDown& event) const
+{
+    const auto& collider = context.getTableauPileCollider(id);
+    const auto cardIndex = collider.tryGetCollidedCardIndex(event.position);
+    if (cardIndex) {
+        tryPullOutOrUncoverCardsFromTableauPile(id, event, cardIndex.value());
+        return true;
+    }
+    return false;
+}
+
+void EventsProcessor::tryPullOutOrUncoverCardsFromTableauPile(
+    const PileId id, const MouseLeftButtonDown& event,
+    const unsigned cardIndex) const
+{
+    const auto eventData = getTableauPileMouseLeftButtonDownEventData(id, cardIndex);
+    if (shouldTryUncoverTableauPileCard(eventData))
+        eventData.solitaire.tryUncoverTableauPileTopCard(id);
+    else
+        tryPullOutCardsFromTableauPile(id, event, eventData);
+}
+
+EventsProcessor::TableauPileMouseLeftButtonDownEventData
+EventsProcessor::getTableauPileMouseLeftButtonDownEventData(
+    const PileId id, const unsigned cardIndex) const
+{
+    auto& solitaire = context.getSolitaire();
+    auto& tableauPile = solitaire.getTableauPile(id);
+
+    return TableauPileMouseLeftButtonDownEventData {
+        solitaire,
+        tableauPile,
+        context.getTableauPileCollider(id),
+        static_cast<unsigned>(tableauPile.getCards().size()),
+        cardIndex
+    };
+}
+
+bool EventsProcessor::shouldTryUncoverTableauPileCard(
+    const TableauPileMouseLeftButtonDownEventData& eventData) const
+{
+    return eventData.cardIndex == eventData.cardsQuantity - 1 and
+           eventData.pile.isTopCardCovered();
+}
+
+void EventsProcessor::tryPullOutCardsFromTableauPile(
+    const PileId id, const MouseLeftButtonDown& event,
+    const TableauPileMouseLeftButtonDownEventData& eventData) const
+{
+    context.setMousePosition(event.position);
+    context.setCardsInHandPosition(
+        eventData.collider.getCardPosition(eventData.cardIndex));
+    const auto cardsToPullOut = eventData.cardsQuantity - eventData.cardIndex;
+    eventData.solitaire.tryPullOutCardsFromTableauPile(id, cardsToPullOut);
 }
 
 void EventsProcessor::processMouseLeftButtonUpEvent() const {

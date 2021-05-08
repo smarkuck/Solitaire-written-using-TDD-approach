@@ -13,7 +13,7 @@ public:
     MOCK_METHOD(bool, collidesWithCardsInHand,
                 (const geometry::Position&), (const, override));
 
-    MOCK_METHOD(geometry::Position, getCardPosition, (const unsigned), (const));
+    MOCK_METHOD(geometry::Position, getCardPosition, (const unsigned), (const, override));
 };
 
 }
