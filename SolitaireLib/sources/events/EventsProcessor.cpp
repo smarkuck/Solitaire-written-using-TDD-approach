@@ -9,6 +9,7 @@
 #include "piles/PileId.h"
 #include "piles/TableauPile.h"
 
+using namespace solitaire::cards;
 using namespace solitaire::colliders::interfaces;
 using namespace solitaire::events::interfaces;
 using namespace solitaire::geometry;
@@ -52,7 +53,6 @@ void EventsProcessor::processMouseLeftButtonDownEvent(
 {
     if (checkIfCollidesAndTryPullOutCardFromAnyFoundationPile(event))
         return;
-
     tryPullOutOrUncoverCardsFromAnyTableauPile(event);
 }
 
@@ -154,22 +154,63 @@ void EventsProcessor::tryPullOutCardsFromTableauPile(
 }
 
 void EventsProcessor::processMouseLeftButtonUpEvent() const {
-    auto& solitaire = context.getSolitaire();
-    tryAddCardOnFoundationPile(solitaire, context.getCardsInHandPosition());
-    solitaire.tryPutCardsBackFromHand();
+    const auto eventData = getMouseLeftButtonUpEventData();
+    if (eventData.cardsInHand.empty()) return;
+    if (not tryAddCardOnAnyFoundationPileAndCheckIfHandEmpty(eventData))
+        tryAddCardsOnAnyTableauPile(eventData);
+    eventData.solitaire.tryPutCardsBackFromHand();
 }
 
-void EventsProcessor::tryAddCardOnFoundationPile(
-    Solitaire& solitaire, const Position& cardsInHandPosition) const
+EventsProcessor::MouseLeftButtonUpEventData
+EventsProcessor::getMouseLeftButtonUpEventData() const {
+    auto& solitaire = context.getSolitaire();
+    return MouseLeftButtonUpEventData {
+        solitaire,
+        solitaire.getCardsInHand(),
+        context.getCardsInHandPosition()
+    };
+}
+
+bool EventsProcessor::tryAddCardOnAnyFoundationPileAndCheckIfHandEmpty(
+    const MouseLeftButtonUpEventData& eventData) const
 {
-    for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
-        const auto& collider = context.getFoundationPileCollider(id);
-        if (collider.collidesWithCardsInHand(cardsInHandPosition))
-        {
-            solitaire.tryAddCardOnFoundationPile(id);
-            break;
-        }
+    for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
+        if (tryAddCardOnFoundationPileIfCollidesAndCheckIfHandEmpty(id, eventData))
+            return true;
+    return false;
+}
+
+bool EventsProcessor::tryAddCardOnFoundationPileIfCollidesAndCheckIfHandEmpty(
+    const PileId id, const MouseLeftButtonUpEventData& eventData) const
+{
+    const auto& collider = context.getFoundationPileCollider(id);
+    return collider.collidesWithCardsInHand(eventData.cardsInHandPosition) and
+           tryAddCardOnFoundationPileAndCheckIfHandEmpty(id, eventData);
+}
+
+bool EventsProcessor::tryAddCardOnFoundationPileAndCheckIfHandEmpty(
+    const PileId id, const MouseLeftButtonUpEventData& eventData) const
+{
+    eventData.solitaire.tryAddCardOnFoundationPile(id);
+    return eventData.cardsInHand.empty();
+}
+
+void EventsProcessor::tryAddCardsOnAnyTableauPile(
+    const MouseLeftButtonUpEventData& eventData) const
+{
+    for (PileId id {0}; id < Solitaire::tableauPilesCount; ++id) {
+        const auto& collider = context.getTableauPileCollider(id);
+        if (collider.collidesWithCardsInHand(eventData.cardsInHandPosition) and
+            tryAddCardOnTableauPileAndCheckIfHandEmpty(id, eventData))
+            return;
     }
+}
+
+bool EventsProcessor::tryAddCardOnTableauPileAndCheckIfHandEmpty(
+    const PileId id, const MouseLeftButtonUpEventData& eventData) const
+{
+    eventData.solitaire.tryAddCardsOnTableauPile(id);
+    return eventData.cardsInHand.empty();
 }
 
 void EventsProcessor::processMouseMoveEvent(const MouseMove& event) const {

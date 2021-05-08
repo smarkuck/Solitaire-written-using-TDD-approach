@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Event.h"
+#include "cards/Cards.h"
 #include "interfaces/events/EventsProcessor.h"
 
 namespace solitaire::interfaces {
@@ -54,6 +55,12 @@ private:
         unsigned cardIndex;
     };
 
+    struct MouseLeftButtonUpEventData {
+        solitaire::interfaces::Solitaire& solitaire;
+        const cards::Cards& cardsInHand;
+        geometry::Position cardsInHandPosition;
+    };
+
     void processEvent(const Event& event);
     void processMouseLeftButtonDownEvent(const MouseLeftButtonDown&) const;
     void processMouseLeftButtonUpEvent() const;
@@ -78,12 +85,21 @@ private:
         const piles::PileId, const MouseLeftButtonDown&,
         const TableauPileMouseLeftButtonDownEventData&) const;
 
-    void tryAddCardOnFoundationPile(solitaire::interfaces::Solitaire&,
-        const geometry::Position& cardsInHandPosition) const;
+    bool tryAddCardOnAnyFoundationPileAndCheckIfHandEmpty(
+        const MouseLeftButtonUpEventData&) const;
+    bool tryAddCardOnFoundationPileIfCollidesAndCheckIfHandEmpty(
+        const piles::PileId, const MouseLeftButtonUpEventData&) const;
+    bool tryAddCardOnFoundationPileAndCheckIfHandEmpty(
+        const piles::PileId, const MouseLeftButtonUpEventData&) const;
+    void tryAddCardsOnAnyTableauPile(const MouseLeftButtonUpEventData&) const;
+    bool tryAddCardOnTableauPileAndCheckIfHandEmpty(
+        const piles::PileId, const MouseLeftButtonUpEventData&) const;
 
     TableauPileMouseLeftButtonDownEventData
     getTableauPileMouseLeftButtonDownEventData(
         const piles::PileId, const unsigned cardIndex) const;
+
+    MouseLeftButtonUpEventData getMouseLeftButtonUpEventData() const;
 
     bool shouldTryUncoverTableauPileCard(
         const TableauPileMouseLeftButtonDownEventData&) const;
