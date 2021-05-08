@@ -37,14 +37,14 @@ TEST_F(FoundationPileColliderTests, collidesWithPoint) {
 }
 
 TEST_F(FoundationPileColliderTests, collidesWithCard) {
-    EXPECT_FALSE(collider.collidesWithCard(topLeftCorner - Position {cardSize.width, 0}));
-    EXPECT_FALSE(collider.collidesWithCard(topLeftCorner - Position {0, cardSize.height}));
-    EXPECT_FALSE(collider.collidesWithCard(topLeftCorner + Position {cardSize.width, 0}));
-    EXPECT_FALSE(collider.collidesWithCard(topLeftCorner + Position {0, cardSize.height}));
+    EXPECT_FALSE(collider.collidesWithCardsInHand(topLeftCorner - Position {cardSize.width, 0}));
+    EXPECT_FALSE(collider.collidesWithCardsInHand(topLeftCorner - Position {0, cardSize.height}));
+    EXPECT_FALSE(collider.collidesWithCardsInHand(topLeftCorner + Position {cardSize.width, 0}));
+    EXPECT_FALSE(collider.collidesWithCardsInHand(topLeftCorner + Position {0, cardSize.height}));
 
-    EXPECT_TRUE(collider.collidesWithCard(
+    EXPECT_TRUE(collider.collidesWithCardsInHand(
         topLeftCorner - Position {cardSize.width - 1, cardSize.height - 1}));
-    EXPECT_TRUE(collider.collidesWithCard(bottomRightCorner));
+    EXPECT_TRUE(collider.collidesWithCardsInHand(bottomRightCorner));
 }
 
 }

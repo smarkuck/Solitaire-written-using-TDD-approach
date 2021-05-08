@@ -69,7 +69,7 @@ void EventsProcessor::tryAddCardOnFoundationPile(
 {
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id) {
         const auto& collider = context.getFoundationPileCollider(id);
-        if (collider.collidesWithCard(cardsInHandPosition))
+        if (collider.collidesWithCardsInHand(cardsInHandPosition))
         {
             solitaire.tryAddCardOnFoundationPile(id);
             break;

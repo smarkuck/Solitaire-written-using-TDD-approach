@@ -55,7 +55,7 @@ public:
         for (PileId id {0}; id < pilesToIgnore; ++id) {
             EXPECT_CALL(contextMock, getFoundationPileCollider(id))
                 .WillOnce(ReturnRef(foundationPileColliderMock));
-            EXPECT_CALL(foundationPileColliderMock, collidesWithCard(_))
+            EXPECT_CALL(foundationPileColliderMock, collidesWithCardsInHand(_))
                 .WillOnce(Return(false));
         }
     }
@@ -74,8 +74,10 @@ public:
     {
         EXPECT_CALL(contextMock, getFoundationPileCollider(id))
             .WillOnce(ReturnRef(foundationPileColliderMock));
-        EXPECT_CALL(foundationPileColliderMock, collidesWithCard(cardsInHandPosition))
-            .WillOnce(Return(true));
+        EXPECT_CALL(
+            foundationPileColliderMock,
+            collidesWithCardsInHand(cardsInHandPosition)
+        ).WillOnce(Return(true));
     }
 };
 

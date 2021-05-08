@@ -19,7 +19,7 @@ bool FoundationPileCollider::collidesWithPoint(
            position.y < this->position.y + Layout::cardSize.height;
 }
 
-bool FoundationPileCollider::collidesWithCard(
+bool FoundationPileCollider::collidesWithCardsInHand(
     const geometry::Position& position) const
 {
     return std::abs(position.x - this->position.x) < Layout::cardSize.width and
