@@ -44,6 +44,18 @@ bool TableauPileCollider::collidesWithCardYPosition(
            position.y < cardPosition.y + Layout::cardSize.height;
 }
 
+bool TableauPileCollider::collidesWithCardsInHand(const Position& position) const {
+    return std::abs(position.x - this->position.x) < Layout::cardSize.width and
+           std::abs(position.y - getLastCardOrPilePosition().y) < Layout::cardSize.height;
+}
+
+Position TableauPileCollider::getLastCardOrPilePosition() const {
+    const auto& cards = tableauPile.getCards();
+    if (cards.empty())
+        return position;
+    return getCardPosition(cards.size() - 1);
+}
+
 Position TableauPileCollider::getCardPosition(const unsigned index) const {
     throwIfInvalidIndex(index);
     const auto topCoveredCardPosition = tableauPile.getTopCoveredCardPosition();

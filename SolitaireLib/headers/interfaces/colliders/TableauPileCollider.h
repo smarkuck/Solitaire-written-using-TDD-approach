@@ -15,6 +15,8 @@ public:
     virtual std::optional<unsigned> tryGetCollidedCardIndex(
         const geometry::Position&) const = 0;
 
+    virtual bool collidesWithCardsInHand(const geometry::Position&) const = 0;
+
     virtual geometry::Position getCardPosition(const unsigned index) const = 0;
 };
 

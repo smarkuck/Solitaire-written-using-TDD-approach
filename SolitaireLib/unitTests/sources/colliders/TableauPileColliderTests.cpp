@@ -13,6 +13,7 @@ using namespace solitaire::piles;
 namespace solitaire::colliders {
 
 namespace {
+using IsCollided = bool;
 using CardsQuantity = unsigned;
 using TopCoveredCardPosition = unsigned;
 using Index = unsigned;
@@ -82,29 +83,57 @@ TEST_P(TableauPileColliderCardPositionTests, getCardPosition) {
     );
 }
 
-INSTANTIATE_TEST_SUITE_P(CardPositions, TableauPileColliderCardPositionTests, Values(
+INSTANTIATE_TEST_SUITE_P(
+CardPositions, TableauPileColliderCardPositionTests,
+Values(
 // uncovered cards
-    CardPositionData {TopCoveredCardPosition {0}, Index {0}, pilePosition},
+    CardPositionData {
+        TopCoveredCardPosition {0},
+        Index {0},
+        pilePosition
+    },
 
-    CardPositionData {TopCoveredCardPosition {0}, Index {1},
-                      pilePosition + Position {0, uncoveredCardsSpacing}},
+    CardPositionData {
+        TopCoveredCardPosition {0},
+        Index {1},
+        pilePosition + Position {0, uncoveredCardsSpacing}
+    },
 
-    CardPositionData {TopCoveredCardPosition {0}, Index {4},
-                      pilePosition + Position {0, 4 * uncoveredCardsSpacing}},
+    CardPositionData {
+        TopCoveredCardPosition {0},
+        Index {4},
+        pilePosition + Position {0, uncoveredCardsSpacing * 4}
+    },
 // covered cards
-    CardPositionData {TopCoveredCardPosition {5}, Index {0}, pilePosition},
+    CardPositionData {
+        TopCoveredCardPosition {5},
+        Index {0},
+        pilePosition
+    },
 
-    CardPositionData {TopCoveredCardPosition {5}, Index {1},
-                      pilePosition + Position {0, coveredCardsSpacing}},
+    CardPositionData {
+        TopCoveredCardPosition {5},
+        Index {1},
+        pilePosition + Position {0, coveredCardsSpacing}
+    },
 
-    CardPositionData {TopCoveredCardPosition {5}, Index {4},
-                      pilePosition + Position {0, 4 * coveredCardsSpacing}},
+    CardPositionData {
+        TopCoveredCardPosition {5},
+        Index {4},
+        pilePosition + Position {0, coveredCardsSpacing * 4}
+    },
 // five cards with two covered
-    CardPositionData {TopCoveredCardPosition {2}, Index {2},
-                      pilePosition + Position {0, 2 * coveredCardsSpacing}},
+    CardPositionData {
+        TopCoveredCardPosition {2},
+        Index {2},
+        pilePosition + Position {0, coveredCardsSpacing * 2}
+    },
 
-    CardPositionData {TopCoveredCardPosition {2}, Index {4}, pilePosition +
-                      Position {0, 2 * coveredCardsSpacing + 2 * uncoveredCardsSpacing}}
+    CardPositionData {
+        TopCoveredCardPosition {2},
+        Index {4},
+        pilePosition + Position {0, coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2}
+    }
 ));
 
 struct CollidedCardData {
@@ -133,89 +162,200 @@ TEST_P(TableauPileColliderCollidedCardTests, getCollidedCardIndex) {
     );
 }
 
-INSTANTIATE_TEST_SUITE_P(BorderPoints, TableauPileColliderCollidedCardTests, Values(
+INSTANTIATE_TEST_SUITE_P(
+BorderPoints, TableauPileColliderCollidedCardTests,
+Values(
 // empty pile
-    CollidedCardData {CardsQuantity {0}, TopCoveredCardPosition {0},
-                      middlePilePosition, CollidedCardIndex {std::nullopt}},
-// one card: x position tests
-    CollidedCardData {CardsQuantity {1}, TopCoveredCardPosition {0},
-                      middleYPilePosition + Position {-1, 0},
-                      CollidedCardIndex {std::nullopt}},
+    CollidedCardData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        middlePilePosition,
+        CollidedCardIndex {std::nullopt}
+    },
+// x position tests
+    CollidedCardData {
+        CardsQuantity {1},
+        TopCoveredCardPosition {0},
+        middleYPilePosition + Position {-1, 0},
+        CollidedCardIndex {std::nullopt}
+    },
 
-    CollidedCardData {CardsQuantity {1}, TopCoveredCardPosition {0},
-                      middleYPilePosition + Position {cardSize.width, 0},
-                      CollidedCardIndex {std::nullopt}},
+    CollidedCardData {
+        CardsQuantity {1},
+        TopCoveredCardPosition {0},
+        middleYPilePosition + Position {cardSize.width, 0},
+        CollidedCardIndex {std::nullopt}
+    },
 
-    CollidedCardData {CardsQuantity {1}, TopCoveredCardPosition {0},
-                      middleYPilePosition, CollidedCardIndex {0}},
+    CollidedCardData {
+        CardsQuantity {1},
+        TopCoveredCardPosition {0},
+        middleYPilePosition,
+        CollidedCardIndex {0}},
 
-    CollidedCardData {CardsQuantity {1}, TopCoveredCardPosition {0},
-                      middleYPilePosition + Position {cardSize.width - 1, 0},
-                      CollidedCardIndex {0}},
-// one card: y position tests
-    CollidedCardData {CardsQuantity {1}, TopCoveredCardPosition {0},
-                      middleXPilePosition + Position {0, -1},
-                      CollidedCardIndex {std::nullopt}},
+    CollidedCardData {
+        CardsQuantity {1},
+        TopCoveredCardPosition {0},
+        middleYPilePosition + Position {cardSize.width - 1, 0},
+        CollidedCardIndex {0}
+    },
+// y position tests
+    CollidedCardData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        middleXPilePosition + Position {0, -1},
+        CollidedCardIndex {std::nullopt}
+    },
 
-    CollidedCardData {CardsQuantity {1}, TopCoveredCardPosition {0},
-                      middleXPilePosition + Position {0, cardSize.height},
-                      CollidedCardIndex {std::nullopt}},
+    CollidedCardData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        middleXPilePosition +
+        Position {0, coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2 - 1},
+        CollidedCardIndex {3}
+    },
 
-    CollidedCardData {CardsQuantity {1}, TopCoveredCardPosition {0},
-                      middleXPilePosition, CollidedCardIndex {0}},
+    CollidedCardData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        middleXPilePosition +
+        Position {0, coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2},
+        CollidedCardIndex {4}
+    },
 
-    CollidedCardData {CardsQuantity {1}, TopCoveredCardPosition {0},
-                      middleXPilePosition + Position {0, cardSize.height - 1},
-                      CollidedCardIndex {0}},
-// five cards: y position tests
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition, CollidedCardIndex {0}},
+    CollidedCardData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        middleXPilePosition + Position {0,
+        coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2 + cardSize.height - 1},
+        CollidedCardIndex {4}},
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition + Position {0, coveredCardsSpacing - 1},
-                      CollidedCardIndex {0}},
+    CollidedCardData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        middleXPilePosition + Position {0,
+        coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2 + cardSize.height},
+        CollidedCardIndex {std::nullopt}}
+));
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition + Position {0, coveredCardsSpacing},
-                      CollidedCardIndex {1}},
+struct CollidedCardsInHandData {
+    CardsQuantity cardsQuantity;
+    TopCoveredCardPosition topCoveredCardPosition;
+    Position cardsInHandPosition;
+    IsCollided isCollided;
+};
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition + Position {0, 2 * coveredCardsSpacing - 1},
-                      CollidedCardIndex {1}},
+class TableauPileColliderCollideWithCardsInHandTests:
+    public TableauPileColliderTests,
+    public WithParamInterface<CollidedCardsInHandData>
+{
+};
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition + Position {0, 2 * coveredCardsSpacing},
-                      CollidedCardIndex {2}},
+TEST_P(TableauPileColliderCollideWithCardsInHandTests, collidesWithCardsInHand) {
+    const auto& collidedCardsInHandData = GetParam();
+    Cards cards {collidedCardsInHandData.cardsQuantity};
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition +
-                      Position {0, 2 * coveredCardsSpacing + uncoveredCardsSpacing - 1},
-                      CollidedCardIndex {2}},
+    EXPECT_CALL(tableauPileMock, getCards()).WillRepeatedly(ReturnRef(cards));
+    EXPECT_CALL(tableauPileMock, getTopCoveredCardPosition())
+        .WillRepeatedly(Return(collidedCardsInHandData.topCoveredCardPosition));
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition +
-                      Position {0, 2 * coveredCardsSpacing + uncoveredCardsSpacing},
-                      CollidedCardIndex {3}},
+    EXPECT_EQ(
+        collider.collidesWithCardsInHand(collidedCardsInHandData.cardsInHandPosition),
+        collidedCardsInHandData.isCollided
+    );
+}
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition +
-                      Position {0, 2 * coveredCardsSpacing + 2 * uncoveredCardsSpacing - 1},
-                      CollidedCardIndex {3}},
+INSTANTIATE_TEST_SUITE_P(
+BorderPoints, TableauPileColliderCollideWithCardsInHandTests,
+Values(
+// x position tests
+    CollidedCardsInHandData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        pilePosition - Position {cardSize.width, 0},
+        IsCollided {false}
+    },
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition +
-                      Position {0, 2 * coveredCardsSpacing + 2 * uncoveredCardsSpacing},
-                      CollidedCardIndex {4}},
+    CollidedCardsInHandData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        pilePosition + Position {cardSize.width, 0},
+        IsCollided {false}
+    },
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition + Position {0,
-                      2 * coveredCardsSpacing + 2 * uncoveredCardsSpacing + cardSize.height - 1},
-                      CollidedCardIndex {4}},
+    CollidedCardsInHandData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        pilePosition - Position {cardSize.width - 1, 0},
+        IsCollided {true}
+    },
 
-    CollidedCardData {CardsQuantity {5}, TopCoveredCardPosition {2},
-                      middleXPilePosition + Position {0,
-                      2 * coveredCardsSpacing + 2 * uncoveredCardsSpacing + cardSize.height},
-                      CollidedCardIndex {std::nullopt}}
+    CollidedCardsInHandData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        pilePosition + Position {cardSize.width - 1, 0},
+        IsCollided {true}
+    },
+// empty pile: y position tests
+    CollidedCardsInHandData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        pilePosition - Position {0, cardSize.height},
+        IsCollided {false}
+    },
+
+    CollidedCardsInHandData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        pilePosition + Position {0, cardSize.height},
+        IsCollided {false}
+    },
+
+    CollidedCardsInHandData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        pilePosition - Position {0, cardSize.height - 1},
+        IsCollided {true}
+    },
+
+    CollidedCardsInHandData {
+        CardsQuantity {0},
+        TopCoveredCardPosition {0},
+        pilePosition + Position {0, cardSize.height - 1},
+        IsCollided {true}
+    },
+// pile with cards: y position tests
+    CollidedCardsInHandData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        pilePosition + Position {0,
+        coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2 - cardSize.height},
+        IsCollided {false}
+    },
+
+    CollidedCardsInHandData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        pilePosition + Position {0,
+        coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2 + cardSize.height},
+        IsCollided {false}
+    },
+
+    CollidedCardsInHandData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        pilePosition + Position {0,
+        coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2 - cardSize.height + 1},
+        IsCollided {true}
+    },
+
+    CollidedCardsInHandData {
+        CardsQuantity {5},
+        TopCoveredCardPosition {2},
+        pilePosition + Position {0,
+        coveredCardsSpacing * 2 + uncoveredCardsSpacing * 2 + cardSize.height - 1},
+        IsCollided {true}
+    }
 ));
 
 }

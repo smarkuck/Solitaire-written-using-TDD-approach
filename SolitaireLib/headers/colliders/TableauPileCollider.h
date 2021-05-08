@@ -18,6 +18,8 @@ public:
     std::optional<unsigned> tryGetCollidedCardIndex(
         const geometry::Position&) const override;
 
+    bool collidesWithCardsInHand(const geometry::Position&) const override;
+
     geometry::Position getCardPosition(const unsigned index) const override;
 
 private:
@@ -26,6 +28,7 @@ private:
     bool collidesWithCardYPosition(const geometry::Position&,
                                    const unsigned index) const;
 
+    geometry::Position getLastCardOrPilePosition() const;
     geometry::Position getRelativeCardPosition(
         const unsigned index, const unsigned topCoveredCardPosition) const;
 
