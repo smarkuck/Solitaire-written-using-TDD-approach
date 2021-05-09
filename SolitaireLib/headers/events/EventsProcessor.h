@@ -12,6 +12,7 @@ class Solitaire;
 
 namespace solitaire::colliders::interfaces {
 class FoundationPileCollider;
+class StockPileCollider;
 class TableauPileCollider;
 }
 
@@ -74,7 +75,7 @@ private:
         const piles::PileId, const MouseLeftButtonDown&,
         const colliders::interfaces::FoundationPileCollider&) const;
 
-    void tryPullOutOrUncoverCardsFromAnyTableauPile(
+    bool checkIfCollidesAndTryPullOutOrUncoverCardsFromAnyTableauPile(
         const MouseLeftButtonDown&) const;
     bool checkIfCollidesAndTryPullOutOrUncoverCardsFromTableauPile(
         const piles::PileId, const MouseLeftButtonDown&) const;
@@ -94,6 +95,11 @@ private:
     void tryAddCardsOnAnyTableauPile(const MouseLeftButtonUpEventData&) const;
     bool tryAddCardOnTableauPileAndCheckIfHandEmpty(
         const piles::PileId, const MouseLeftButtonUpEventData&) const;
+
+    void tryInteractWithStockPile(const MouseLeftButtonDown&) const;
+    void tryPullOutCardFromStockPile(
+        const MouseLeftButtonDown&,
+        const colliders::interfaces::StockPileCollider&) const;
 
     TableauPileMouseLeftButtonDownEventData
     getTableauPileMouseLeftButtonDownEventData(

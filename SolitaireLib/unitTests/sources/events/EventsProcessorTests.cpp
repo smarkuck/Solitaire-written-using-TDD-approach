@@ -3,6 +3,7 @@
 #include "SolitaireMock.h"
 #include "cards/Card.h"
 #include "colliders/FoundationPileColliderMock.h"
+#include "colliders/StockPileColliderMock.h"
 #include "colliders/TableauPileColliderMock.h"
 #include "events/EventsDefinitions.h"
 #include "events/EventsProcessor.h"
@@ -66,6 +67,14 @@ public:
         }
     }
 
+    void ignoreLeftButtonDownOnStockPile() {
+        expectGetStockPileCollider();
+        EXPECT_CALL(stockPileColliderMock, coveredCardsCollidesWith(_))
+            .WillOnce(Return(false));
+        EXPECT_CALL(stockPileColliderMock, uncoveredCardsCollidesWith(_))
+            .WillOnce(Return(false));
+    }
+
     void ignoreLeftButtonUpOnFoundationPilesFromFirstTo(unsigned pilesToIgnore) {
         for (PileId id {0}; id < pilesToIgnore; ++id) {
             EXPECT_CALL(contextMock, getFoundationPileCollider(id))
@@ -100,6 +109,26 @@ public:
             .WillOnce(ReturnRef(tableauPileColliderMock));
         EXPECT_CALL(tableauPileColliderMock, tryGetCollidedCardIndex(event.position))
             .WillOnce(Return(cardIndex));
+    }
+
+    void acceptLeftButtonDownOnCoveredStockPileCards(const MouseLeftButtonDown& event) {
+        EXPECT_CALL(stockPileColliderMock, coveredCardsCollidesWith(event.position))
+            .WillOnce(Return(true));
+        EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
+        EXPECT_CALL(solitaireMock, trySelectNextStockPileCard());
+    }
+
+    void acceptLeftButtonDownOnUncoveredStockPileCards(const MouseLeftButtonDown& event) {
+        EXPECT_CALL(stockPileColliderMock, coveredCardsCollidesWith(event.position))
+            .WillOnce(Return(false));
+        EXPECT_CALL(stockPileColliderMock, uncoveredCardsCollidesWith(event.position))
+            .WillOnce(Return(true));
+        EXPECT_CALL(contextMock, setMousePosition(event.position));
+        EXPECT_CALL(stockPileColliderMock, getUncoveredCardsPosition())
+            .WillOnce(Return(pilePosition));
+        EXPECT_CALL(contextMock, setCardsInHandPosition(pilePosition));
+        EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
+        EXPECT_CALL(solitaireMock, tryPullOutCardFromStockPile());
     }
 
     void acceptLeftButtonUpOnFoundationPile(
@@ -143,9 +172,15 @@ public:
         EXPECT_CALL(solitaireMock, tryPullOutCardsFromTableauPile(id, cardsToPullout));
     }
 
+    void expectGetStockPileCollider() {
+        EXPECT_CALL(contextMock, getStockPileCollider())
+            .WillOnce(ReturnRef(stockPileColliderMock));
+    }
+
     InSequence seq;
     StrictMock<SolitaireMock> solitaireMock;
     StrictMock<FoundationPileColliderMock> foundationPileColliderMock;
+    StrictMock<StockPileColliderMock> stockPileColliderMock;
     StrictMock<TableauPileColliderMock> tableauPileColliderMock;
     StrictMock<TableauPileMock> tableauPileMock;
     StrictMock<ContextMock> contextMock;
@@ -161,6 +196,7 @@ TEST_F(EventsProcessorTests,
     expectEvent(mouseLeftButtonDownEvent);
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount);
+    ignoreLeftButtonDownOnStockPile();
     expectEvent(NoEvents {});
     eventsProcessor.processEvents();
     EXPECT_FALSE(eventsProcessor.shouldQuit());
@@ -172,6 +208,7 @@ TEST_F(EventsProcessorTests,
     expectEvent(mouseLeftButtonDownEvent);
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount);
+    ignoreLeftButtonDownOnStockPile();
     expectEvent(Quit {});
     eventsProcessor.processEvents();
     EXPECT_TRUE(eventsProcessor.shouldQuit());
@@ -238,6 +275,30 @@ TEST_F(EventsProcessorTests,
     expectTryPullOutCardsFromTableauPile(
         mouseLeftButtonDownEvent, lastTableauPileId,
         middleTableauPileCardIndex, cards.size() - middleTableauPileCardIndex);
+    expectEvent(Quit {});
+    eventsProcessor.processEvents();
+}
+
+TEST_F(EventsProcessorTests,
+       trySelectNextStockPileCardOnLeftButtonDownEvent)
+{
+    expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
+    ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount);
+    expectGetStockPileCollider();
+    acceptLeftButtonDownOnCoveredStockPileCards(mouseLeftButtonDownEvent);
+    expectEvent(Quit {});
+    eventsProcessor.processEvents();
+}
+
+TEST_F(EventsProcessorTests,
+       tryPullOutCardFromStockPileOnLeftButtonDownEvent)
+{
+    expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
+    ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount);
+    expectGetStockPileCollider();
+    acceptLeftButtonDownOnUncoveredStockPileCards(mouseLeftButtonDownEvent);
     expectEvent(Quit {});
     eventsProcessor.processEvents();
 }

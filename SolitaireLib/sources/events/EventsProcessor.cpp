@@ -4,6 +4,7 @@
 #include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
+#include "interfaces/colliders/StockPileCollider.h"
 #include "interfaces/colliders/TableauPileCollider.h"
 #include "interfaces/events/EventsSource.h"
 #include "piles/PileId.h"
@@ -53,7 +54,9 @@ void EventsProcessor::processMouseLeftButtonDownEvent(
 {
     if (checkIfCollidesAndTryPullOutCardFromAnyFoundationPile(event))
         return;
-    tryPullOutOrUncoverCardsFromAnyTableauPile(event);
+    if (checkIfCollidesAndTryPullOutOrUncoverCardsFromAnyTableauPile(event))
+        return;
+    tryInteractWithStockPile(event);
 }
 
 bool EventsProcessor::
@@ -87,13 +90,14 @@ void EventsProcessor::tryPullOutCardFromFoundationPile(
     context.setCardsInHandPosition(collider.getPosition());
 }
 
-void EventsProcessor::
-tryPullOutOrUncoverCardsFromAnyTableauPile(
+bool EventsProcessor::
+checkIfCollidesAndTryPullOutOrUncoverCardsFromAnyTableauPile(
     const MouseLeftButtonDown& event) const
 {
     for (PileId id {0}; id < Solitaire::tableauPilesCount; ++id)
         if (checkIfCollidesAndTryPullOutOrUncoverCardsFromTableauPile(id, event))
-            return;
+            return true;
+    return false;
 }
 
 bool EventsProcessor::checkIfCollidesAndTryPullOutOrUncoverCardsFromTableauPile(
@@ -151,6 +155,22 @@ void EventsProcessor::tryPullOutCardsFromTableauPile(
         eventData.collider.getCardPosition(eventData.cardIndex));
     const auto cardsToPullOut = eventData.cardsQuantity - eventData.cardIndex;
     eventData.solitaire.tryPullOutCardsFromTableauPile(id, cardsToPullOut);
+}
+
+void EventsProcessor::tryInteractWithStockPile(const MouseLeftButtonDown& event) const {
+    const auto& collider = context.getStockPileCollider();
+    if (collider.coveredCardsCollidesWith(event.position))
+        context.getSolitaire().trySelectNextStockPileCard();
+    else if (collider.uncoveredCardsCollidesWith(event.position))
+        tryPullOutCardFromStockPile(event, collider);
+}
+
+void EventsProcessor::tryPullOutCardFromStockPile(
+    const MouseLeftButtonDown& event, const StockPileCollider& collider) const
+{
+    context.setMousePosition(event.position);
+    context.setCardsInHandPosition(collider.getUncoveredCardsPosition());
+    context.getSolitaire().tryPullOutCardFromStockPile();
 }
 
 void EventsProcessor::processMouseLeftButtonUpEvent() const {
