@@ -34,6 +34,7 @@ const std::string windowTitle {"Solitaire"};
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {480};
 constexpr unsigned cardPlaceholderAlpha {70};
+constexpr unsigned buttonAlpha {150};
 constexpr unsigned foundationPilesCount {4};
 constexpr unsigned tableauPilesCount {7};
 constexpr unsigned cardsInHandSpacing {16};
@@ -43,12 +44,18 @@ const TextureId backgroundTextureId {0};
 const TextureId cardsTextureId {1};
 const TextureId cardPlaceholderTextureId {2};
 const TextureId winId {3};
+const TextureId newGameId {4};
+const TextureId undoId {5};
 
 constexpr Size cardSize {75, 104};
 
+constexpr Area newGameTextureArea {Position {0, 0}, Size {58, 17}};
+constexpr Area undoTextureArea {Position {0, 0}, Size {34, 17}};
 constexpr Area cardPlaceholderTextureArea {Position {0, 0}, cardSize};
 constexpr Area cardBackTextureArea {Position {0, 416}, cardSize};
 
+constexpr Position newGameButtonPosition {16, 7};
+constexpr Position undoButtonPosition {80, 7};
 constexpr Position pilePosition {283, 30};
 constexpr Position stockPilePosition {16, 30};
 constexpr Position stockPileLastCoveredCardPosition {20, 30};
@@ -82,6 +89,23 @@ public:
             setTextureAlpha(cardPlaceholderTextureId, cardPlaceholderAlpha));
         EXPECT_CALL(*graphicsSystemMock, loadTexture(assetsPath + "win.bmp"))
             .WillOnce(Return(winId));
+        EXPECT_CALL(*graphicsSystemMock, loadTexture(assetsPath + "new_game.bmp"))
+            .WillOnce(Return(newGameId));
+        EXPECT_CALL(*graphicsSystemMock,
+            setTextureAlpha(newGameId, buttonAlpha));
+        EXPECT_CALL(*graphicsSystemMock, loadTexture(assetsPath + "undo.bmp"))
+            .WillOnce(Return(undoId));
+        EXPECT_CALL(*graphicsSystemMock,
+            setTextureAlpha(undoId, buttonAlpha));
+    }
+
+    void expectRenderBackgroundAndButtons() {
+        EXPECT_CALL(*graphicsSystemMock,
+            renderTextureInFullWindow(backgroundTextureId));
+        EXPECT_CALL(*graphicsSystemMock,
+            renderTexture(newGameId, newGameButtonPosition, newGameTextureArea));
+        EXPECT_CALL(*graphicsSystemMock,
+            renderTexture(undoId, undoButtonPosition, undoTextureArea));
     }
 
     InSequence seq;
@@ -95,7 +119,7 @@ TEST_F(RendererTests, onConstructionShouldCreateWindowAndLoadAllTextures) {
 }
 
 TEST_F(RendererTests, ifGameIsFinishedRenderWinTexture) {
-    EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
+    expectRenderBackgroundAndButtons();
     EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
     EXPECT_CALL(solitaireMock, isGameFinished()).WillOnce(Return(true));
     EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(winId));
@@ -109,7 +133,7 @@ public:
     using TopCoveredCardPosition = unsigned;
 
     CreatedRendererTests() {
-        EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
+        expectRenderBackgroundAndButtons();
         EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
         EXPECT_CALL(solitaireMock, isGameFinished()).WillOnce(Return(false));
 

@@ -22,7 +22,11 @@ struct Layout {
     static constexpr int uncoveredTableauPileCardsSpacing {16};
     static constexpr int stockPileCardsSpacing {2};
 
+    static constexpr geometry::Position newGameButtonPosition {16, 7};
+    static constexpr geometry::Position undoButtonPosition {80, 7};
     static constexpr geometry::Position stockPilePosition {16, 30};
+    static constexpr geometry::Size newGameButtonSize {58, 17};
+    static constexpr geometry::Size undoButtonSize {34, 17};
     static constexpr geometry::Size cardSize {75, 104};
 };
 

@@ -32,6 +32,7 @@ const std::string windowTitle {"Solitaire"};
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {480};
 constexpr unsigned cardPlaceholderAlpha {70};
+constexpr unsigned buttonAlpha {150};
 
 constexpr Area cardPlaceholderTextureArea {Position {0, 0}, Layout::cardSize};
 constexpr Area cardBackTextureArea {Position {0, 416}, Layout::cardSize};
@@ -50,6 +51,10 @@ Renderer::Renderer(const Context& context,
     cardPlaceholderId = loadTexture("card_placeholder.bmp");
     this->graphicsSystem->setTextureAlpha(cardPlaceholderId, cardPlaceholderAlpha);
     winId = loadTexture("win.bmp");
+    newGameId = loadTexture("new_game.bmp");
+    this->graphicsSystem->setTextureAlpha(newGameId, buttonAlpha);
+    undoId = loadTexture("undo.bmp");
+    this->graphicsSystem->setTextureAlpha(undoId, buttonAlpha);
 }
 
 TextureId Renderer::loadTexture(const std::string& path) const {
@@ -58,6 +63,7 @@ TextureId Renderer::loadTexture(const std::string& path) const {
 
 void Renderer::render() const {
     graphicsSystem->renderTextureInFullWindow(backgroundId);
+    renderButtons();
 
     if (context.getSolitaire().isGameFinished())
         graphicsSystem->renderTextureInFullWindow(winId);
@@ -65,6 +71,16 @@ void Renderer::render() const {
         renderPiles();
 
     graphicsSystem->renderFrame();
+}
+
+void Renderer::renderButtons() const {
+    graphicsSystem->renderTexture(
+        newGameId, Layout::newGameButtonPosition,
+        Area {Position {0, 0}, Layout::newGameButtonSize});
+
+    graphicsSystem->renderTexture(
+        undoId, Layout::undoButtonPosition,
+        Area {Position {0, 0}, Layout::undoButtonSize});
 }
 
 void Renderer::renderPiles() const {

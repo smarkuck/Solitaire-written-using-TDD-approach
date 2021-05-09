@@ -41,6 +41,7 @@ private:
 
     TextureId loadTexture(const std::string& path) const;
 
+    void renderButtons() const;
     void renderPiles() const;
     void renderFoundationPile(const piles::PileId) const;
     void renderTableauPile(const piles::PileId) const;
@@ -81,6 +82,8 @@ private:
     TextureId cardsId;
     TextureId cardPlaceholderId;
     TextureId winId;
+    TextureId newGameId;
+    TextureId undoId;
 };
 
 }
