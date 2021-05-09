@@ -1,4 +1,3 @@
-#include <cassert>
 #include <filesystem>
 #include <memory>
 
@@ -127,6 +126,5 @@ std::string ApplicationFactory::findAssetsPath() const {
         if (std::filesystem::exists(path))
             return path;
 
-    assert(false and "cannot find assets path");
-    return {};
+    throw std::runtime_error{"Cannot find assets path"};
 }
