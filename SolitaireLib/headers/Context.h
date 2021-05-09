@@ -20,7 +20,8 @@ public:
         interfaces::Solitaire::tableauPilesCount>;
 
     Context(std::unique_ptr<interfaces::Solitaire>,
-            FoundationPileColliders, TableauPileColliders);
+            FoundationPileColliders, TableauPileColliders,
+            std::unique_ptr<colliders::interfaces::StockPileCollider>);
 
     void setMousePosition(const geometry::Position&) override;
     void setCardsInHandPosition(const geometry::Position&) override;
@@ -40,6 +41,12 @@ public:
     const colliders::interfaces::TableauPileCollider&
     getTableauPileCollider(const piles::PileId) const override;
 
+    colliders::interfaces::StockPileCollider&
+    getStockPileCollider() override;;
+
+    const colliders::interfaces::StockPileCollider&
+    getStockPileCollider() const override;
+
     geometry::Position getMousePosition() const override;
     geometry::Position getCardsInHandPosition() const override;
 
@@ -47,6 +54,7 @@ private:
     std::unique_ptr<interfaces::Solitaire> solitaire;
     FoundationPileColliders foundationPileColliders;
     TableauPileColliders tableauPileColliders;
+    std::unique_ptr<colliders::interfaces::StockPileCollider> stockPileCollider;
     geometry::Position mousePosition;
     geometry::Position cardsInHandPosition;
 };

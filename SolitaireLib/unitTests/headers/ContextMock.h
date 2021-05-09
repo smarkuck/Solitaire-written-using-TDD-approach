@@ -27,6 +27,12 @@ public:
     MOCK_METHOD(const colliders::interfaces::TableauPileCollider&,
                 getTableauPileCollider, (const piles::PileId), (const, override));
 
+    MOCK_METHOD(colliders::interfaces::StockPileCollider&,
+                getStockPileCollider, (), (override));
+
+    MOCK_METHOD(const colliders::interfaces::StockPileCollider&,
+                getStockPileCollider, (), (const, override));
+
     MOCK_METHOD(geometry::Position, getMousePosition, (), (const, override));
     MOCK_METHOD(geometry::Position, getCardsInHandPosition, (), (const, override));
 };

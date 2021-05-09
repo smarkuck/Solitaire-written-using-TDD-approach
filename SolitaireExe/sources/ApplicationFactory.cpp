@@ -11,6 +11,7 @@
 #include "archivers/MoveCardsOperationSnapshotCreator.h"
 #include "cards/ShuffledDeckGenerator.h"
 #include "colliders/FoundationPileCollider.h"
+#include "colliders/StockPileCollider.h"
 #include "colliders/TableauPileCollider.h"
 #include "events/EventsProcessor.h"
 #include "events/SDLEventsSource.h"
@@ -61,7 +62,8 @@ ApplicationFactory::makeContext() const
 
     return std::make_unique<Context>(
         std::move(solitaire), std::move(foundationPileColliders),
-        std::move(tableauPileColliders));
+        std::move(tableauPileColliders),
+        std::make_unique<StockPileCollider>(solitaire->getStockPile()));
 }
 
 std::unique_ptr<solitaire::interfaces::Solitaire>

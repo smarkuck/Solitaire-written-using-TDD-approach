@@ -1,6 +1,7 @@
 #include "Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
+#include "interfaces/colliders/StockPileCollider.h"
 #include "interfaces/colliders/TableauPileCollider.h"
 #include "piles/PileId.h"
 
@@ -13,10 +14,12 @@ namespace solitaire {
 
 Context::Context(std::unique_ptr<Solitaire> solitaire,
                  FoundationPileColliders foundationPileColliders,
-                 TableauPileColliders tableauPileColliders):
+                 TableauPileColliders tableauPileColliders,
+                 std::unique_ptr<StockPileCollider> stockPileCollider):
     solitaire {std::move(solitaire)},
     foundationPileColliders {std::move(foundationPileColliders)},
-    tableauPileColliders {std::move(tableauPileColliders)} {
+    tableauPileColliders {std::move(tableauPileColliders)},
+    stockPileCollider {std::move(stockPileCollider)} {
 }
 
 void Context::setMousePosition(const Position& position) {
@@ -57,6 +60,14 @@ const TableauPileCollider& Context::getTableauPileCollider(const PileId id) cons
     if (id >= Solitaire::tableauPilesCount)
         throw std::runtime_error {"Invalid tableau pile id: " + id};
     return *tableauPileColliders[id];
+}
+
+StockPileCollider& Context::getStockPileCollider() {
+    return *stockPileCollider;
+}
+
+const StockPileCollider& Context::getStockPileCollider() const {
+    return *stockPileCollider;
 }
 
 Position Context::getMousePosition() const {

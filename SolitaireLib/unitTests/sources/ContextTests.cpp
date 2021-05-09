@@ -5,6 +5,7 @@
 #include "SolitaireMock.h"
 #include "cards/Card.h"
 #include "colliders/FoundationPileColliderMock.h"
+#include "colliders/StockPileColliderMock.h"
 #include "colliders/TableauPileColliderMock.h"
 #include "gtest/gtest.h"
 
@@ -47,12 +48,13 @@ public:
 
         context = std::make_unique<Context>(
             solitaireMock.make_unique(), std::move(foundationPileColliders),
-            std::move(tableauPileColliders));
+            std::move(tableauPileColliders), stockPileColliderMock.make_unique());
     }
 
     mock_ptr<SolitaireMock> solitaireMock;
     FoundationPileColliderMocks foundationPileColliderMocks;
     TableauPileColliderMocks tableauPileColliderMocks;
+    mock_ptr<StockPileColliderMock> stockPileColliderMock;
     std::unique_ptr<Context> context;
 };
 
@@ -101,6 +103,11 @@ TEST_F(ContextTests, throwOnInvalidTableauPileColliderId) {
         std::as_const(*context).getTableauPileCollider(PileId {tableauPilesCount}),
         std::runtime_error
     );
+}
+
+TEST_F(ContextTests, getStockPileCollider) {
+    EXPECT_EQ(&context->getStockPileCollider(), stockPileColliderMock.get());
+    EXPECT_EQ(&std::as_const(*context).getStockPileCollider(), stockPileColliderMock.get());
 }
 
 TEST_F(ContextTests, setAndGetPositions) {
