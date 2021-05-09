@@ -192,9 +192,17 @@ TEST_F(StockPileColliderTests, thirteenCoveredCardsCollidesWith) {
         pileBottomRightCorner + Position {pileCardsSpacing * 2, 0}));
 }
 
-TEST_F(StockPileColliderTests, emptyUncoveredCardsCollidesWith) {
+TEST_F(StockPileColliderTests, emptyUncoveredCardsDoesNotCollideWith) {
     EXPECT_CALL(stockPileMock, getSelectedCardIndex())
         .WillRepeatedly(Return(std::nullopt));
+
+    EXPECT_FALSE(collider.uncoveredCardsCollidesWith(pileUncoveredCardsPosition));
+    EXPECT_FALSE(collider.uncoveredCardsCollidesWith(pileBottomRightCorner));
+}
+
+TEST_F(StockPileColliderTests, oneUncoveredCardCollidesWith) {
+    EXPECT_CALL(stockPileMock, getSelectedCardIndex())
+        .WillRepeatedly(Return(0));
 
     EXPECT_FALSE(collider.uncoveredCardsCollidesWith(
         pileUncoveredCardsPosition - Position {1, 0}));

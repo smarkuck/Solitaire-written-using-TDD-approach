@@ -19,6 +19,7 @@ bool StockPileCollider::coveredCardsCollidesWith(const Position& position) const
 }
 
 bool StockPileCollider::uncoveredCardsCollidesWith(const Position& position) const {
+    if (not stockPile.getSelectedCardIndex()) return false;
     const auto cardsPosition = getUncoveredCardsPosition();
     return cardCollidesWith(cardsPosition, position);
 }
