@@ -13,7 +13,8 @@ namespace solitaire::time {
 
 class ChronoFPSLimiter: public interfaces::FPSLimiter {
 public:
-    ChronoFPSLimiter(std::unique_ptr<interfaces::StdTimeFunctionsWrapper>);
+    ChronoFPSLimiter(const unsigned fps,
+                     std::unique_ptr<interfaces::StdTimeFunctionsWrapper>);
 
     void saveFrameStartTime() override;
     void sleepRestOfFrameTime() const override;
@@ -22,6 +23,7 @@ private:
     void calculateRestOfFrameTimeAndSleep(
         const std::chrono::duration<double, std::milli>&) const;
 
+    const double frameTime;
     std::unique_ptr<interfaces::StdTimeFunctionsWrapper> stdTimeFunctionsWrapper;
     std::chrono::system_clock::time_point frameStartTime;
 };

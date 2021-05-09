@@ -10,6 +10,7 @@ namespace solitaire {
 
 namespace {
 using Milliseconds = unsigned;
+constexpr unsigned fps {60};
 constexpr Milliseconds start {3};
 constexpr Milliseconds frameTime {16};
 }
@@ -47,7 +48,7 @@ TEST_F(ChronoFPSLimiterTests, sleepRestOfFrameTimeSavedDuringConstruction) {
     constexpr Milliseconds stop {5};
 
     expectGetActualTime(start);
-    ChronoFPSLimiter fpsLimiter {stdTimeFunctionsWrapperMock.make_unique()};
+    ChronoFPSLimiter fpsLimiter {fps, stdTimeFunctionsWrapperMock.make_unique()};
 
     expectGetActualTime(stop);
     expectSleepForCalculatedRestOfTime(start, stop);
@@ -60,7 +61,7 @@ public:
         expectGetActualTime(start);
 
         fpsLimiter = std::make_unique<ChronoFPSLimiter>(
-            stdTimeFunctionsWrapperMock.make_unique());
+            fps, stdTimeFunctionsWrapperMock.make_unique());
     }
 
     std::unique_ptr<ChronoFPSLimiter> fpsLimiter;

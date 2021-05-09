@@ -113,8 +113,9 @@ ApplicationFactory::makeRenderer(
 
 std::unique_ptr<time::interfaces::FPSLimiter>
 ApplicationFactory::makeFPSLimiter() const {
+    const unsigned fps {200};
     return std::make_unique<ChronoFPSLimiter>(
-        std::make_unique<StdTimeFunctionsWrapper>()
+        fps, std::make_unique<StdTimeFunctionsWrapper>()
     );
 }
 

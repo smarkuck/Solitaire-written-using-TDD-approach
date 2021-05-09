@@ -5,12 +5,10 @@ using namespace solitaire::time::interfaces;
 
 namespace solitaire::time {
 
-namespace {
-constexpr double frameTime {1000 / 60.0};
-}
-
 ChronoFPSLimiter::ChronoFPSLimiter(
+    const unsigned fps,
     std::unique_ptr<StdTimeFunctionsWrapper> stdTimeFunctionsWrapper):
+        frameTime {1000.0 / fps},
         stdTimeFunctionsWrapper {std::move(stdTimeFunctionsWrapper)},
         frameStartTime {this->stdTimeFunctionsWrapper->now()} {
 }
