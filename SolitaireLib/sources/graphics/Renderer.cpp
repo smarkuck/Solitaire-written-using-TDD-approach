@@ -9,6 +9,7 @@
 #include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
+#include "interfaces/colliders/StockPileCollider.h"
 #include "interfaces/colliders/TableauPileCollider.h"
 #include "interfaces/graphics/GraphicsSystem.h"
 #include "interfaces/piles/FoundationPile.h"
@@ -116,8 +117,9 @@ void Renderer::renderStockPileWithCards(
     const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
 {
     throwOnInvalidSelectedCardIndex(pileCards, selectedCardIndex);
-    renderStockPileCoveredCards(pileCards, selectedCardIndex);
-    renderStockPileUncoveredCards(pileCards, selectedCardIndex);
+    const auto& collider = context.getStockPileCollider();
+    renderStockPileCoveredCardsOrPlaceholder(pileCards, selectedCardIndex, collider);
+    renderStockPileUncoveredCards(pileCards, selectedCardIndex, collider);
 }
 
 void Renderer::throwOnInvalidSelectedCardIndex(
@@ -128,52 +130,51 @@ void Renderer::throwOnInvalidSelectedCardIndex(
             "Cannot get Stock pile card with index: " + selectedCardIndex.value()};
 }
 
-void Renderer::renderStockPileCoveredCards(
+void Renderer::renderStockPileCoveredCardsOrPlaceholder(
+    const Cards& pileCards, const SelectedCardIndex& selectedCardIndex,
+    const StockPileCollider& collider) const
+{
+    if (areCoveredCardsEmpty(pileCards, selectedCardIndex)) {
+        renderCardPlaceholder(Layout::stockPilePosition);
+        return;
+    }
+
+    renderStockPileCoveredCards(pileCards, selectedCardIndex, collider);
+}
+
+bool Renderer::areCoveredCardsEmpty(
     const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
 {
-    const auto cardsToRender = getStockPileCardsToRenderCount(
-        getStockPileCoveredCardsCount(pileCards, selectedCardIndex));
+    return selectedCardIndex and selectedCardIndex == pileCards.size() - 1;
+}
 
-    if (cardsToRender == 0)
-        renderCardPlaceholder(Layout::stockPilePosition);
-
+void Renderer::renderStockPileCoveredCards(
+    const Cards& pileCards, const SelectedCardIndex& selectedCardIndex,
+    const StockPileCollider& collider) const
+{
     auto cardPosition = Layout::stockPilePosition;
-    for (unsigned i = 0; i < cardsToRender; ++i) {
+    const auto coveredCardsPosition = collider.getCoveredCardsPosition();
+
+    while (cardPosition.x <= coveredCardsPosition.x) {
         renderCardBack(cardPosition);
         cardPosition.x += Layout::stockPileCardsSpacing;
     }
 }
 
 void Renderer::renderStockPileUncoveredCards(
-    const Cards& pileCards, const SelectedCardIndex& selectedCardIndex) const
+    const Cards& pileCards, const SelectedCardIndex& selectedCardIndex,
+    const StockPileCollider& collider) const
 {
-    const unsigned cardsToRender = getStockPileCardsToRenderCount(
-        getStockPileUncoveredCardsCount(selectedCardIndex));
+    if (not selectedCardIndex) return;
 
     auto cardPosition = Layout::stockPilePosition;
     cardPosition.x += Layout::pilesSpacing;
-    for (unsigned i = 0; i < cardsToRender; ++i) {
+    const auto uncoveredCardsPosition = collider.getUncoveredCardsPosition();
+
+    while (cardPosition.x <= uncoveredCardsPosition.x) {
         renderCard(cardPosition, pileCards[selectedCardIndex.value()]);
         cardPosition.x += Layout::stockPileCardsSpacing;
     }
-}
-
-unsigned Renderer::getStockPileCoveredCardsCount(const Cards& pileCards,
-    const SelectedCardIndex& selectedCardIndex) const
-{
-    if (selectedCardIndex)
-        return pileCards.size() - (selectedCardIndex.value() + 1);
-    return pileCards.size();
-}
-
-unsigned Renderer::getStockPileUncoveredCardsCount(
-    const SelectedCardIndex& selectedCardIndex) const
-{
-    return selectedCardIndex ? selectedCardIndex.value() + 1 : 0;
-}
-
-unsigned Renderer::getStockPileCardsToRenderCount(const unsigned cardsCount) const {
-    return (cardsCount + 5) / 6;
 }
 
 void Renderer::renderCardsInHand() const {

@@ -7,6 +7,7 @@
 #include "cards/Suit.h"
 #include "cards/Value.h"
 #include "colliders/FoundationPileColliderMock.h"
+#include "colliders/StockPileColliderMock.h"
 #include "colliders/TableauPileColliderMock.h"
 #include "gmock/gmock.h"
 #include "geometry/Area.h"
@@ -35,8 +36,7 @@ constexpr unsigned windowHeight {480};
 constexpr unsigned cardPlaceholderAlpha {70};
 constexpr unsigned foundationPilesCount {4};
 constexpr unsigned tableauPilesCount {7};
-constexpr unsigned coveredTableauPileCardsSpacing {3};
-constexpr unsigned uncoveredTableauPileCardsSpacing {16};
+constexpr unsigned cardsInHandSpacing {16};
 constexpr unsigned stockPileCardsSpacing {2};
 
 const TextureId backgroundTextureId {0};
@@ -50,28 +50,20 @@ constexpr Area cardBackTextureArea {Position {0, 416}, cardSize};
 
 constexpr Position pilePosition {283, 30};
 constexpr Position stockPilePosition {16, 30};
+constexpr Position stockPileLastCoveredCardPosition {20, 30};
 constexpr Position stockPileUncoveredCardsPosition {105, 30};
+constexpr Position stockPileLastUncoveredCardPosition {109, 30};
 constexpr Position cardsInHandPosition {15, 22};
 
 const Card fiveDiamond {Value::Five, Suit::Diamond};
 
 const Cards noCards;
-const Cards aceHeart {Card {Value::Ace, Suit::Heart}};
 
-const Cards twoCardsWithLastSevenSpade {
-    Card {Value::Ace, Suit::Heart},
-    Card {Value::Seven, Suit::Spade}
-};
-
-const Cards threeCardsWithLastKingClub {
+const Cards threeCards {
     Card {Value::Ace, Suit::Heart},
     Card {Value::Seven, Suit::Spade},
     Card {Value::King, Suit::Club}
 };
-
-const Cards sixCards {6};
-const Cards sevenCards {7};
-const Cards nineteenCards {19};
 }
 
 class RendererTests: public Test {
@@ -106,17 +98,17 @@ public:
         EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
 
         expectRenderFoundationPile(PileId {0}, noCards);
-        expectRenderFoundationPile(PileId {1}, aceHeart);
-        expectRenderFoundationPile(PileId {2}, twoCardsWithLastSevenSpade);
-        expectRenderFoundationPile(PileId {3}, threeCardsWithLastKingClub);
+        expectRenderFoundationPile(PileId {1}, threeCards);
+        expectRenderFoundationPile(PileId {2}, threeCards);
+        expectRenderFoundationPile(PileId {3}, threeCards);
 
         expectRenderTableauPile(PileId {0}, noCards);
-        expectRenderTableauPile(PileId {1}, aceHeart, TopCoveredCardPosition {0});
-        expectRenderTableauPile(PileId {2}, aceHeart, TopCoveredCardPosition {1});
-        expectRenderTableauPile(PileId {3}, threeCardsWithLastKingClub, TopCoveredCardPosition {0});
-        expectRenderTableauPile(PileId {4}, threeCardsWithLastKingClub, TopCoveredCardPosition {1});
-        expectRenderTableauPile(PileId {5}, threeCardsWithLastKingClub, TopCoveredCardPosition {2});
-        expectRenderTableauPile(PileId {6}, threeCardsWithLastKingClub, TopCoveredCardPosition {3});
+        expectRenderTableauPile(PileId {1}, threeCards, TopCoveredCardPosition {0});
+        expectRenderTableauPile(PileId {2}, threeCards, TopCoveredCardPosition {1});
+        expectRenderTableauPile(PileId {3}, threeCards, TopCoveredCardPosition {2});
+        expectRenderTableauPile(PileId {4}, threeCards, TopCoveredCardPosition {3});
+        expectRenderTableauPile(PileId {5}, threeCards, TopCoveredCardPosition {4});
+        expectRenderTableauPile(PileId {6}, threeCards, TopCoveredCardPosition {5});
     }
 
     void expectRenderFoundationPile(const PileId id, const Cards& pileCards) {
@@ -180,17 +172,28 @@ public:
         EXPECT_CALL(stockPileMock, getSelectedCardIndex()).WillOnce(Return(selectedCardIndex));
     }
 
-    void expectRenderStockPileCoveredCards(const unsigned cardsToRender) {
+    void expectGetStockPileCollider() {
+        EXPECT_CALL(contextMock, getStockPileCollider())
+            .WillOnce(ReturnRef(stockPileColliderMock));
+    }
+
+    void expectRenderStockPileCoveredCards() {
+        EXPECT_CALL(stockPileColliderMock, getCoveredCardsPosition())
+            .WillOnce(Return(stockPileLastCoveredCardPosition));
+
         auto cardPosition = stockPilePosition;
-        for (unsigned i = 0; i < cardsToRender; ++i) {
+        while (cardPosition.x <= stockPileLastCoveredCardPosition.x) {
             expectRenderCardBack(cardPosition);
             cardPosition.x += stockPileCardsSpacing;
         }
     }
 
-    void expectRenderStockPileUncoveredCards(const unsigned cardsToRender) {
+    void expectRenderStockPileUncoveredCards() {
+        EXPECT_CALL(stockPileColliderMock, getUncoveredCardsPosition)
+            .WillOnce(Return(stockPileLastUncoveredCardPosition));
+
         auto cardPosition = stockPileUncoveredCardsPosition;
-        for (unsigned i = 0; i < cardsToRender; ++i) {
+        while (cardPosition.x <= stockPileLastUncoveredCardPosition.x) {
             expectRenderCard(cardPosition, fiveDiamond);
             cardPosition.x += stockPileCardsSpacing;
         }
@@ -236,6 +239,7 @@ public:
     FoundationPileColliderMock foundationPileColliderMock;
     std::array<TableauPileMock, tableauPilesCount> tableauPileMocks;
     TableauPileColliderMock tableauPileColliderMock;
+    StockPileColliderMock stockPileColliderMock;
     StockPileMock stockPileMock;
 };
 
@@ -248,94 +252,50 @@ TEST_F(CreatedRendererTests, renderSolitaireWithEmptyStockPile) {
 }
 
 TEST_F(CreatedRendererTests, throwOnInvalidStockPileSelectedCardIndex) {
-    expectGetStockPileData(threeCardsWithLastKingClub, 3);
+    expectGetStockPileData(threeCards, 3);
     EXPECT_THROW(renderer.render(), std::runtime_error);
 }
 
-struct StockPileRenderData {
-    unsigned pileCardsCount;
-    unsigned cardsToRender;
-};
-
-class StockPileRendererTests:
-    public CreatedRendererTests,
-    public testing::WithParamInterface<StockPileRenderData>
-{
-};
-
-TEST_P(StockPileRendererTests, renderStockPileWithCoveredCards) {
-    const auto& stockPileRenderData = GetParam();
-    const Cards pileCards {stockPileRenderData.pileCardsCount};
-
-    expectGetStockPileData(pileCards, std::nullopt);
-    expectRenderStockPileCoveredCards(stockPileRenderData.cardsToRender);
+TEST_F(CreatedRendererTests, renderStockPileWithCoveredCards) {
+    expectGetStockPileData(threeCards, std::nullopt);
+    expectGetStockPileCollider();
+    expectRenderStockPileCoveredCards();
     expectGetCardsInHand(noCards);
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
-
     renderer.render();
 }
 
-TEST_P(StockPileRendererTests, renderStockPileWithUncoveredCards) {
-    const auto& stockPileRenderData = GetParam();
-    const unsigned selectedCardIndex = stockPileRenderData.pileCardsCount - 1;
+TEST_F(CreatedRendererTests, renderStockPileWithUncoveredCards) {
+    const unsigned pileCardsSize = 5;
+    const unsigned selectedCardIndex = pileCardsSize - 1;
     const auto pileCards = getPileCardsWithSelectedFiveDiamond(
-        stockPileRenderData.pileCardsCount, selectedCardIndex);
+        pileCardsSize, selectedCardIndex);
 
     expectGetStockPileData(pileCards, selectedCardIndex);
+    expectGetStockPileCollider();
     expectRenderCardPlaceholder(stockPilePosition);
-    expectRenderStockPileUncoveredCards(stockPileRenderData.cardsToRender);
+    expectRenderStockPileUncoveredCards();
     expectGetCardsInHand(noCards);
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
 
     renderer.render();
 }
 
-INSTANTIATE_TEST_SUITE_P(BorderPoints,
-                         StockPileRendererTests,
-                         Values(StockPileRenderData {1, 1},
-                                StockPileRenderData {6, 1},
-                                StockPileRenderData {7, 2},
-                                StockPileRenderData {12, 2},
-                                StockPileRenderData {13, 3},
-                                StockPileRenderData {18, 3},
-                                StockPileRenderData {19, 4}));
-
-struct StockPileWithSelectedCardRenderData {
-    unsigned pileCardsCount;
-    unsigned selectedCardIndex;
-    unsigned coveredCardsToRender;
-    unsigned uncoveredCardsToRender;
-};
-
-class StockPileWithCoveredAndUncoveredCardsRendererTests:
-    public CreatedRendererTests,
-    public testing::WithParamInterface<StockPileWithSelectedCardRenderData>
-{
-};
-
-TEST_P(StockPileWithCoveredAndUncoveredCardsRendererTests, renderStockPile) {
-    const auto& stockPileRenderData = GetParam();
+TEST_F(CreatedRendererTests, renderStockPileWithCoveredAndUncoveredCards) {
+    const unsigned pileCardsSize = 5;
+    const unsigned selectedCardIndex = 2;
     const auto pileCards = getPileCardsWithSelectedFiveDiamond(
-        stockPileRenderData.pileCardsCount, stockPileRenderData.selectedCardIndex);
+        pileCardsSize, selectedCardIndex);
 
-    expectGetStockPileData(pileCards, stockPileRenderData.selectedCardIndex);
-    expectRenderStockPileCoveredCards(stockPileRenderData.coveredCardsToRender);
-    expectRenderStockPileUncoveredCards(stockPileRenderData.uncoveredCardsToRender);
+    expectGetStockPileData(pileCards, selectedCardIndex);
+    expectGetStockPileCollider();
+    expectRenderStockPileCoveredCards();
+    expectRenderStockPileUncoveredCards();
     expectGetCardsInHand(noCards);
     EXPECT_CALL(*graphicsSystemMock, renderFrame());
 
     renderer.render();
 }
-
-INSTANTIATE_TEST_SUITE_P(BorderPoints,
-                         StockPileWithCoveredAndUncoveredCardsRendererTests,
-                         Values(StockPileWithSelectedCardRenderData {24, 10, 3, 2},
-                                StockPileWithSelectedCardRenderData {24, 11, 2, 2},
-                                StockPileWithSelectedCardRenderData {24, 12, 2, 3},
-                                StockPileWithSelectedCardRenderData {15, 1, 3, 1},
-                                StockPileWithSelectedCardRenderData {15, 2, 2, 1},
-                                StockPileWithSelectedCardRenderData {15, 5, 2, 1},
-                                StockPileWithSelectedCardRenderData {15, 6, 2, 2}));
 
 class CardsInHandRendererTests: public CreatedRendererTests {
 public:
@@ -346,14 +306,14 @@ public:
 };
 
 TEST_F(CardsInHandRendererTests, renderCardsInHand) {
-    expectGetCardsInHand(threeCardsWithLastKingClub);
+    expectGetCardsInHand(threeCards);
     EXPECT_CALL(contextMock, getCardsInHandPosition())
         .WillOnce(Return(cardsInHandPosition));
 
     auto cardPosition = cardsInHandPosition;
-    for (unsigned i = 0; i < threeCardsWithLastKingClub.size(); ++i) {
-        expectRenderCard(cardPosition, threeCardsWithLastKingClub[i]);
-        cardPosition.y += uncoveredTableauPileCardsSpacing;
+    for (unsigned i = 0; i < threeCards.size(); ++i) {
+        expectRenderCard(cardPosition, threeCards[i]);
+        cardPosition.y += cardsInHandSpacing;
     }
 
     EXPECT_CALL(*graphicsSystemMock, renderFrame());

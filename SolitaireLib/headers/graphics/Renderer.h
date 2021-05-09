@@ -9,6 +9,7 @@
 #include "interfaces/graphics/Renderer.h"
 
 namespace solitaire::colliders::interfaces {
+class StockPileCollider;
 class TableauPileCollider;
 }
 
@@ -46,26 +47,27 @@ private:
         const colliders::interfaces::TableauPileCollider&, const cards::Cards&,
         const unsigned topCoveredCardPosition) const;
     void renderStockPile() const;
-    void renderStockPileWithCards(const cards::Cards&,
-                                  const SelectedCardIndex&) const;
-    void renderStockPileCoveredCards(const cards::Cards&,
-                                     const SelectedCardIndex&) const;
-    void renderStockPileUncoveredCards(const cards::Cards&,
-                                       const SelectedCardIndex&) const;
+    void renderStockPileWithCards(
+        const cards::Cards&, const SelectedCardIndex&) const;
+    void renderStockPileCoveredCardsOrPlaceholder(
+        const cards::Cards&, const SelectedCardIndex&,
+        const colliders::interfaces::StockPileCollider&) const;
+    void renderStockPileCoveredCards(
+        const cards::Cards&, const SelectedCardIndex&,
+        const colliders::interfaces::StockPileCollider&) const;
+    void renderStockPileUncoveredCards(
+        const cards::Cards&, const SelectedCardIndex&,
+        const colliders::interfaces::StockPileCollider&) const;
     void renderCardsInHand() const;
     void renderCard(const geometry::Position&, const cards::Card&) const;
     void renderCardBack(const geometry::Position&) const;
     void renderCardPlaceholder(const geometry::Position&) const;
 
-    unsigned getStockPileCoveredCardsCount(const cards::Cards&,
-        const SelectedCardIndex& selectedCardIndex) const;
-    unsigned getStockPileUncoveredCardsCount(
-        const SelectedCardIndex& selectedCardIndex) const;
-    unsigned getStockPileCardsToRenderCount(const unsigned cardsCount) const;
-
     geometry::Position getFoundationPilePosition(const piles::PileId) const;
     geometry::Position getTableauPilePosition(const piles::PileId) const;
     geometry::Area getCardTextureArea(const cards::Card&) const;
+
+    bool areCoveredCardsEmpty(const cards::Cards&, const SelectedCardIndex&) const;
 
     void throwOnInvalidSelectedCardIndex(const cards::Cards&,
                                          const SelectedCardIndex&) const;
