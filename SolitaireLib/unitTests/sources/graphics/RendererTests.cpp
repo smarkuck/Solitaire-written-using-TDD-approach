@@ -42,6 +42,7 @@ constexpr unsigned stockPileCardsSpacing {2};
 const TextureId backgroundTextureId {0};
 const TextureId cardsTextureId {1};
 const TextureId cardPlaceholderTextureId {2};
+const TextureId winId {3};
 
 constexpr Size cardSize {75, 104};
 
@@ -79,15 +80,28 @@ public:
             .WillOnce(Return(cardPlaceholderTextureId));
         EXPECT_CALL(*graphicsSystemMock,
             setTextureAlpha(cardPlaceholderTextureId, cardPlaceholderAlpha));
+        EXPECT_CALL(*graphicsSystemMock, loadTexture(assetsPath + "win.bmp"))
+            .WillOnce(Return(winId));
     }
 
     InSequence seq;
     const ContextMock contextMock;
+    SolitaireMock solitaireMock;
     mock_ptr<GraphicsSystemMock> graphicsSystemMock;
 };
 
 TEST_F(RendererTests, onConstructionShouldCreateWindowAndLoadAllTextures) {
     Renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath};
+}
+
+TEST_F(RendererTests, ifGameIsFinishedRenderWinTexture) {
+    EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
+    EXPECT_CALL(solitaireMock, isGameFinished()).WillOnce(Return(true));
+    EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(winId));
+    EXPECT_CALL(*graphicsSystemMock, renderFrame());
+
+    Renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath}.render();
 }
 
 class CreatedRendererTests: public RendererTests {
@@ -96,6 +110,8 @@ public:
 
     CreatedRendererTests() {
         EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
+        EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
+        EXPECT_CALL(solitaireMock, isGameFinished()).WillOnce(Return(false));
 
         expectRenderFoundationPile(PileId {0}, noCards);
         expectRenderFoundationPile(PileId {1}, threeCards);
@@ -234,7 +250,6 @@ public:
     }
 
     Renderer renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath};
-    SolitaireMock solitaireMock;
     std::array<FoundationPileMock, foundationPilesCount> foundationPileMocks;
     FoundationPileColliderMock foundationPileColliderMock;
     std::array<TableauPileMock, tableauPilesCount> tableauPileMocks;

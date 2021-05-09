@@ -49,6 +49,7 @@ Renderer::Renderer(const Context& context,
     cardsId = loadTexture("cards.bmp");
     cardPlaceholderId = loadTexture("card_placeholder.bmp");
     this->graphicsSystem->setTextureAlpha(cardPlaceholderId, cardPlaceholderAlpha);
+    winId = loadTexture("win.bmp");
 }
 
 TextureId Renderer::loadTexture(const std::string& path) const {
@@ -58,6 +59,15 @@ TextureId Renderer::loadTexture(const std::string& path) const {
 void Renderer::render() const {
     graphicsSystem->renderTextureInFullWindow(backgroundId);
 
+    if (context.getSolitaire().isGameFinished())
+        graphicsSystem->renderTextureInFullWindow(winId);
+    else
+        renderPiles();
+
+    graphicsSystem->renderFrame();
+}
+
+void Renderer::renderPiles() const {
     for (PileId id {0}; id < Solitaire::foundationPilesCount; ++id)
         renderFoundationPile(id);
 
@@ -66,7 +76,6 @@ void Renderer::render() const {
 
     renderStockPile();
     renderCardsInHand();
-    graphicsSystem->renderFrame();
 }
 
 void Renderer::renderFoundationPile(const PileId id) const {
