@@ -28,4 +28,4 @@
 5. mkdir build
 6. cd build
 7. cmake ..
-8. make -j `nproc`
+8. make -j \`nproc\`
