@@ -1,5 +1,6 @@
 #include <array>
 
+#include "ButtonMock.h"
 #include "ContextMock.h"
 #include "mock_ptr.h"
 #include "SolitaireMock.h"
@@ -33,6 +34,7 @@ const std::string windowTitle {"Solitaire"};
 
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {480};
+constexpr unsigned noAlpha {255};
 constexpr unsigned cardPlaceholderAlpha {70};
 constexpr unsigned buttonAlpha {150};
 constexpr unsigned foundationPilesCount {4};
@@ -99,9 +101,15 @@ public:
             setTextureAlpha(undoId, buttonAlpha));
     }
 
-    void expectRenderBackgroundAndButtons() {
-        EXPECT_CALL(*graphicsSystemMock,
-            renderTextureInFullWindow(backgroundTextureId));
+    void expectRenderBackgroundAndUnhoveredButtons() {
+        EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(backgroundTextureId));
+        EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+        EXPECT_CALL(buttonMock, isHovered()).WillOnce(Return(false));
+        EXPECT_CALL(*graphicsSystemMock, setTextureAlpha(newGameId, buttonAlpha));
+        expectRenderButtons();
+    }
+
+    void expectRenderButtons() {
         EXPECT_CALL(*graphicsSystemMock,
             renderTexture(newGameId, newGameButtonPosition, newGameTextureArea));
         EXPECT_CALL(*graphicsSystemMock,
@@ -111,6 +119,7 @@ public:
     InSequence seq;
     const ContextMock contextMock;
     SolitaireMock solitaireMock;
+    ButtonMock buttonMock;
     mock_ptr<GraphicsSystemMock> graphicsSystemMock;
 };
 
@@ -119,7 +128,22 @@ TEST_F(RendererTests, onConstructionShouldCreateWindowAndLoadAllTextures) {
 }
 
 TEST_F(RendererTests, ifGameIsFinishedRenderWinTexture) {
-    expectRenderBackgroundAndButtons();
+    expectRenderBackgroundAndUnhoveredButtons();
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
+    EXPECT_CALL(solitaireMock, isGameFinished()).WillOnce(Return(true));
+    EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(winId));
+    EXPECT_CALL(*graphicsSystemMock, renderFrame());
+
+    Renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath}.render();
+}
+
+TEST_F(RendererTests, renderHoveredNewGameButton) {
+    EXPECT_CALL(*graphicsSystemMock,
+        renderTextureInFullWindow(backgroundTextureId));
+    EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, isHovered()).WillOnce(Return(true));
+    EXPECT_CALL(*graphicsSystemMock, setTextureAlpha(newGameId, noAlpha));
+    expectRenderButtons();
     EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
     EXPECT_CALL(solitaireMock, isGameFinished()).WillOnce(Return(true));
     EXPECT_CALL(*graphicsSystemMock, renderTextureInFullWindow(winId));
@@ -133,7 +157,7 @@ public:
     using TopCoveredCardPosition = unsigned;
 
     CreatedRendererTests() {
-        expectRenderBackgroundAndButtons();
+        expectRenderBackgroundAndUnhoveredButtons();
         EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
         EXPECT_CALL(solitaireMock, isGameFinished()).WillOnce(Return(false));
 

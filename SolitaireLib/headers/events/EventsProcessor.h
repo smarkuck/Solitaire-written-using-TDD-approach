@@ -66,7 +66,9 @@ private:
     void processMouseLeftButtonDownEvent(const MouseLeftButtonDown&) const;
     void processMouseLeftButtonUpEvent() const;
     void processMouseMoveEvent(const MouseMove&) const;
+    void processButtonsHoverState(const MouseMove&) const;
 
+    bool checkIfCollidesAndTryClickButtons(const MouseLeftButtonDown&) const;
     bool checkIfCollidesAndTryPullOutCardFromAnyFoundationPile(
         const MouseLeftButtonDown&) const;
     bool checkIfCollidesAndTryPullOutCardFromFoundationPile(

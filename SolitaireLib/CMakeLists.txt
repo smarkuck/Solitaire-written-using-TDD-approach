@@ -3,6 +3,7 @@ target_include_directories(SolitaireLib PUBLIC headers)
 
 target_sources(SolitaireLib PRIVATE
     sources/Application.cpp
+    sources/Button.cpp
     sources/Context.cpp
     sources/Layout.cpp
     sources/Solitaire.cpp

@@ -15,6 +15,7 @@ struct PileId;
 }
 
 namespace solitaire::interfaces {
+class Button;
 class Solitaire;
 
 class Context {
@@ -44,6 +45,9 @@ public:
 
     virtual const colliders::interfaces::StockPileCollider&
     getStockPileCollider() const = 0;
+
+    virtual interfaces::Button& getNewGameButton() = 0;
+    virtual const interfaces::Button& getNewGameButton() const = 0;
 
     virtual geometry::Position getMousePosition() const = 0;
     virtual geometry::Position getCardsInHandPosition() const = 0;

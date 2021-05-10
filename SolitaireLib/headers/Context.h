@@ -21,7 +21,8 @@ public:
 
     Context(std::unique_ptr<interfaces::Solitaire>,
             FoundationPileColliders, TableauPileColliders,
-            std::unique_ptr<colliders::interfaces::StockPileCollider>);
+            std::unique_ptr<colliders::interfaces::StockPileCollider>,
+            std::unique_ptr<interfaces::Button>);
 
     void setMousePosition(const geometry::Position&) override;
     void setCardsInHandPosition(const geometry::Position&) override;
@@ -47,6 +48,9 @@ public:
     const colliders::interfaces::StockPileCollider&
     getStockPileCollider() const override;
 
+    interfaces::Button& getNewGameButton() override;
+    const interfaces::Button& getNewGameButton() const override;
+
     geometry::Position getMousePosition() const override;
     geometry::Position getCardsInHandPosition() const override;
 
@@ -57,6 +61,7 @@ private:
     std::unique_ptr<colliders::interfaces::StockPileCollider> stockPileCollider;
     geometry::Position mousePosition;
     geometry::Position cardsInHandPosition;
+    std::unique_ptr<interfaces::Button> newGameButton;
 };
 
 }

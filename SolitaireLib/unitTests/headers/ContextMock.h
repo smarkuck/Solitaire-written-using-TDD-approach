@@ -33,6 +33,9 @@ public:
     MOCK_METHOD(const colliders::interfaces::StockPileCollider&,
                 getStockPileCollider, (), (const, override));
 
+    MOCK_METHOD(interfaces::Button&, getNewGameButton, (), (override));
+    MOCK_METHOD(const interfaces::Button&, getNewGameButton, (), (const, override));
+
     MOCK_METHOD(geometry::Position, getMousePosition, (), (const, override));
     MOCK_METHOD(geometry::Position, getCardsInHandPosition, (), (const, override));
 };

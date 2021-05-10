@@ -1,3 +1,4 @@
+#include "Button.h"
 #include "cards/Card.h"
 #include "events/EventsDefinitions.h"
 #include "events/EventsProcessor.h"
@@ -52,11 +53,20 @@ void EventsProcessor::processEvent(const Event& event) {
 void EventsProcessor::processMouseLeftButtonDownEvent(
     const MouseLeftButtonDown& event) const
 {
-    if (checkIfCollidesAndTryPullOutCardFromAnyFoundationPile(event))
-        return;
-    if (checkIfCollidesAndTryPullOutOrUncoverCardsFromAnyTableauPile(event))
-        return;
+    if (checkIfCollidesAndTryClickButtons(event)) return;
+    if (checkIfCollidesAndTryPullOutCardFromAnyFoundationPile(event)) return;
+    if (checkIfCollidesAndTryPullOutOrUncoverCardsFromAnyTableauPile(event)) return;
     tryInteractWithStockPile(event);
+}
+
+bool EventsProcessor::checkIfCollidesAndTryClickButtons(
+    const MouseLeftButtonDown& event) const
+{
+    if (context.getNewGameButton().collidesWith(event.position)) {
+        context.getSolitaire().startNewGame();
+        return true;
+    }
+    return false;
 }
 
 bool EventsProcessor::
@@ -234,11 +244,18 @@ bool EventsProcessor::tryAddCardOnTableauPileAndCheckIfHandEmpty(
 }
 
 void EventsProcessor::processMouseMoveEvent(const MouseMove& event) const {
+    processButtonsHoverState(event);
     const auto lastMousePosition = context.getMousePosition();
     auto lastCardsInHandPosition = context.getCardsInHandPosition();
     auto mouseMoveDelta = event.position - lastMousePosition;
     context.setMousePosition(event.position);
     context.setCardsInHandPosition(lastCardsInHandPosition + mouseMoveDelta);
+}
+
+void EventsProcessor::processButtonsHoverState(const MouseMove& event) const {
+    auto& newGameButton = context.getNewGameButton();
+    newGameButton.setHoveredState(
+        newGameButton.collidesWith(event.position));
 }
 
 bool EventsProcessor::shouldQuit() const {

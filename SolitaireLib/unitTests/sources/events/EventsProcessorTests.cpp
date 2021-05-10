@@ -1,3 +1,4 @@
+#include "ButtonMock.h"
 #include "ContextMock.h"
 #include "mock_ptr.h"
 #include "SolitaireMock.h"
@@ -47,6 +48,11 @@ public:
     void expectEvent(const Event& event) {
         EXPECT_CALL(*eventsSourceMock, getEvent())
             .WillOnce(Return(event));
+    }
+
+    void ignoreLeftButtonDownOnButtons() {
+        EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+        EXPECT_CALL(buttonMock, collidesWith(_)).WillOnce(Return(false));
     }
 
     void ignoreLeftButtonDownOnFoundationPilesFromFirstTo(unsigned pilesToIgnore) {
@@ -177,12 +183,21 @@ public:
             .WillOnce(ReturnRef(stockPileColliderMock));
     }
 
+    void expectMoveCardsInHand(const MouseMove& event) {
+        EXPECT_CALL(contextMock, getMousePosition()).WillOnce(Return(mousePosition));
+        EXPECT_CALL(contextMock, getCardsInHandPosition()).WillOnce(Return(cardsInHandPosition));
+        EXPECT_CALL(contextMock, setMousePosition(event.position));
+        const auto mouseMoveDelta = event.position - mousePosition;
+        EXPECT_CALL(contextMock, setCardsInHandPosition(cardsInHandPosition + mouseMoveDelta));
+    }
+
     InSequence seq;
     StrictMock<SolitaireMock> solitaireMock;
     StrictMock<FoundationPileColliderMock> foundationPileColliderMock;
     StrictMock<StockPileColliderMock> stockPileColliderMock;
     StrictMock<TableauPileColliderMock> tableauPileColliderMock;
     StrictMock<TableauPileMock> tableauPileMock;
+    StrictMock<ButtonMock> buttonMock;
     StrictMock<ContextMock> contextMock;
     mock_ptr<StrictMock<EventsSourceMock>> eventsSourceMock;
 
@@ -194,6 +209,7 @@ TEST_F(EventsProcessorTests,
        ignoreLeftButtonDownEventAndStopProcessingWhenNoEvents)
 {
     expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnButtons();
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount);
     ignoreLeftButtonDownOnStockPile();
@@ -206,6 +222,7 @@ TEST_F(EventsProcessorTests,
        ignoreLeftButtonDownEventAndStopProcessingOnQuitEvent)
 {
     expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnButtons();
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount);
     ignoreLeftButtonDownOnStockPile();
@@ -214,10 +231,22 @@ TEST_F(EventsProcessorTests,
     EXPECT_TRUE(eventsProcessor.shouldQuit());
 }
 
+TEST_F(EventsProcessorTests, startNewGameOnLeftButtonDownEvent) {
+    expectEvent(mouseLeftButtonDownEvent);
+    EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, collidesWith(mouseLeftButtonDownEvent.position))
+        .WillOnce(Return(true));
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
+    EXPECT_CALL(solitaireMock, startNewGame());
+    expectEvent(Quit {});
+    eventsProcessor.processEvents();
+}
+
 TEST_F(EventsProcessorTests,
        tryPullOutCardFromFoundationPileOnLeftButtonDownEvent)
 {
     expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnButtons();
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount - 1);
     acceptLeftButtonDownOnFoundationPile(lastFoundationPileId, mouseLeftButtonDownEvent);
     EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
@@ -233,6 +262,7 @@ TEST_F(EventsProcessorTests,
        tryUncoverTableauPileTopCardOnLeftButtonDownEventOnTopCard)
 {
     expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnButtons();
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount - 1);
     acceptLeftButtonDownOnTableauPileCard(
@@ -249,6 +279,7 @@ TEST_F(EventsProcessorTests,
        tryPullOutCardsFromTableauPileOnLeftButtonDownEventOnTopCard)
 {
     expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnButtons();
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount - 1);
     acceptLeftButtonDownOnTableauPileCard(
@@ -266,6 +297,7 @@ TEST_F(EventsProcessorTests,
        tryPullOutCardsFromTableauPileOnLeftButtonDownEventOnNotTopCard)
 {
     expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnButtons();
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount - 1);
     acceptLeftButtonDownOnTableauPileCard(
@@ -283,6 +315,7 @@ TEST_F(EventsProcessorTests,
        trySelectNextStockPileCardOnLeftButtonDownEvent)
 {
     expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnButtons();
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount);
     expectGetStockPileCollider();
@@ -295,6 +328,7 @@ TEST_F(EventsProcessorTests,
        tryPullOutCardFromStockPileOnLeftButtonDownEvent)
 {
     expectEvent(mouseLeftButtonDownEvent);
+    ignoreLeftButtonDownOnButtons();
     ignoreLeftButtonDownOnFoundationPilesFromFirstTo(foundationPilesCount);
     ignoreLeftButtonDownOnTableauPilesFromFirstTo(tableauPilesCount);
     expectGetStockPileCollider();
@@ -373,13 +407,22 @@ TEST_F(EventsProcessorLeftMouseButtonUpEventTests,
     eventsProcessor.processEvents();
 }
 
-TEST_F(EventsProcessorTests, moveCardsInHandOnMoveEvent) {
+TEST_F(EventsProcessorTests, setNewGameButtonHoveredAndMoveCardsInHandOnMoveEvent) {
     expectEvent(mouseMoveEvent);
-    EXPECT_CALL(contextMock, getMousePosition()).WillOnce(Return(mousePosition));
-    EXPECT_CALL(contextMock, getCardsInHandPosition()).WillOnce(Return(cardsInHandPosition));
-    EXPECT_CALL(contextMock, setMousePosition(mouseMoveEvent.position));
-    const auto mouseMoveDelta = mouseMoveEvent.position - mousePosition;
-    EXPECT_CALL(contextMock, setCardsInHandPosition(cardsInHandPosition + mouseMoveDelta));
+    EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, collidesWith(mouseMoveEvent.position)).WillOnce(Return(true));
+    EXPECT_CALL(buttonMock, setHoveredState(true));
+    expectMoveCardsInHand(mouseMoveEvent);
+    expectEvent(Quit {});
+    eventsProcessor.processEvents();
+}
+
+TEST_F(EventsProcessorTests, setNewGameButtonNotHoveredOnMoveEvent) {
+    expectEvent(mouseMoveEvent);
+    EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, collidesWith(mouseMoveEvent.position)).WillOnce(Return(false));
+    EXPECT_CALL(buttonMock, setHoveredState(false));
+    expectMoveCardsInHand(mouseMoveEvent);
     expectEvent(Quit {});
     eventsProcessor.processEvents();
 }

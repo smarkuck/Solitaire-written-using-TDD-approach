@@ -1,5 +1,6 @@
 #include <utility>
 
+#include "ButtonMock.h"
 #include "Context.h"
 #include "mock_ptr.h"
 #include "SolitaireMock.h"
@@ -48,13 +49,15 @@ public:
 
         context = std::make_unique<Context>(
             solitaireMock.make_unique(), std::move(foundationPileColliders),
-            std::move(tableauPileColliders), stockPileColliderMock.make_unique());
+            std::move(tableauPileColliders), stockPileColliderMock.make_unique(),
+            newGameButtonMock.make_unique());
     }
 
     mock_ptr<SolitaireMock> solitaireMock;
     FoundationPileColliderMocks foundationPileColliderMocks;
     TableauPileColliderMocks tableauPileColliderMocks;
     mock_ptr<StockPileColliderMock> stockPileColliderMock;
+    mock_ptr<ButtonMock> newGameButtonMock;
     std::unique_ptr<Context> context;
 };
 
@@ -108,6 +111,11 @@ TEST_F(ContextTests, throwOnInvalidTableauPileColliderId) {
 TEST_F(ContextTests, getStockPileCollider) {
     EXPECT_EQ(&context->getStockPileCollider(), stockPileColliderMock.get());
     EXPECT_EQ(&std::as_const(*context).getStockPileCollider(), stockPileColliderMock.get());
+}
+
+TEST_F(ContextTests, getNewGameButton) {
+    EXPECT_EQ(&context->getNewGameButton(), newGameButtonMock.get());
+    EXPECT_EQ(&std::as_const(*context).getNewGameButton(), newGameButtonMock.get());
 }
 
 TEST_F(ContextTests, setAndGetPositions) {

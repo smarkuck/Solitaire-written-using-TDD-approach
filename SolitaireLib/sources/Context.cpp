@@ -1,4 +1,5 @@
 #include "Context.h"
+#include "interfaces/Button.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
 #include "interfaces/colliders/StockPileCollider.h"
@@ -15,11 +16,13 @@ namespace solitaire {
 Context::Context(std::unique_ptr<Solitaire> solitaire,
                  FoundationPileColliders foundationPileColliders,
                  TableauPileColliders tableauPileColliders,
-                 std::unique_ptr<StockPileCollider> stockPileCollider):
+                 std::unique_ptr<StockPileCollider> stockPileCollider,
+                 std::unique_ptr<Button> newGameButton):
     solitaire {std::move(solitaire)},
     foundationPileColliders {std::move(foundationPileColliders)},
     tableauPileColliders {std::move(tableauPileColliders)},
-    stockPileCollider {std::move(stockPileCollider)} {
+    stockPileCollider {std::move(stockPileCollider)},
+    newGameButton {std::move(newGameButton)} {
 }
 
 void Context::setMousePosition(const Position& position) {
@@ -68,6 +71,14 @@ StockPileCollider& Context::getStockPileCollider() {
 
 const StockPileCollider& Context::getStockPileCollider() const {
     return *stockPileCollider;
+}
+
+Button& Context::getNewGameButton() {
+    return *newGameButton;
+}
+
+const Button& Context::getNewGameButton() const {
+    return *newGameButton;
 }
 
 Position Context::getMousePosition() const {

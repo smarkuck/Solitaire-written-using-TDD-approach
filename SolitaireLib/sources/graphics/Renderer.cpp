@@ -6,6 +6,7 @@
 #include "cards/Value.h"
 #include "geometry/Area.h"
 #include "graphics/Renderer.h"
+#include "interfaces/Button.h"
 #include "interfaces/Context.h"
 #include "interfaces/Solitaire.h"
 #include "interfaces/colliders/FoundationPileCollider.h"
@@ -31,6 +32,7 @@ const std::string windowTitle {"Solitaire"};
 
 constexpr unsigned windowWidth {640};
 constexpr unsigned windowHeight {480};
+constexpr unsigned noAlpha {255};
 constexpr unsigned cardPlaceholderAlpha {70};
 constexpr unsigned buttonAlpha {150};
 
@@ -74,6 +76,8 @@ void Renderer::render() const {
 }
 
 void Renderer::renderButtons() const {
+    setButtonsAlpha();
+
     graphicsSystem->renderTexture(
         newGameId, Layout::newGameButtonPosition,
         Area {Position {0, 0}, Layout::newGameButtonSize});
@@ -81,6 +85,13 @@ void Renderer::renderButtons() const {
     graphicsSystem->renderTexture(
         undoId, Layout::undoButtonPosition,
         Area {Position {0, 0}, Layout::undoButtonSize});
+}
+
+void Renderer::setButtonsAlpha() const {
+    if (context.getNewGameButton().isHovered())
+        graphicsSystem->setTextureAlpha(newGameId, noAlpha);
+    else
+        graphicsSystem->setTextureAlpha(newGameId, buttonAlpha);
 }
 
 void Renderer::renderPiles() const {

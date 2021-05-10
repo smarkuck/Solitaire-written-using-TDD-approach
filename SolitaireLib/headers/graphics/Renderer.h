@@ -42,6 +42,7 @@ private:
     TextureId loadTexture(const std::string& path) const;
 
     void renderButtons() const;
+    void setButtonsAlpha() const;
     void renderPiles() const;
     void renderFoundationPile(const piles::PileId) const;
     void renderTableauPile(const piles::PileId) const;

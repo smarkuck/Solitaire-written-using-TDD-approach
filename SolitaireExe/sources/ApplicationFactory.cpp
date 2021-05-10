@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "ApplicationFactory.h"
+#include "Button.h"
 #include "Context.h"
 #include "Layout.h"
 #include "Solitaire.h"
@@ -62,7 +63,8 @@ ApplicationFactory::makeContext() const
     return std::make_unique<Context>(
         std::move(solitaire), std::move(foundationPileColliders),
         std::move(tableauPileColliders),
-        std::make_unique<StockPileCollider>(solitaire->getStockPile()));
+        std::make_unique<StockPileCollider>(solitaire->getStockPile()),
+        std::make_unique<Button>(Layout::newGameButtonPosition));
 }
 
 std::unique_ptr<solitaire::interfaces::Solitaire>
