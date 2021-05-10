@@ -36,6 +36,9 @@ public:
     MOCK_METHOD(interfaces::Button&, getNewGameButton, (), (override));
     MOCK_METHOD(const interfaces::Button&, getNewGameButton, (), (const, override));
 
+    MOCK_METHOD(interfaces::Button&, getUndoButton, (), (override));
+    MOCK_METHOD(const interfaces::Button&, getUndoButton, (), (const, override));
+
     MOCK_METHOD(geometry::Position, getMousePosition, (), (const, override));
     MOCK_METHOD(geometry::Position, getCardsInHandPosition, (), (const, override));
 };

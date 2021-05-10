@@ -424,6 +424,7 @@ TEST_F(SolitaireHandWithOneCardTest, onNewGameClearHandAndDistributeCards) {
     for (auto& pile: foundationPileMocks)
         EXPECT_CALL(*pile, getTopCardValue()).Times(0);
 
+    EXPECT_CALL(*historyTrackerMock, reset());
     EXPECT_CALL(*deckGeneratorMock, generate()).WillOnce(Return(deck));
     expectFoundationPilesInitialization();
     expectTableauPilesInitialization();

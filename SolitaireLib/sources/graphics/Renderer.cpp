@@ -92,6 +92,11 @@ void Renderer::setButtonsAlpha() const {
         graphicsSystem->setTextureAlpha(newGameId, noAlpha);
     else
         graphicsSystem->setTextureAlpha(newGameId, buttonAlpha);
+
+    if (context.getUndoButton().isHovered())
+        graphicsSystem->setTextureAlpha(undoId, noAlpha);
+    else
+        graphicsSystem->setTextureAlpha(undoId, buttonAlpha);
 }
 
 void Renderer::renderPiles() const {

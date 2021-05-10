@@ -66,6 +66,10 @@ bool EventsProcessor::checkIfCollidesAndTryClickButtons(
         context.getSolitaire().startNewGame();
         return true;
     }
+    if (context.getUndoButton().collidesWith(event.position)) {
+        context.getSolitaire().tryUndoOperation();
+        return true;
+    }
     return false;
 }
 
@@ -256,6 +260,9 @@ void EventsProcessor::processButtonsHoverState(const MouseMove& event) const {
     auto& newGameButton = context.getNewGameButton();
     newGameButton.setHoveredState(
         newGameButton.collidesWith(event.position));
+    auto& undoButton = context.getUndoButton();
+    undoButton.setHoveredState(
+        undoButton.collidesWith(event.position));
 }
 
 bool EventsProcessor::shouldQuit() const {

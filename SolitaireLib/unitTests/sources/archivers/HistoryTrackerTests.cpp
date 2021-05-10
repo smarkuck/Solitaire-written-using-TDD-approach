@@ -58,6 +58,11 @@ public:
     mock_ptr<SnapshotMock> snapshotMock2;
 };
 
+TEST_F(FullHistoryTrackerTests, resetShouldClearHistory) {
+    historyTracker.reset();
+    EXPECT_EQ(historyTracker.getHistorySize(), 0);
+}
+
 TEST_F(FullHistoryTrackerTests, onUndoRestoreSnapshotsInReverseOrder) {
     EXPECT_CALL(*snapshotMock2, restore());
     historyTracker.undo();

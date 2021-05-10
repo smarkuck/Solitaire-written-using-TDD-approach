@@ -106,6 +106,9 @@ public:
         EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
         EXPECT_CALL(buttonMock, isHovered()).WillOnce(Return(false));
         EXPECT_CALL(*graphicsSystemMock, setTextureAlpha(newGameId, buttonAlpha));
+        EXPECT_CALL(contextMock, getUndoButton()).WillOnce(ReturnRef(buttonMock));
+        EXPECT_CALL(buttonMock, isHovered()).WillOnce(Return(false));
+        EXPECT_CALL(*graphicsSystemMock, setTextureAlpha(undoId, buttonAlpha));
         expectRenderButtons();
     }
 
@@ -137,12 +140,15 @@ TEST_F(RendererTests, ifGameIsFinishedRenderWinTexture) {
     Renderer {contextMock, graphicsSystemMock.make_unique(), assetsPath}.render();
 }
 
-TEST_F(RendererTests, renderHoveredNewGameButton) {
+TEST_F(RendererTests, renderHoveredButtons) {
     EXPECT_CALL(*graphicsSystemMock,
         renderTextureInFullWindow(backgroundTextureId));
     EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
     EXPECT_CALL(buttonMock, isHovered()).WillOnce(Return(true));
     EXPECT_CALL(*graphicsSystemMock, setTextureAlpha(newGameId, noAlpha));
+    EXPECT_CALL(contextMock, getUndoButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, isHovered()).WillOnce(Return(true));
+    EXPECT_CALL(*graphicsSystemMock, setTextureAlpha(undoId, noAlpha));
     expectRenderButtons();
     EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
     EXPECT_CALL(solitaireMock, isGameFinished()).WillOnce(Return(true));

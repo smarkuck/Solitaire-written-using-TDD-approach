@@ -50,7 +50,7 @@ public:
         context = std::make_unique<Context>(
             solitaireMock.make_unique(), std::move(foundationPileColliders),
             std::move(tableauPileColliders), stockPileColliderMock.make_unique(),
-            newGameButtonMock.make_unique());
+            newGameButtonMock.make_unique(), undoButtonMock.make_unique());
     }
 
     mock_ptr<SolitaireMock> solitaireMock;
@@ -58,6 +58,7 @@ public:
     TableauPileColliderMocks tableauPileColliderMocks;
     mock_ptr<StockPileColliderMock> stockPileColliderMock;
     mock_ptr<ButtonMock> newGameButtonMock;
+    mock_ptr<ButtonMock> undoButtonMock;
     std::unique_ptr<Context> context;
 };
 
@@ -116,6 +117,11 @@ TEST_F(ContextTests, getStockPileCollider) {
 TEST_F(ContextTests, getNewGameButton) {
     EXPECT_EQ(&context->getNewGameButton(), newGameButtonMock.get());
     EXPECT_EQ(&std::as_const(*context).getNewGameButton(), newGameButtonMock.get());
+}
+
+TEST_F(ContextTests, getUndoButton) {
+    EXPECT_EQ(&context->getUndoButton(), undoButtonMock.get());
+    EXPECT_EQ(&std::as_const(*context).getUndoButton(), undoButtonMock.get());
 }
 
 TEST_F(ContextTests, setAndGetPositions) {

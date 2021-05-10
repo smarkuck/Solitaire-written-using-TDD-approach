@@ -64,7 +64,13 @@ ApplicationFactory::makeContext() const
         std::move(solitaire), std::move(foundationPileColliders),
         std::move(tableauPileColliders),
         std::make_unique<StockPileCollider>(solitaire->getStockPile()),
-        std::make_unique<Button>(Layout::newGameButtonPosition));
+        std::make_unique<Button>(
+            Layout::newGameButtonPosition, Layout::newGameButtonSize
+        ),
+        std::make_unique<Button>(
+            Layout::undoButtonPosition, Layout::undoButtonSize
+        )
+    );
 }
 
 std::unique_ptr<solitaire::interfaces::Solitaire>

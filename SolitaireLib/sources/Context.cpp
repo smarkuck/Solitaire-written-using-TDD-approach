@@ -17,12 +17,14 @@ Context::Context(std::unique_ptr<Solitaire> solitaire,
                  FoundationPileColliders foundationPileColliders,
                  TableauPileColliders tableauPileColliders,
                  std::unique_ptr<StockPileCollider> stockPileCollider,
-                 std::unique_ptr<Button> newGameButton):
+                 std::unique_ptr<Button> newGameButton,
+                 std::unique_ptr<Button> undoButton):
     solitaire {std::move(solitaire)},
     foundationPileColliders {std::move(foundationPileColliders)},
     tableauPileColliders {std::move(tableauPileColliders)},
     stockPileCollider {std::move(stockPileCollider)},
-    newGameButton {std::move(newGameButton)} {
+    newGameButton {std::move(newGameButton)},
+    undoButton {std::move(undoButton)} {
 }
 
 void Context::setMousePosition(const Position& position) {
@@ -79,6 +81,14 @@ Button& Context::getNewGameButton() {
 
 const Button& Context::getNewGameButton() const {
     return *newGameButton;
+}
+
+Button& Context::getUndoButton() {
+    return *undoButton;
+}
+
+const Button& Context::getUndoButton() const {
+    return *undoButton;
 }
 
 Position Context::getMousePosition() const {

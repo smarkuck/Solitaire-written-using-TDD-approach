@@ -36,6 +36,7 @@ Solitaire::Solitaire(std::unique_ptr<DeckGenerator> deckGenerator,
 }
 
 void Solitaire::startNewGame() {
+    historyTracker->reset();
     cardsInHand.clear();
     const auto deck = deckGenerator->generate();
 

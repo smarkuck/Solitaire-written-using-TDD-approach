@@ -7,13 +7,17 @@ using namespace solitaire::geometry;
 namespace solitaire {
 
 namespace {
+constexpr geometry::Size size {15, 25};
 constexpr geometry::Position position {34, 23};
-constexpr geometry::Position bottomLeftCorner {91, 39};
+constexpr geometry::Position bottomLeftCorner {
+    position.x + size.width - 1,
+    position.y + size.height - 1
+};
 }
 
 class ButtonTests: public Test {
 public:
-    Button button {position};
+    Button button {position, size};
 };
 
 TEST_F(ButtonTests, buttonIsNotHoveredInitially) {

@@ -9,6 +9,7 @@ class HistoryTracker: public interfaces::HistoryTracker {
 public:
     HistoryTracker(const unsigned historyMaxSize = 10);
 
+    void reset() override;
     void save(std::unique_ptr<interfaces::Snapshot>) override;
     void undo() override;
 

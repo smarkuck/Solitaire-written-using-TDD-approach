@@ -53,6 +53,8 @@ public:
     void ignoreLeftButtonDownOnButtons() {
         EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
         EXPECT_CALL(buttonMock, collidesWith(_)).WillOnce(Return(false));
+        EXPECT_CALL(contextMock, getUndoButton()).WillOnce(ReturnRef(buttonMock));
+        EXPECT_CALL(buttonMock, collidesWith(_)).WillOnce(Return(false));
     }
 
     void ignoreLeftButtonDownOnFoundationPilesFromFirstTo(unsigned pilesToIgnore) {
@@ -242,6 +244,20 @@ TEST_F(EventsProcessorTests, startNewGameOnLeftButtonDownEvent) {
     eventsProcessor.processEvents();
 }
 
+TEST_F(EventsProcessorTests, undoOperationOnLeftButtonDownEvent) {
+    expectEvent(mouseLeftButtonDownEvent);
+    EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, collidesWith(mouseLeftButtonDownEvent.position))
+        .WillOnce(Return(false));
+    EXPECT_CALL(contextMock, getUndoButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, collidesWith(mouseLeftButtonDownEvent.position))
+        .WillOnce(Return(true));
+    EXPECT_CALL(contextMock, getSolitaire()).WillOnce(ReturnRef(solitaireMock));
+    EXPECT_CALL(solitaireMock, tryUndoOperation());
+    expectEvent(Quit {});
+    eventsProcessor.processEvents();
+}
+
 TEST_F(EventsProcessorTests,
        tryPullOutCardFromFoundationPileOnLeftButtonDownEvent)
 {
@@ -407,9 +423,12 @@ TEST_F(EventsProcessorLeftMouseButtonUpEventTests,
     eventsProcessor.processEvents();
 }
 
-TEST_F(EventsProcessorTests, setNewGameButtonHoveredAndMoveCardsInHandOnMoveEvent) {
+TEST_F(EventsProcessorTests, setButtonsHoveredAndMoveCardsInHandOnMoveEvent) {
     expectEvent(mouseMoveEvent);
     EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, collidesWith(mouseMoveEvent.position)).WillOnce(Return(true));
+    EXPECT_CALL(buttonMock, setHoveredState(true));
+    EXPECT_CALL(contextMock, getUndoButton()).WillOnce(ReturnRef(buttonMock));
     EXPECT_CALL(buttonMock, collidesWith(mouseMoveEvent.position)).WillOnce(Return(true));
     EXPECT_CALL(buttonMock, setHoveredState(true));
     expectMoveCardsInHand(mouseMoveEvent);
@@ -420,6 +439,9 @@ TEST_F(EventsProcessorTests, setNewGameButtonHoveredAndMoveCardsInHandOnMoveEven
 TEST_F(EventsProcessorTests, setNewGameButtonNotHoveredOnMoveEvent) {
     expectEvent(mouseMoveEvent);
     EXPECT_CALL(contextMock, getNewGameButton()).WillOnce(ReturnRef(buttonMock));
+    EXPECT_CALL(buttonMock, collidesWith(mouseMoveEvent.position)).WillOnce(Return(false));
+    EXPECT_CALL(buttonMock, setHoveredState(false));
+    EXPECT_CALL(contextMock, getUndoButton()).WillOnce(ReturnRef(buttonMock));
     EXPECT_CALL(buttonMock, collidesWith(mouseMoveEvent.position)).WillOnce(Return(false));
     EXPECT_CALL(buttonMock, setHoveredState(false));
     expectMoveCardsInHand(mouseMoveEvent);

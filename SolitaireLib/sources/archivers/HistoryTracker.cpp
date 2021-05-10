@@ -11,6 +11,10 @@ HistoryTracker::HistoryTracker(const unsigned historyMaxSize):
     historyMaxSize {historyMaxSize} {
 }
 
+void HistoryTracker::reset() {
+    history.clear();
+}
+
 void HistoryTracker::save(std::unique_ptr<Snapshot> snapshot) {
     if (not snapshot)
         throw std::runtime_error {"Passed snapshot is nullptr"};

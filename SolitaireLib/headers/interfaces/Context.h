@@ -49,6 +49,9 @@ public:
     virtual interfaces::Button& getNewGameButton() = 0;
     virtual const interfaces::Button& getNewGameButton() const = 0;
 
+    virtual interfaces::Button& getUndoButton() = 0;
+    virtual const interfaces::Button& getUndoButton() const = 0;
+
     virtual geometry::Position getMousePosition() const = 0;
     virtual geometry::Position getCardsInHandPosition() const = 0;
 };
