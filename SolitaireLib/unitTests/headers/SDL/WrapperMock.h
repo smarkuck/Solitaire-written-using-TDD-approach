@@ -46,8 +46,6 @@ public:
                  (const, override));
 
     MOCK_METHOD(void, renderPresent, (const UniquePtr<SDL_Renderer>&), (const, override));
-
-    MOCK_METHOD(void, delay, (Uint32), (const, override));
 };
 
 }

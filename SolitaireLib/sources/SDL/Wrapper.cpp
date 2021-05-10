@@ -80,8 +80,4 @@ void Wrapper::renderPresent(const UniquePtr<SDL_Renderer>& renderer) const {
     SDL_RenderPresent(renderer.get());
 }
 
-void Wrapper::delay(Uint32 ms) const {
-    SDL_Delay(ms);
-}
-
 }

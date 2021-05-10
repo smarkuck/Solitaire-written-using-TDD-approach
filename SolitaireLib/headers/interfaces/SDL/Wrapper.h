@@ -45,8 +45,6 @@ public:
                            const std::optional<SDL_Rect>& dstrect) const = 0;
 
     virtual void renderPresent(const UniquePtr<SDL_Renderer>&) const = 0;
-
-    virtual void delay(Uint32 ms) const = 0;
 };
 
 }

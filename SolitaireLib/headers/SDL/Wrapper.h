@@ -39,8 +39,6 @@ public:
                    const std::optional<SDL_Rect>& dstrect) const override;
 
     void renderPresent(const UniquePtr<SDL_Renderer>&) const override;
-
-    void delay(Uint32 ms) const override;
 };
 
 }
