@@ -1,4 +1,4 @@
-add_executable(${PROJECT_NAME} WIN32)
+add_executable(${PROJECT_NAME} WIN32 resource.rc)
 target_include_directories(${PROJECT_NAME} PRIVATE headers)
 
 target_sources(${PROJECT_NAME} PRIVATE
